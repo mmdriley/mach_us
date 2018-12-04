@@ -1,0 +1,57 @@
+%
+% bid.tex
+%
+% $Revision: 1.1 $
+% $Date: 1992/05/04 19:31:06 $
+%
+
+\subsection*{NAME}
+
+\noindent BID (Boot ID Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent 
+
+BID is the filtering module of the BootId protocol. 
+The BootId protocol is designed to advise workstations that a peer has
+rebooted, to protect protocols from receiving messages generated
+during previous boot incarnations, and to inform higher protocols of a
+peer's reboot in a timely fashion.
+
+If an upper protocol registers with BIDCTL protocol and messages
+from its session pass through BID sessions, the BootId protocol
+guarantees that a message from a rebooted peer will not be sent to an
+upper protocol until the upper protocol has been informed of the
+reboot.  
+
+\subsection*{SYNOPSIS}
+
+BID sessions stamp all outgoing messages with a local and remote
+BootId and filter out all incoming messages which do not have the
+correct BootIds.  Determination of the ``correct'' BootId is made by
+the BIDCTL protocol.  BID requires BIDCTL.
+
+BID is not reliable.  If there is confusion between two peers as to
+what their mutual BootIds are, messages between them will be silently
+dropped until the confusion is resolved.
+
+\subsection*{REALM}
+
+BID is in the ASYNC realm.
+
+\subsection*{PARTICIPANTS}
+
+BID expects an IPhost on the top of each participant.  It examines
+this value but does not remove it form the participant stack before
+opening its transport protocol.
+
+\subsection*{CONFIGURATION}
+
+BID expects to be configured above two protocols.  The first is the
+transport protocol and the second is the BIDCTL protocol.
+
+\subsection*{AUTHORS}
+
+\noindent Ed Menze
+

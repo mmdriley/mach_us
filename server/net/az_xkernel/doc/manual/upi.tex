@@ -1,0 +1,964 @@
+% 
+% $RCSfile: upi.tex,v $
+%
+% $Revision: 1.18 $
+% $Date: 1993/02/05 21:17:56 $
+%
+
+\section{Uniform Protocol Interface}
+
+Each \xk{} protocol is encapsulated in a uniform protocol interface.
+The suite of protocols configured into the system form a {\em protocol
+graph} and the collection of currently opened sessions (connections)
+form a {\em session graph}.
+
+\subsection{Type Definitions}
+
+\subsubsection{XObj}
+
+An {\em XObj} is the fundamental identifier in the system.  It can
+represent either a protocol or a session.  Fields which can be read or
+written by the programmer are so indicated.
+
+\begin{tabbing}
+xxxx \= xxxx \= xxxxxxxxxxx \= xxxxxxxxxxx \= \kill
+\>{\sem typedef struct} {\bold xobj} \{\\
+\>\>  {\sem XObjType}  	\>type;\\
+\>\>  {\sem char} 	\>*fullName;\>{\smallfont /* the name given in graph.comp, e.g., ``ethdrv/SE0''  */}\\
+\>\>  {\sem char} 	\>*name;\>{\smallfont /* the protocol name, e.g., ``ethdrv'' */}\\
+\>\>  {\sem char} 	\>*instName;\>{\smallfont /* the instance name, e.g., ``SE0'' */}\\
+\>\>  {\sem char} 	\>*state;\>{\smallfont /* Readable/writable -- Owned by the session/protocol */}\\
+\>\>  {\sem Bind} 	\>binding;\>{\smallfont /* Readable/writable */}\\
+\>\>  {\sem int} 	\>rcnt;\>{\smallfont /* readable */}\\
+\>\>  {\sem int} 	\>id;\>{\smallfont /* readable */}\\
+%\>\>  {\sem int} 	\>instance;\>{\smallfont /* readable */}\\
+\>\>  {\smallfont /* Interface functions */} \\
+\>\>  {\sem Pfo} 	\>open;\>{\smallfont /* protocols only */}\\
+\>\>  {\sem Pfk} 	\>closedone;\>{\smallfont /* protocols only */}\\
+\>\>  {\sem Pfk} 	\>openenable;\>{\smallfont /* protocols only */}\\
+\>\>  {\sem Pfk} 	\>opendisable;\>{\smallfont /* protocols only */}\\
+\>\>  {\sem Pfk} 	\>opendone;\>{\smallfont /* protocols only */}\\
+\>\>  {\sem Pfk}  	\>demux;\>{\smallfont /* protocols only */}\\
+\>\>  {\sem Pfk}  	\>calldemux;\>{\smallfont /* protocols only */}\\
+\>\>  {\sem Pfk}  	\>shutdown;\>{\smallfont /* protocols only */}\\
+\>\>  {\sem Pfk}  	\>pop;\>{\smallfont /* sessions only */}\\
+\>\>  {\sem Pfk}  	\>callpop;\>{\smallfont /* sessions only */}\\
+\>\>  {\sem Pfh}  	\>push;\>{\smallfont /* sessions only */}\\
+\>\>  {\sem Pfk}  	\>call;\>{\smallfont /* sessions only */}\\
+\>\>  {\sem Pfk}  	\>close;\>{\smallfont /* sessions or protocols */}\\
+\>\>  {\sem Pfi}  	\>control;\>{\smallfont /* sessions or protocols */}\\
+\>\>  {\sem Pfk}  	\>duplicate;\>{\smallfont /* sessions only */}\\
+\>\>  {\sem int}  	\>numdown; \>{\smallfont /* readable */}\\
+\>\>\>{\smallfont /* down info is owned by the protocol for its sessions */}\\
+\>\>  {\sem int} 	\>downlistsz;\\
+\>\>  {\sem unsigned int} \>idle;\\
+\>\>  {\sem struct xobj} \>*down[8];\\
+\>\>  {\sem struct xobj} \>**downlist;\\
+\>\>  {\sem struct xobj} \>*myprotl;\> {\smallfont /* readable -- a session is an instance of this protocol */}\\
+\>\>  {\sem struct xobj} \>*up; \>{\smallfont /* for sessions only */}\\
+\>\>  {\sem struct xobj} \>*hlpType;\\
+\>\} *{\bold XObj};
+\end{tabbing}
+
+If you think of the \xk{} as implementing protocol and session graphs,
+then each {\em XObj} represents a node in one of the graphs.
+Furthermore, an object's {\em down} vector represents graph edges;
+they contain pointers to the {\em XObjs} that are below the object in
+the protocol or session graphs. The fields {\em myprotl} and {\em up}
+link a session to the protocols that own and created the session,
+respectively.
+
+Note that the one aspect of Version 3.2 that differs most from
+descriptions of the $x$-kernel found in the literature is that {\it
+protocol} and {\it session} objects have been unified, and replaced
+with a single type {\em XObj}.  As a consequence, routines that really
+require a session or a protocol object check the type field of the
+{\em XObj} object, where session objects have the type {\em Session}
+and protocol objects have the type {\em Protocol}.
+
+\subsubsection{Enable Objects}
+\label{enable_objects}
+
+The {\em Enable} object is provided for use by the programmer in
+maintaining maps that associate identifiers and protocols or sessions.
+A pointer to an {\em Enable} object is often used as the internal
+identifier in {\em mapBind} calls.  An {\em Enable} object has a field
+for reference counting. Protocol writers will find this useful in
+handling {\em xOpenEnable} calls with identical participants---the
+calls are redundant with respect to session creation---but they must
+be reference counted in order to properly handle {\em xOpenDisable}
+calls.
+
+\begin{tabbing}
+xxxx \= xxxx \= xxxxxxxxxxx \= xxxxxxxxxx \=\kill
+\>{\sem typedef struct} {\bold xenable}  \{\\
+\>\>  {\sem XObj}         \>hlpRcv;\>\smallfont{/* upper protocol */}\\
+\>\>  {\sem XObj}         \>hlpType;\>\smallfont{/* upper protocol */}\\
+\>\>  {\sem Bind} 	\>binding;\>\smallfont{/* from mapBind */}\\
+\>\>  {\sem int} 	\>rcnt;\>\smallfont{/* A use count */}\\
+\>\} {\bold Enable};
+\end{tabbing}
+
+\subsubsection{Return Values}
+
+Most routines have a return value type of {\em xkern\_return\_t},
+which is either {\em XK\_SUCCESS} or {\em XK\_FAILURE}.  Routines that
+return type {\em XObj} have a failure value of {\em ERR\_XOBJ}.  Some
+message handling routines use type {\em xmsg\_handle}; see section
+\ref{xPush}.  Severe error conditions will result in console error
+messages and the termination of the $x$-kernel.
+
+\subsubsection{Function Types}
+
+The following typedefs are used in the {\em XObj} structure and
+throughout this document:
+
+\begin{quote}
+{\sem typedef xkern\_return\_t } ( * Pfk )();\\
+{\sem typedef void } ( * Pfv )();\\
+{\sem typedef struct xobj } ( * Pfo )();\\
+{\sem typedef xmsg\_handle\_t } ( * Pfh )();\\ 
+{\sem typedef int } ( * Pfi )();
+\end{quote}
+
+\subsection{Protocol-Protocol Operations}
+
+This section defines the operations that protocols (and sessions)
+invoke on each other. In general, each of the operations invokes a
+corresponding operation in the target protocol or session.  For
+example, an {\em xOpen} call will result in the invocation of a
+protocol specific open routine, e.g.  {\em udp\_open}.  For each
+operation, we give the interface to both the generic $x$-kernel
+operation and an example protocol-specific procedure that implements
+the generic operation.  Although nearly the same, the specification
+for the generic operation and the specification for the
+protocol-specific routine typically differ in that a {\it self}
+pointer is passed to the protocol-specific routine.
+
+\subsubsection{xOpen}
+
+\noindent The {\em xOpen} function is used by high-level protocol {\em
+hlpRcv} to actively open a session associated with low-level protocol
+{\em llp} on behalf of high-level protocol {\em hlpType}. Typically,
+{\em hlpRcv} and {\em hlpType} refer to the same protocol 
+(see section \ref{hlpdesc}.)  
+The {\em participants} 
+argument is a list of addresses for each participant in
+the communication.  For this, and all calls returning type {\em XObj},
+a return value of {\em ERR\_XOBJ} indicates failure, and this must be
+checked by all callers before using the return value.
+
+Caveat: the high-level protocol will use its {\em self} object as the
+first argument in {\em xOpen}, and the lower-level protocol object as
+the third argument.  The lower-level's open routine will see its own
+{\em self} object as the first argument, and the high-level protocols
+as the second and third arguments.  This reversal of argument order
+preserves the convention that the current protocol's self object is
+the first argument in the list.
+
+\medskip
+{\sanss Generic: }
+{\sem XObj} {\bold xOpen}({\sem XObj} {\caps  hlpRcv}, {\sem XObj} {\caps  hlpType}, {\sem XObj} {\caps  llp}, {\sem Part} *{\caps participants})
+\medskip
+
+{\sanss Specific: }
+{\sem XObj} {\bold udp\_open}({\sem XObj} {\caps self}, {\sem XObj} {\caps  hlpRcv}, {\sem XObj} {\caps  hlpType}, {\sem Part} *{\caps participants})
+
+\subsubsection{xOpenEnable}
+
+\noindent Used by high-level protocol {\em hlpRcv} to passively open a 
+session associated with low-level protocol {\em llp} on behalf of
+high-level protocol {\em hlpType}. As with {\em xOpen}, {\em hlpRcv}
+and {\em hlpType} usually refer to the same protocol. A passive open
+indicates a willingness to accept connections initiated by remote
+participants.  A session is not actually returned, but the low-level
+protocol, by convention, ``remembers'' this enabling, and later calls
+the high-level protocol's {\em xOpenDone} operation to complete the
+passive open.  {\em participants} is an ordered list of addresses for
+each participant for which the communication has been enabled. In most
+cases, it contains only a single element: the address of the local
+participant.  A return value of {\em XK\_FAILURE} indicates failure.
+
+The lower-level protocol generally ``remembers'' an invocation of its
+{\em xOpenEnable} operation by binding an {\em Enable} object to the
+participant information using {\em mapBind}.
+\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xOpenEnable} (
+{\sem XObj} {\caps hlpRcv}, {\sem XObj} {\caps hlpType}, 
+{\sem XObj} {\caps llp}, {\sem Part} *{\caps p}
+)
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_openenable} (
+{\sem XObj} {\caps self}, 
+{\sem XObj} {\caps hlpRcv}, {\sem XObj} {\caps hlpType}, 
+{\sem Part} *{\caps p})
+
+\subsubsection{xOpenDisable}
+
+\noindent Used by high-level protocol {\em hlpRcv} to undo the effects
+of an earlier invocation of {\em xOpenEnable}. The contents of the
+{\em participant} argument, { \em hlpRcv } and { \em hlpType } must be
+the same as the ones given to {\em xOpenEnable}.\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xOpenDisable}(
+{\sem XObj} {\caps hlpRcv}, {\sem XObj} {\caps hlpType}, 
+{\sem XObj} {\caps  llp}, {\sem Part}*{\caps p})
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_opendisable}(
+{\sem XObj} {\caps self}, 
+{\sem XObj} {\caps hlpRcv}, {\sem XObj} {\caps hlpType}, 
+{\sem Part}*{\caps p})
+
+
+\subsubsection{xOpenDisableAll}
+
+\noindent 
+Used by high-level protocol {\em hlpRcv} to 
+inform low-level protocol {\em llp} that all previous
+openEnables made by {\em hlpRcv} should be removed.  
+
+\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xOpenDisableAll}
+( {\sem XObj} {\caps hlpRcv}, {\sem XObj} {\caps  llp} )
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_opendisableall}
+( {\sem XObj} {\caps self}, {\sem XObj} {\caps hlpRcv} )
+
+
+\subsubsection{xOpenDone}
+
+\noindent Used by low-level protocol to inform high-level
+protocol that session ({\em s}) has now been created corresponding to
+an earlier {\em xOpenEnable} on behalf of {\em hlpType}.  
+
+\begin{quote}
+{\em 3.1 compatibility note:} This is like 3.1's x\_callopendone
+without participants or hlp; the original x\_opendone no longer exists.
+\end{quote}
+\medskip
+
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xOpenDone} (
+{\sem XObj} {\caps hlpRcv}, {\sem XObj} {\caps s}, {\sem XObj} {\caps llp} ) 
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_opendone}
+({\sem XObj} {\caps self}, {\sem XObj} {\caps lls}, {\sem XObj} {\caps llp}, 
+{\sem XObj} {\caps hlpType}
+)
+
+\subsubsection{xPush}\label{xPush}
+
+\noindent Used by a high-level protocol that opened session {\em s}
+to pass the message {\em msg} down through that session.  The return
+value is an opaque handle on the message that was sent.  This handle
+may be used to identify this message in subsequent {\em xControl} operations.
+The message handle may also take one of two special values:
+a return value of {\em XMSG\_ERR\_HANDLE} indicates general failure, 
+while {\em XMSG\_ERR\_WOULDBLOCK} indicates that a session in
+non-blocking mode would normally have blocked the push.
+
+\begin{quote}
+{\em 3.1 compatibility note:} 
+The reply message arg from 3.1 has been eliminated.  Use xCall if a
+reply message is expected.
+\end{quote}
+\medskip
+
+{\sanss Generic:} {\sem xmsg\_handle\_t} {\bold xPush} ({\sem XObj} {\caps s}, {\sem Msg} *{\caps msg})
+\medskip
+
+{\sanss Specific:} {\sem xmsg\_handle\_t} {\bold udp\_push} ({\sem XObj} {\caps self}, {\sem Msg} *{\caps msg})
+
+\subsubsection{xCall}
+
+\noindent Similar to {\em xPush} except that a ``reply'' message
+may be returned through the argument {\em reply\_msg}.  Used with
+synchronous (RPC-like) protocols.  Because the lower protocol
+typically retains no state for the request message after {\em xCall}
+returns, a message handle is not returned.  The message structure for
+the reply must be initialized; see {\em msgConstructEmpty}.
+\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xCall} ({\sem XObj} {\caps s}, {\sem Msg} *{\caps msg}, {\sem Msg} *{\caps reply\_msg})
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_call} ({\sem XObj} {\caps s}, {\sem Msg} *{\caps msg}, {\sem Msg} *{\caps reply\_msg})
+
+\subsubsection{xPop}\label{xPop}
+
+\noindent Used by a protocol to pass an incoming message {\em msg} up to 
+session {\em s} for processing, and to indicate the lower-level
+session from which the message was received ({\em lls}).  This calls
+the pop routine of the session {\em s} and increments the session
+reference count (see section \ref{refcnt}).  This call is invoked by a
+protocol on one of its own sessions.
+
+The {\em hdr} argument is passed through the infrastructure directly
+to the protocol-specific routine.  It is typically used to pass the
+header (which the {\em demux} routine used to find the session)
+to the session's {\em pop} routine.
+
+\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xPop} 
+({\sem XObj} {\caps s}, {\sem XObj} {\caps lls}, {\sem Msg} *{\caps msg},
+ {\sem void *} {\caps hdr})
+\medskip
+
+{\sanss Specific: }{\sem xkern\_return\_t} {\bold udp\_pop} 
+({\sem XObj} {\caps self}, {\sem XObj} {\caps lls}, {\sem Msg} *{\caps msg},
+ {\sem void *} {\caps hdr})
+
+
+\subsubsection{xCallPop}
+
+When a  synchronous (RPC-like) protocol will  be demuxing a message to
+an asynchronous  protocol, {\em xCallPop}  can  be  used  to allow the
+upper protocol to return a message. This reply message may be the same
+one passed to the synchronous protocol via {\em xCallDemux}.
+\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xCallPop} 
+({\sem XObj} {\caps s}, {\sem XObj} {\caps lls}, 
+{\sem Msg} *{\caps msg},  {\sem void *} {\caps hdr},
+{\sem Msg} *{\caps rmsg})
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_callpop} 
+({\sem XObj} {\caps self}, {\sem XObj} {\caps lls}, 
+{\sem Msg} *{\caps msg},  {\sem void *} {\caps hdr},
+{\sem Msg} *{\caps rmsg})
+
+\subsubsection{xCloseDone}
+
+\noindent Used by a low-level protocol to inform the high-level protocol 
+that originally opened session {\em s} that the session has been closed by
+a peer participant.
+\medskip
+
+{\sanss Generic:}{\sem xkern\_return\_t} {\bold xCloseDone} ({\sem XObj} {\caps s})
+\medskip				
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_closedone} ({\sem XObj} {\caps s})
+
+\subsubsection{xClose}
+
+\noindent Decrements the reference count of an {\em XObj} (see section
+\ref{refcnt}), calling the object's close function {\em only} if the
+reference count is zero. This call applies to {\em XObj}s that represent
+both protocols and sessions, but the implications of invoking {\em xClose}
+on a protocol is not fully determined at this time.
+
+\begin{quote}
+{\em 3.1 compatibility note:} Replaces xCloseProtl and xCloseSession.
+Note that in 3.1, the {\em XObj}'s close function was called every
+time xCloseProtl or xCloseSession was called.
+\end{quote}
+\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xClose} ({\sem XObj} {\caps object})
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_close} ({\sem XObj} {\caps object})
+
+\subsubsection{xControl}
+
+Used by one {\em XObj} to act upon another {\em XObj} for retrieving
+information or for setting processing parameters.  The operation code
+{\em opcode} identifies the action; {\em buf} is a character buffer
+from which an argument is retrieved and/or into which a result is
+placed; and {\em len} is the length of the buffer.  There are two
+``classes'' of operations: standard ones that may be implemented by
+more than one protocol, and protocol-specific ones.  A full discussion
+of control operation codes is in section \ref{control}.
+
+\begin{quote}
+{\em 3.1 compatibility note:} The routines controlprotl and controlsessn
+no longer exist.
+\end{quote}
+\medskip
+
+{\sanss Generic:} {\sem int} {\bold xControl} ({\sem XObj} {\caps object}, 
+{\sem int} {\caps opcode}, {\sem char} *{\caps buf}, {\sem int} {\caps len})
+\medskip
+
+{\sanss Specific:} {\sem int} {\bold udp\_control} ({\sem XObj} {\caps self}, {\sem int} {\caps opcode}, {\sem char} *{\caps buf}, {\sem int} {\caps len})
+
+\subsubsection{xDemux}
+
+\noindent Used by low-level session {\em s} to pass message {\em msg}
+to the high-level protocol that created it.  The higher-level protocol
+is determined from the session object.  The higher-level protocol
+demux routine should find the appropriate session, creating it if
+necessary, and {\em xPop} the message to the session. See
+\ref{xCreateSessn} for guidelines on when session creation is
+appropriate.
+
+The called routine is presented with its protocol object, the session
+object from the lower-level protocol, and the message.
+\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xDemux} ({\sem XObj} {\caps s}, {\sem Msg} *{\caps msg})
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_demux} ({\sem
+XObj} {\caps self}, {\sem XObj} {\caps lls}, {\sem Msg} *{\caps msg})
+
+\subsubsection{xCallDemux}
+
+This call is like {\em xDemux} but allows an argument to contain a
+return message. Used with synchronous (RPC-like) protocols.
+\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xCallDemux} ({\sem XObj} {\caps s}, {\sem Msg} *{\caps msg}, {\sem Msg} *{\caps rmsg})
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold upd\_calldemux}
+({\sem XObj} {\caps self}, {\sem XObj} {\caps lls}, {\sem Msg} *{\caps msg}, {\sem Msg} *{\caps rmsg})
+
+\subsubsection{xDuplicate}
+\label{duplicate}
+
+Increments the reference count of session {\em s}.  This can be used
+to create a permanent handle on the {\em XObj} from a temporary handle,
+or to create a new equivalent handle from an existing handle. For a
+full discussion of session reference counts, see section \ref{refcnt}.
+\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xDuplicate} ({\sem XObj}  {\caps s})
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_duplicate} ({\sem XObj}  {\caps self})
+
+
+
+\subsubsection{xShutDown}
+
+Called once for each protocol object to indicate imminent death of the
+\xk{}.  A protocol may choose to take actions to shut down in a
+graceful manner.  In particular, boundary protocols may choose to
+sever their connections to the outside world in an orderly manner on
+receipt of this call.
+
+Protocols should generally not invoke this operation on other
+protocols or on themselves.  It is typically invoked by the \xk{}
+infrastructure itself.
+
+\medskip
+
+{\sanss Generic:} {\sem xkern\_return\_t} {\bold xShutDown} 
+({\sem XObj} {\caps protl} )
+\medskip
+
+{\sanss Specific:} {\sem xkern\_return\_t} {\bold udp\_shutdown} 
+({\sem XObj}  {\caps self})
+
+
+
+\subsection{Graph Manipulation Operations}
+				
+Unlike the previous set of operations---which protocols invoke on each
+other to open/close connections and to send/receive messages---the
+operations defined in this section actually manipulate the protocol
+and session graphs; i.e, create nodes and edges. These operations
+are either called by the \xk{} at start-up time to create and link
+together protocol objects, or by protocols at runtime to create and
+link together session objects.
+
+\subsubsection{xCreateSessn}\label{xCreateSessn}
+
+Called by protocol {\em llp} to create a session that will handle data
+associated with a common source/destination pair. Usually called in
+response to an {\em xOpen} call, or because data has arrived with
+participants that match a previous {\em xOpenEnable} call.  By
+convention, a protocol will only create one session at a time for a
+source/destination pair, even if there have been multiple {\em
+xOpenEnable}'s that would match incoming data.
+
+The session is initialized using information found in protocols {\em hlpRcv},
+{\em hlpType} and {\em llp}.  The new session's up pointer is set to
+{\em hlpRcv} (this is where upward-bound messages through this session
+will be delivered.)
+The count {\em downc}
+indicates how many lower level sessions this session requires.  
+It need be non-zero only for sessions that will store
+sessions in the ``down'' vector {\em downv} (it will be zero
+for device drivers and one for normal sessions.)
+The initialization
+function pointer {\em f} may be null; otherwise this function should
+fill in the interface function pointers in the {\em XObj} structure.
+These pointers are initialized to default (usually null) functions by
+the system initialization code.  
+\medskip
+
+{\sem XObj} {\bold xCreateSessn}({\sem Pfv} {\caps  f}, 
+{\sem XObj} {\caps  hlpRcv}, {\sem XObj} {\caps  hlpType}, 
+{\sem XObj} {\caps llp}, {\sem int} {\caps downc}, 
+{\sem XObj} *{\caps downv})
+\medskip
+
+{\sanss Example Init Function:} {\sem void} {\bold udp\_sessn\_init} ({\sem XObj} {\caps self})
+
+\medskip
+
+\subsubsection{xCreateProtl}
+
+Called during system start-up for each protocol in the graph.  The
+function {\em f} is called to initialize a protocol object. It must
+have a well-known name derived from the concatenation of the protocol
+name and the string ``{\em \_init}'' (e.g., {\em tcp\_init}).  The
+initialization generally allocates and initializes protocol state and
+fills in the interface function pointers.  Because function pointers
+are initialized to null functions before {\em f} is called, only those
+functions actually used by the protocol need be defined.
+
+Use of {\em xCreateProtl} outside of initialization, e.g., to
+dynamically load new protocols, is not supported at this time.
+
+\begin{quote}
+{\em 3.1 compatibility note:} Replaces x\_instantiateprotl and
+x\_createprotl (the user routine) and eliminates the need for x\_getproc.
+\end{quote}
+\medskip
+
+{\sem XObj} {\bold xCreateProtl} ({\sem Pfv} {\caps f}, {\sem char} *{\caps name}, {\sem char} *{\caps instName}, {\sem int} {\caps downc}, {\sem XObj} *{\caps {\caps downv}} )
+\medskip
+
+{\sanss Example Init Function:} {\sem void} {\bold udp\_init} ({\sem XObj} {\caps self})
+
+\subsubsection{xDestroy}
+
+Destroys protocol and session objects. It is the inverse of {\em
+xCreateSessn} and {\em xCreateProtl}.  Storage for the {\em XObj} is
+freed, and if the state pointer of the {\em XObj} is non-null, it is
+also freed.
+\medskip
+
+{\sem xkern\_return\_t} {\bold xDestroy}({\sem XObj} {\caps object})
+\medskip
+
+\subsubsection{xGetProtlByName}
+
+Returns a capability for a protocol object given its mnemonic name.
+(See the discussion of graph.comp in section \ref{config}.)
+\medskip
+
+{\sem XObj} {\bold xGetProtlByName} ({\sem char} *{\caps name} )
+
+\subsubsection{xSetDown}
+
+Sets the {\em index}th member of {\em self}'s down vector to be {\em
+object}.  It sets or increments the {\em XObj} field {\em numdown} as
+a side effect.
+\medskip
+
+{\sem xkern\_return\_t} {\bold xSetDown} ({\sem XObj} {\caps self}, {\sem int} {\caps index}, {\sem XObj} {\caps object})
+
+\subsubsection{xGetDown}
+
+Returns the {\em index}th member of {\em self}'s down vector.  Returns
+{\em ERR\_XOBJ} if the index is larger than the down vector.
+\medskip
+
+{\sem XObj} {\bold xGetDown} ({\sem XObj} {\caps self}, {\sem int} {\caps index})
+
+
+\subsubsection{xSetUp}
+
+Resets the up pointer of session {\em s} to {\em hlp}.  The up pointer
+of a session is initialized in {\em xCreateSessn}, so {\em xSetUp}
+is only used for extraordinary manipulation of the session graph.
+\medskip
+
+{\sem void} {\bold xSetUp} ({\sem XObj} {\caps s}, {\sem XObj} {\caps hlp})
+
+
+\subsubsection{xGetUp}
+
+Returns the up pointer of session {\em s}.
+\medskip
+
+{\sem XObj} {\bold xGetUp} ({\sem XObj} {\caps s})
+
+
+\subsubsection{xHlpType}
+
+Returns the {\em hlpType} argument that was used to create session
+{\em s.}
+\medskip
+
+{\sem XObj} {\bold xHlpType} ({\sem XObj} {\caps s})
+
+
+
+\subsection{ Utility Operations }
+
+\subsubsection{xIsProtocol}
+
+Returns true if the {\em XObj} is a protocol.
+\medskip
+
+{\sem bool} {\bold xIsProtocol} ( {\sem XObj} )
+
+
+
+\subsubsection{xIsSession}
+
+Returns true if the {\em XObj} is a session.
+\medskip
+
+{\sem bool} {\bold xIsSession} ( {\sem XObj} )
+
+
+
+\subsubsection{xIsXObj}
+
+Returns true if the {\em XObj} is either a session or a protocol
+(i.e., if this returns false the {\em XObj} was either never
+initialized or has been badly clobbered.)
+\medskip
+
+{\sem bool} {\bold xIsXObj} ( {\sem XObj} )
+
+
+
+\subsubsection{xIsValidXObj}
+
+XObjects created with xCreateSessn or xCreateProtl are kept in a
+system map and removed when the object is destroyed.  
+{\em xIsValidXObj} can be used to determine whether a random 
+XObject handle is in this map and can thus be used safely.
+\medskip
+
+{\sem bool} {\bold xIsValidXObj} ( {\sem XObj} )
+
+
+\subsubsection{xPrintXObj}
+
+Display some information about the state of the {\sem XObj}.
+\medskip
+
+{\sem bool} {\bold xPrintXObj} ( {\sem XObj} )
+
+
+
+\subsection{Usage Rules}
+
+This section has some protocol design rules that protocol writers
+should follow in order to develop ``well-behaved'' protocols that
+interact properly with other protocols with which they might be
+composed.
+
+
+\subsubsection{Initializing a Protocol}
+
+At system boot time, the \xk{} calls xCreateProtocol for each protocol 
+configured into the kernel (see section \ref{config}). 
+xCreateProtocol, in turn, 
+calls the protocol's init routine,
+where for a protocol named `yap', this initialization routine 
+must be named `yap\_init'. 
+Generally, this routine does the following work.
+
+\begin{verbatim}
+void
+yap_init(self)
+    XObj self;
+{
+    /* fill in protocol-specific operations */
+    self->open = yap_open;
+    self->demux = yap_demux;
+    . . .
+
+    /* create and initialize protocol-specific state, including maps */
+    self->state = xMalloc( sizeof(struct yap_state) );
+    . . .
+
+    /* get handle for, and register with, lower-level protocol */
+    llp = xGetDown(self, 0));
+    partInit(&part, 1);
+    partPush(part, ANY_HOST, 0);
+    xOpenEnable(self, self, llp, &part);
+}
+\end{verbatim}
+
+
+
+\subsubsection{hlpRcv and hlpType}
+\label{hlpdesc}
+
+The operations {\em xOpen}, {\em xOpenEnable}, and {\em xOpenDisable}
+take two high-level protocols, {\em hlpRcv} and {\em hlpType}.  {\em
+hlpRcv} is the protocol to which the new lower session should route
+incoming messages.  The lower protocol uses {\em hlpRcv} as the hlp
+argument to {\em xCreateSessn}. The lower protocol uses {\em hlpType}
+to determine which messages the new session should handle.  For
+example, when {\em ethOpen} is called with IP as the {\em hlpType},
+ETH knows that the new session will deal with packets that have the IP
+ethernet type.  The lower protocol typically determines the number
+that corresponds to {\em hlpType} by using it in a call to {\em
+relProtNum} (see section \ref{protnum}.)
+
+Most protocols use their {\em self} pointer as both {\em hlpRcv} and
+{\em hlpType} when making these calls, though virtual protocols (see
+below) are the exception.
+
+\subsubsection{Protocol Realms}
+
+Although the \xk{} defines a single interface for all protocols, not
+all protocols are created equal. Our experience is that protocols can
+be classified into different categories, which we call realms. Chances
+are, any protocol you write falls into one of the following realms. In
+some cases, the realm a protocol falls into both defines a restricted
+subset of the interface that the protocol implements, and the set of
+protocols with which it may be composed.
+
+\paragraph{Asynchronous Protocols}{\ }
+
+\smallskip
+
+\noindent Most protocols---e.g., protocols like IP, TCP, and UDP---fall 
+in this category. The \xk{} supports asynchronous protocols through
+the use of {\em xPush}, {\em xPop} and {\em xDemux} operations.
+Asynchronous protocols are typically symmetric in the sense that the
+protocol's sessions process both incoming and outgoing messages.
+While it seems possible for asynchronous protocols to have asymmetric
+sessions (a given session can handle only incoming or outgoing
+messages, but not both), we have thus far been able to make all our
+asynchronous protocols be symmetric, and we strongly encourage such
+designs.  Knowing that any low-level protocols you may use are
+symmetric enhances our ability to compose protocols and makes
+implementing a given protocol much easier.
+
+\paragraph{Synchronous Protocols}{\ }
+
+\smallskip
+
+\noindent These are RPC protocols. They are typically asymmetric in the 
+sense that client-side sessions and the server-side sessions are quite
+different.  The \xk{} explicitly supports synchronous/asymmetric
+sessions through the use of {\em xCall}, {\em xCallPop} and {\em
+xCallDemux}. Since synchronous protocols are asymmetric, {\em xCall}
+is used on the client side and {\em xCallPop} and {\em xCallDeumx} are
+used on the server side.
+
+Note that some protocols lie on the boundary between the synchronous
+and asynchronous realms. For example, a protocol that implements RPC
+(as opposed to one that uses it) probably looks asynchronous from the
+bottom (i.e., lower level protocols call its {\em xPop} routine),
+but synchronous from above (i.e., higher level protocols call its
+{\em xCall} routine).
+
+\paragraph{Control Protocols}{\ }
+
+\smallskip
+
+\noindent These protocols support neither a {\em xPush/xPop} nor a 
+{\em xCall/xCallPop} interface.  Typically, only control operations
+may be performed on these protocols.  ARP and ICMP fall into this
+category.
+
+
+\subsubsection{Anchor Protocols}
+
+Anchor protocols sit either at the top or the bottom of a protocol
+stack and provide an interface between the \xk{} and the system in
+which the \xk{} is embedded.  Top-level anchor protocols look like an
+\xk{} protocol from the bottom, but provide an Application Programmer
+Interface to the \xk{} (see appendix \ref{api}.)  Bottom-level anchor
+protocols (e.g., device drivers) look like a protocol from the top,
+but typically interface with the lower levels of the surrounding
+system or with network hardware.
+
+Writing anchor protocols involves careful synchronization of
+external threads with \xk{} threads and objects.  See section
+\ref{ext-threads}. 
+
+\subsubsection{Virtual Protocols}
+
+Virtual protocols occupy places in the protocol (and sometimes the
+session) graphs, but they neither produce nor interpret network headers.
+They typically make decisions about how messages should be routed
+through the session graph based on participants in {\em xOpen} or on
+properties of messages, such as size.
+
+The {\em xOpen}, {\em xOpenEnable}, and {\em xOpenDisable} routines of
+virtual protocols differ from those of conventional protocols.  A
+virtual protocol's implementation of {\em xOpen}, for example, will
+usually make an {\em xOpen} call to its lower protocols using the {\em
+hlpType} that was passed into the virtual protocol, but using its {\em
+self} pointer as {\em hlpRcv}.  This allows arbitrary chains of
+virtual protocols to insert their sessions between the upper and lower
+conventional sessions while still passing ``type information'' from
+the upper protocol to the lower protocol.
+
+Note that virtual protocols can be either synchronous (support the
+{\em xCall}/{\em xCallPop}/{\em xCallDemux} interface) or asynchronous
+(support the {\em xPush}/{\em xPop}/{\em xDemux} interface).
+
+
+\subsection{Default Operations}
+
+Since many protocols' UPI operations look very similar, the \xk{}
+provides some library operations which do much of the standard work of
+some of the operations.  Many protocols can call these default
+operations and greatly simplify their own implementations of these
+routines.  
+
+
+\subsubsection{defaultOpenEnable}
+
+Binds {\em key} to an enable object with {\em hlpRcv} and {\em
+hlpType}.  If a previous binding exists for the given key and {\em hlp}s,
+the reference count of that enable object will be increased.  
+{\em defaultOpenEnable} will fail if a previous binding exists for
+this key that does not match the {\em hlp}s.
+
+\medskip
+
+{\sem xkern\_return\_t} {\bold defaultOpenEnable} 
+( 
+{\sem Map} {\caps m}, 
+{\sem XObj} {\caps hlpRcv}, 
+{\sem XObj} {\caps hlpType}, 
+{\sem void} *{\caps key}
+)
+
+
+\subsubsection{defaultOpenDisable}
+
+Undoes the effect of a previous {\em defaultOpenEnable.}
+Returns failure if no appropriate enable object exists (e.g., if
+nothing exists for the given key or if the {\em hlp}s don't match the
+saved values in the enable object.)
+
+\medskip
+
+{\sem xkern\_return\_t} {\bold defaultOpenDisable} 
+( 
+{\sem Map} {\caps m}, 
+{\sem XObj} {\caps hlpRcv}, 
+{\sem XObj} {\caps hlpType}, 
+{\sem void} *{\caps key}
+)
+
+
+\subsubsection{defaultOpenDisableAll}
+
+Removes all enable objects bound in {\em map} with {\em hlpRcv}.
+If {\em f} is non-zero, it is called with the ({\em key}, {\em
+Enable} *) pair for each {\em Enable} object in the map before it is removed.
+
+
+\medskip
+
+{\sem xkern\_return\_t} {\bold defaultOpenDisableAll} 
+( 
+{\sem Map} {\caps m}, 
+{\sem XObj} {\caps hlpRcv}, 
+{\sem DisableAllFunc} {\caps f}
+)
+
+\medskip
+
+{\sem typedef void} ({\bold *DisableAllFunc} )
+(
+{\sem void} *{\caps key}, 
+{\sem Enable} *{\caps e}
+)
+
+
+\subsubsection{defaultVirtualOpenEnable}
+
+Designed to be used by virtual protocols.  In addition to the binding
+performed by {\em defaultOpenEnable}, an {\em xOpenEnable} is
+performed on each lower protocol in the null-terminated array 
+{\em llp} (using participants {\em p}, 
+causing the lower protocols to deliver packets for 
+{\em hlpType} to the virtual protocol {\em self}.  If any of these
+{\em xOpenEnable}s fail, {\em defaultVirtualOpenEnable} backs out of
+the entire operation.
+
+Assumes that the passive map is keyed on {\em hlpType}.
+
+\medskip
+
+\begin{tabbing}
+
+\indent
+{\sem xkern\_return\_t} {\bold defaultVirtualOpenEnable} 
+( \= 
+{\sem XObj} {\caps self}, 
+{\sem Map} {\caps m}, 
+{\sem XObj} {\caps hlpRcv}, 
+{\sem XObj} {\caps hlpType}, \\
+\> {\sem XObj} *{\caps llp}, 
+{\sem Part} *{\caps p}
+)
+
+\end{tabbing}
+
+\subsubsection{defaultVirtualOpenDisable}
+
+Undoes the effect of a previous {\em defaultVirtualOpenEnable}.
+
+\medskip
+
+\begin{tabbing}
+
+\indent
+{\sem xkern\_return\_t} {\bold defaultVirtualOpenDisable} 
+( \=
+{\sem XObj} {\caps self}, 
+{\sem Map} {\caps m}, 
+{\sem XObj} {\caps hlpRcv}, \\
+\> {\sem XObj} {\caps hlpType}, 
+{\sem XObj} *{\caps llp}, 
+{\sem Part} *{\caps p}
+)
+
+\end{tabbing}
+
+
+
+\subsubsection {Usage}
+
+Here is an example of how a protocol might simplify its 
+{\em enable}/{\em disable} routines using these operations:
+
+\begin{verbatim}
+
+static xkern_return_t
+yapOpenEnable( XObj self, XObj hlpRcv, XObj hlpType, Part *p )
+{
+    long    key;
+    PState  *ps = self->state;
+    
+    key = getRelProtNum(hlpType, self));
+    return defaultOpenEnable(ps->passive_map, hlpRcv, hlpType, &key);
+}
+
+static xkern_return_t
+yapOpenDisable( XObj self, XObj hlpRcv, XObj hlpType, Part *p )
+{
+    long    key;
+    PState  *ps = self->state;
+    
+    key = getRelProtNum(hlpType, self));
+    return defaultOpenDisable(ps->passive_map, hlpRcv, hlpType, &key);
+}
+
+static xkern_return_t
+yapOpenDisableAll( XObj self, XObj hlpRcv )
+{
+    PState  *ps = self->state;
+
+    return defaultOpenDisableAll(ps->passive_map, hlpRcv, 0);
+}
+\end{verbatim}

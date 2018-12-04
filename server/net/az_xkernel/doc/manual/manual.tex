@@ -1,0 +1,119 @@
+\documentstyle[11pt,fcanon,timesmath]{article}
+
+\setcounter{tocdepth}{5}
+
+\begin{document}
+
+\sansfont{helvetica}
+
+\makeatletter
+\postscript@fontdef{Palatino}{palatino}%
+{pplr}{pplri}{pplb}{pplbi}{pplrc}{pplro}
+\makeatother
+\def\caps{\family{palatino}\size{12}{12pt}\selectfont}
+
+\makeatother
+\def\nintt{\family{helvetica}\size{9}{11pt}\selectfont}
+\makeatother
+\def\sanss{\family{helvetica}\size{11}{11pt}\selectfont}
+\makeatother
+\def\smalltt{\family{courier}\size{9}{11pt}\selectfont}
+
+\newcommand{\COURIERtt}{\fontfamily{courier}\size{9}{11pt}\selectfont}
+\newcommand{\CMRtt}{\fontfamily{cmtt}\selectfont}
+
+\font\bold=cmbx12
+\font\smallfont=cmr10
+\font\sem=cmsl10
+
+\def\xk{$x$-kernel}
+
+\title{$x$-Kernel Programmer's Manual \\ {\rm (Version 3.2)}}
+\author{\\ Edwin F. Menze III\\ Hilarie K. Orman \thanks
+{This work supported in part by 
+National Science Foundation Grants CCR-8811423, IRI-9015407, and CCR-9102040, 
+Sun Microsystems Inc., 
+Hewlett-Packard Company, 
+and DARPA Contract DABT63-91-C-0030}}
+\maketitle{}
+
+\begin{center}
+{\bf\Large Abstract}
+\end{center}
+\begin{quote}
+\input abstract
+\end{quote}
+
+%\newpage{}
+%\input copyright
+
+
+\renewcommand\baselinestretch{1}
+\tolerance=1000
+\small\normalsize
+
+\newpage{}
+% In timesmath, the . in math mode below turns out mapped to :, because . is
+% is at position 0x3A in cmmi, but 0x2E in cmr (and Postscript).  Map it back.
+\makeatletter
+\def\@dottedtocline#1#2#3#4#5{\ifnum #1>\c@tocdepth \else
+  \vskip \z@ plus.2\p@
+  {\leftskip #2\relax \rightskip \@tocrmarg \parfillskip -\rightskip
+    \parindent #2\relax\@afterindenttrue
+   \interlinepenalty\@M
+   \leavevmode
+   \@tempdima #3\relax \advance\leftskip \@tempdima \hbox{}\hskip -\leftskip
+%    #4\nobreak\leaders\hbox{$\m@th \mkern \@dotsep mu.\mkern \@dotsep
+    #4\nobreak\leaders\hbox{$\m@th \mkern \@dotsep mu\mathchar"012E\mkern \@dotsep
+       mu$}\hfill \nobreak
+           \hbox to\@pnumwidth{\hfil\reset@font\rm #5}\par}\fi}
+\makeatother
+
+\tableofcontents
+
+\newpage{}
+\input intro
+\newpage{}
+\input upi
+\newpage{}
+\input participant
+\newpage{}
+\input message
+\newpage{}
+\input event
+\newpage{}
+\input map
+\newpage{}
+\input thread
+\newpage{}
+\input trace
+\newpage{}
+\input utilities
+\newpage{}
+\input control
+\newpage{}
+\input refcount
+\newpage{}
+\input protNums
+\newpage{}
+\input config
+\newpage{}
+\input running
+\newpage{}
+\input releasing
+\newpage{}
+\input install
+\newpage{}
+\input install_mach_kernel
+
+\sloppy
+\appendix
+
+\newpage{}
+\input prots
+
+\newpage{}
+\input api
+
+
+\end{document}

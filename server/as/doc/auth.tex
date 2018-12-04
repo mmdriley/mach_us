@@ -1,0 +1,317 @@
+\documentstyle[11pt,titlepage]{article}
+
+\oddsidemargin 0.25in
+\evensidemargin 0.25in
+
+\textwidth 6.0in
+\topmargin 0in
+\textheight 8in
+
+\itemsep 0pt
+\marginparwidth 1in
+
+% \psfigure{width in inches}{height in inches}{file}
+% Modify the following definition to select figures on or off.
+\newcommand{\psfigure}[3]{\psfigureon{#1}{#2}{#3}}
+\newcommand{\psfigureoff}[3]{\setlength{\unitlength}{1in}\begin{picture}(#1,#2)\put(0,0){\framebox(#1,#2){#3}}\end{picture}}
+\newcommand{\psfigureon}[3]{\setlength{\unitlength}{1in}\begin{picture}(#1,#2)\put(0,0){\special{psfile=#3}}\end{picture}}
+\newcommand{\psfigureboxed}[3]{\setlength{\unitlength}{1in}\begin{picture}(#1,#2)\put(0,0){\special{psfile=#3}}\put(0,0){\framebox(#1,#2){}}\end{picture}}
+
+\begin{document}
+
+\begin{center}
+\LARGE Authentication Service Design \\[0.25in]
+\Large Robert Sansom \\
+%\Large \today
+\Large{August, 1988}
+\vspace{0.25in}
+\end{center}
+
+\section{Overview}
+The authentication service is used by servers to identify clients.  In
+addition it provides servers with support for access control.  The
+authentication service uses Mach ports as {\em tokens\/} of identity and
+thus its security is dependent on the security of the underlying IPC
+facility.
+
+Before a user can obtain a token of identity, the user must log in to the
+authentication service.  A user logs in by sending a user identifier and
+password to the authentication service.  The authentication service checks
+the password by encrypting it under a one-way cipher function and comparing
+it with the stored version of the encrypted password.
+
+If the log in is successful, then the authentication service creates a new
+{\em private port\/} for the user.  The private port represents the user to
+the authentication service and the authentication service treats any request
+message received on the private port as already authenticated.  This private
+port is useful only for communicating with the authentication service;  it
+cannot be used for accessing resources guarded by other servers.  However
+the user can send a request message to the private port asking the
+authentication service to create a token of the user's identity.  The
+authentication service creates the token and remembers that the new token
+represents the user.
+
+\begin{figure}[tb]
+\begin{center}
+\psfigure{5.5}{3.2}{"authexample.PS"}
+\end{center}
+
+\begin{small}
+User A wishes to access resources managed by server B.  A obtains a token,
+P1 from the authentication service.  A sends P1 to B, and B verifies P1 with
+the AS.  If P1 is valid, and A is a member of a group that has access to
+some subset of the resources that B manages, then B creates and returns a
+new private port, P2, to A.  All reply messages in this protocol are sent to
+the reply ports contained in the request messages.  All messages must be
+sent securely if the authentication protocol is to be secure.
+\end{small}
+\caption{Summary of Authentication Process}
+\label{auth-summary}
+\end{figure}
+
+As shown in Figure \ref{auth-summary}, once a user has obtained a token from
+the authentication service, the user can pass the token to a server when
+making a request of the server.  The server can {\em verify\/} the identity
+of the user by querying the authentication service about the token.  If the
+token is valid, the authentication service will return the identity of the
+user that created the token.  In addition the authentication service will
+return a list of the {\em access control groups\/} (see also Section
+\ref{author}) represented by the token.  The list returned need not contain
+all the access control groups of which the user is a member --- when asking
+the authentication service to create a token, the user can specify that the
+token should represent only a subset of these groups.
+
+The server can then check the access control groups represented by the token
+against the access control lists that it maintains to protect its resources.
+If the user does have access to the requested resource, the server can
+create and return to the user a new private port that the user can use to
+access the resource.  The server will treat any requests that arrive on this
+private port as already verified.
+
+When a user logs out, either explicitly by using the authentication service
+{\tt log\_out} call or implicitly by just exiting, the private port and all
+the tokens associated with that user are deallocated.  Deleting the user's
+tokens immediately upon the user's log out may cause problems if a server
+has received a token but has not yet verified it with the authentication
+service.  When the server comes to verify the token it will find that the
+token is no longer valid and thus it will not be able to carry out the
+user's original request.
+
+\section{Implementation}
+The authentication service is implemented by a combination of {\em Central
+Authentication Servers\/} (CASs) and {\em Local Authentication Servers\/}
+(LASs).  Ideally there should be multiple central authentication servers to
+ensure the availability of the authentication service;  the current
+implementation, however, has only a single central server.
+
+\subsection{Central Authentication Server}
+The central authentication server maintains an authentication database that
+contains information about users and their memberships of access control
+groups.  Currently this database is stored in the file named {\em
+ASDATABASE}.  Passwords are stored in the authentication database under a
+one-way encryption function as in the {\sc Unix}\footnote{{\sc Unix} is a
+trademark of AT\&T Bell Laboratories.} password database.  Storing the
+passwords in an encrypted form means that the authentication database does
+not form a weak link in the security of the system.  Moreover, the database
+can be made readable to all users thus allowing users easy access to the
+public information about users' memberships of access control groups.
+
+When a user logs in from a remote node, the unencrypted version of the
+user's password must be received by the central authentication server.  The
+central authentication server encrypts the password itself and compares it
+against the stored, encrypted version to see if the log in request is valid.
+The request message sent between the local and central authentication
+servers must be sent securely in order to protect the security of a user's
+passwords.
+
+\subsection{Local Authentication Servers}
+Each node in the distributed system, apart from the central node, has a
+local authentication server that maintains a connection to a central
+authentication server.  If the connection to the CAS fails, then the local
+server will handle the failure gracefully.  In addition, the local
+authentication server caches verification information obtained from
+intercepting all authentication requests between tasks on its node and the
+CAS.  Thus it will be able to answer many subsequent authentication requests
+using its cached information.
+
+The local authentication server creates and holds receive and ownership
+rights to all ports resulting from authentication service requests.  Each
+private port created as a result of a successful log in is actually a pair
+of private ports, a local and central private port, both created by the
+local authentication server.  Each token is a single port created by the
+local authentication server.
+
+When the user makes a log in request, the LAS creates a central private port
+and passes send rights to this port to the CAS.  If the log in request is
+successful then the LAS uses this port to represent the user in subsequent
+authentication requests sent to the CAS.  But before replying to the user,
+the LAS creates a local private port that it associates with the central
+private port.  Send rights to this local private port are returned to the
+user in the log in reply.
+
+A user makes subsequent authentication requests by sending messages to the
+local private port.  The local authentication server maps the local private
+port into the corresponding central private port and forwards the request
+message to the central authentication server.  Note that because the CAS
+does not have receive rights to the central private port, the forwarded
+request cannot be sent to the central private port but instead must be sent
+to the CAS's public port.  For consistency the local request made by the
+user is sent not to the local private port but to the local authentication
+server's public port.
+
+When a user makes a token creation request, the local authentication server
+creates a port that will be the token.  It then requests that the central
+authentication server {\em register\/} the port as a token.  Send rights to
+the token are passed in the request sent to the CAS.  If the request is
+successful, the LAS returns send rights for the token to the user task.
+
+The local authentication server can detect that the user has logged out
+without informing the authentication service if it receives a {\em no more
+senders\/} notification\footnote{The {\em no more senders\/} notification
+for a port implies that no tasks hold send rights to the port.  The current
+implementation of Mach does not, however, support this notification.} for
+the user's private port.  Similarly it can detect that a token is no longer
+in use if it gets a {\em no more senders\/} notification for the token.
+
+\subsection{Interface}
+The following requests can be made of the authentication service (more
+details can be found in the manual entries):
+\begin{quotation} \noindent {\small
+\verb"log-in(user-name,password)" $\rightarrow$ \verb"(private port)"}
+
+Logs in a user if the clear-text password is correct for the given
+user-name.  Returns send rights to a private port to which the user can send
+subsequent requests to the authentication service.
+\end{quotation}
+
+\begin{quotation} \noindent {\small
+\verb"log-out(private port)"}
+
+Logs out the user associated with the given private port.
+\end{quotation}
+
+\begin{quotation} \noindent {\small
+\verb"create-token(private port,group-ids)" $\rightarrow$ \verb"(token)"}
+
+Creates and returns a token that represents the user associated with the
+given private port.  By default the token will represent all the access
+control groups of which the user is a member.  However an optional list of
+access control groups identifiers can be passed in and, if these groups are
+a subset of the groups of which the user is a member, the token will be
+associated only with these access groups.  Thus the optional list will {\em
+restrict\/} the protection domain denoted by the token.
+\end{quotation}
+
+\begin{quotation} \noindent {\small
+\verb"delete-token(private port,token)"}
+
+Deletes a token registered previously by the user who is represented by the
+given private port.
+\end{quotation}
+
+\begin{quotation} \noindent {\small
+\verb"verify-token-ids(token)" $\rightarrow$ \verb"(user-id,group-ids)"}
+
+\noindent {\small
+\verb"verify-token-ids(token)" $\rightarrow$ \verb"(user-name,group-names)"}
+
+Returns the user identity and access control groups represented by a token.
+Each access control group can be referred to either by its {\em identifier\/}
+(a 32 bit unique integer) or by its {\em group-name\/} (an ASCII string). The
+first form of the verify call returns access control group identifiers.  The
+second form returns access control group names.
+\end{quotation}
+
+\begin{quotation} \noindent {\small
+\verb"change-password(private-port,old-password,new-password)"}
+
+Changes the password for a user.  Either the private port must be that of
+the system administrator, who is allowed to change any user's password, or
+the private port must represent the user requesting the password change.  In
+the latter case the user's old password must also be correct.
+\end{quotation}
+
+\section{Access Control Support}
+\label{author}
+\subsection{Interface}
+Servers that manage the resources of the distributed system must control
+access to their resources and determine whether users are authorised to
+access their resources.  In the secure Mach distributed system, servers use
+{\em Access Control Lists\/} (ACLs) to make authorisation decisions.  An
+access control list for a resource maps user identifiers on to specific
+access rights to the resource.  Since individual servers know best what ACL
+support they need, servers manage access control access control lists
+themselves.
+
+To aid servers in implementing access control lists, a simple scheme to
+support access control is provided as part of the authentication service.
+The scheme allows users to be members of {\em access control groups}.  An
+access control group defines a subset of users to whom privileges may be
+awarded or from whom privileges may be revoked.  With one verification call
+a server can determine all (or a subset) of the access control groups to
+which a user belongs.  The use of access control groups can simplify the
+ACLs that the server needs to maintain at the cost of the management of the
+groups.  However typical access control groups are relatively static
+entities whose rate of change is slow.  For example they often reflect such
+natural groupings as projects or courses.  Thus changes to the membership of
+access control groups are not often required.
+
+Tow types of access control groups are supported by the authentication
+service: {\em primary access groups}, which can only have one member and
+thus represent users or servers, and {\em secondary access groups}, which
+may contain both primary and other secondary access groups as members.  Thus
+the {\em protection domain\/} of a user is given by the transitive closure
+of all the access groups of which he or she is an authenticated member.
+
+\subsection{Interface}
+The calls that can be made to the authentication service to manipulate
+access control groups are:
+
+\begin{quotation} \noindent {\small
+\verb"create-group(private-port,group-name,group-type,owner)"\\
+\hspace*{1in}$\rightarrow$ \verb"(group-id)"}
+
+Creates a new access control group.  The private port identifies the user
+making the call.  Only the system administrator is allowed to create primary
+access groups.  The creator of the group is by default the {\em owner\/} of
+the new group although the creator may specify that the owner is some other
+group (either primary or secondary).
+\end{quotation}
+
+\begin{quotation} \noindent {\small
+\verb"delete-group(private-port,group-name)"}
+
+Deletes an access control group.  The private port identifies the user
+making the call.  Only the owner or a member of the owner group is allowed
+to perform the deletion.
+\end{quotation}
+
+\begin{quotation} \noindent {\small
+\verb"add-to-group(private-port,group-name,add-group)"}
+
+Adds the add-group (primary or secondary) as a member of a secondary access
+group.  The private port identifies the user making the call.  Only the
+owner or a member of the owner group is allowed to perform the addition.
+\end{quotation}
+
+\begin{quotation} \noindent {\small
+\verb"remove-from-group(private-port,group-name,remove-group)"}
+
+Removes the remove-group (primary or secondary) as a member of a secondary
+access group.  The private port identifies the user making the call.  Only
+the owner or a member of the owner group is allowed to perform the removal.
+\end{quotation}
+
+\begin{quotation} \noindent {\small
+\verb"list-members(group-name)"}
+
+Lists the members of a secondary access group.
+\end{quotation}
+
+\begin{quotation} \noindent {\small
+\verb"list-memberships(group-name)"}
+
+Lists the groups of which an access group is a member.
+\end{quotation}
+
+\end{document}

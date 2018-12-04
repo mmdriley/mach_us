@@ -1,0 +1,114 @@
+#
+# Mach Operating System
+# Copyright (c) 1993-1988 Carnegie Mellon University
+# All Rights Reserved.
+# 
+# Permission to use, copy, modify and distribute this software and its
+# documentation is hereby granted, provided that both the copyright
+# notice and this permission notice appear in all copies of the
+# software, derivative works or modified versions, and any portions
+# thereof, and that both notices appear in supporting documentation.
+# 
+# CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS"
+# CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND FOR
+# ANY DAMAGES WHATSOEVER RESULTING FROM THE USE OF THIS SOFTWARE.
+# 
+# Carnegie Mellon requests users of this software to return to
+# 
+#  Software Distribution Coordinator  or  Software.Distribution@CS.CMU.EDU
+#  School of Computer Science
+#  Carnegie Mellon University
+#  Pittsburgh PA 15213-3890
+# 
+# any improvements or extensions that they make and grant Carnegie Mellon 
+# the rights to redistribute these changes.
+
+# HISTORY
+# $Log:	Makefile-include,v $
+# Revision 2.10  94/06/29  15:01:59  mrt
+# 	Updated for odemake. 
+# 	[94/02/09            mrt]
+# 
+# Revision 2.9  92/07/05  23:26:06  dpj
+# 	No further changes.
+# 	[92/06/29  22:47:53  dpj]
+# 
+# 	Upgraded for MK71. Get the string operations from libmach_sa.
+# 	Rebuilt mach_init_ports.o, to get the name server port.
+# 	[92/03/12  13:47:48  dpj]
+# 
+# Revision 2.8  92/03/05  14:58:19  jms
+# 	Just build by removing stuff from a libmach*.a released lib and
+# 	adding some more stuff.  Nolonger do will build from scratch
+# 	in the same fashion as MK does.
+# 	[92/02/26  17:52:29  jms]
+# 
+# 	Failed attempt to upgrade to mk69 libmach build world.
+# 	Checkin before total strategy change.
+# 	[92/01/29  18:07:09  jms]
+# 
+# Revision 2.7  91/12/20  17:43:48  jms
+# 	Remove MK_{SRC,REL} definitions.  change /dev/null to $(DEVNULL).
+# 	[91/12/20  15:31:04  jms]
+# 
+# Revision 2.6  90/11/10  00:38:13  dpj
+# 	Added start_float.s for SUN3.
+# 	[90/11/09  22:11:41  dpj]
+# 
+# Revision 2.5  90/10/30  17:24:50  mbj
+# 	Run "cpp" directly instead of using "cc -ES" CMU-ism.
+# 	[90/10/30  17:02:28  mbj]
+# 
+# Revision 2.4  90/10/29  17:28:19  dpj
+# 	$(machine) -> $(target_machine)
+# 	Added exc_user.o, from the pure kernel mainline.
+# 	[90/10/27  17:51:33  dpj]
+# 
+# 	$(machine) -> $(target_machine)
+# 	Added exc_user.o, from the pure kernel mainline.
+# 	[90/10/21  21:23:30  dpj]
+# 
+# Revision 2.3  90/08/22  18:11:34  roy
+# 	Added memory_object_server.o.
+# 	[90/08/14  12:33:09  roy]
+# 
+# Revision 2.2  90/07/26  12:37:59  dpj
+# 	First version
+# 	[90/07/24  14:29:34  dpj]
+# 
+#
+
+#
+# Makefile for stand-alone stuff (so far)
+#
+# Copied from the equivalent Makefile in the "pure kernel" sources.
+#
+
+
+WASTEM = mach_init_sa.o exit.o doprnt.o printf.o sprintf.o panic.o \
+	get_privileged_  	mach_error_stri
+#       get_privileged_ports.o  mach_error_string.o
+# mach_msg_destroy.o  mach_msg_server.o
+
+ADDEM			= ${MK_REL}/lib/crt0.o 
+MACH_SA_OFILES		= mach_init_pts.o
+
+LIBMACH_MK		= ${MK_REL}/lib/libmach_sa.a
+
+${TARGET_NAME}_1: ${LIBMACH_MK} ${ADDEM}
+	${RM} -f ${.TARGET}
+	${CP} ${LIBMACH_MK} ${.TARGET}
+	@ echo Missing objects in next \"${AR} d\" are ok.
+	- ${_AR_} d ${.TARGET} ${WASTEM}
+	${_AR_} q ${.TARGET} ${ADDEM}
+	${_RANLIB_} ${.TARGET}
+
+#
+# mach_init_ports.o must be built locally, because we need access to the
+# netname_server_port, which is not found in libmach_sa.a.
+# Conversely, the version of mach_init_ports.o in libmach.a also pulls
+# sbrk() and fork(), which is unacceptable.
+#
+
+SHORTNAMES		+= mach_init_pts.c
+mach_init_pts.c_LONGNAME = mach_init_ports.c

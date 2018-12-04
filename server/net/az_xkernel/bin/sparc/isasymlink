@@ -1,0 +1,21 @@
+#!/bin/csh -f
+#
+# isasymlink
+#
+# x-kernel v3.2
+#
+# Copyright (c) 1991  Arizona Board of Regents
+#
+#
+# $Revision: 1.2 $
+# $Date: 1991/10/09 18:46:44 $
+
+
+if { sun } then
+    test -h $*
+    set xx = $status
+else
+    ls -ld $* | egrep -s '^lrwxrwxrwx'
+    set xx = $status
+endif
+exit( $xx )

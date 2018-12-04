@@ -1,0 +1,64 @@
+
+Moving a send right:
+
+
+
+RR -- holder of receive right
+NSR -- new holder of send right
+OSR -- original holder of send right
+
+
+ *    Notify receiver to lock port; get confirmation
+
+	This lock (on the receive semaphore) prevents the receive
+	right from moving.
+
+	The lock operation may fail in the case of a moved receive right
+	(in which case we try again with the new receiver.)
+	
+	The lock message contains NSR -- the receiver confirms NSR BID
+	and updates the make_send_count for that host at this time.
+
+	NSR reboot -- OSR will abort transfer (and UNLOCK).  
+
+	
+ *    Notify new sender of right, msgID of confirming message, BID of
+ *    RR.  NSR confirms RR BID.
+ *    get confirmation.  Sender can create local structure.
+
+	NSR must keep track of these rights and the host from
+	which it is expecting the 'finalized' message (OSR).  If OSR
+	reboots, the rights must be killed.
+
+	RR reboot -- both OSR and NSR release.
+	NSR reboot -- same
+	OSR reboot -- RR releases port right, 
+		      NSR releases send right
+	
+(
+ *    If receiver lock request arrives, honor it and wait until
+ *    port is unlocked before proceeding.
+
+	This can't happen.  The receiver would have blocked our lock
+	request if the receive right was moving before we got the
+	lock.  If RR decided the right was moving after we got the
+	lock, it would have blocked until we released.
+)
+
+
+ *    Sender should have reliably notified receiver to unlock port
+
+	OSR reboot -- NSR releases right 
+	RR reboot -- same
+	NSR reboot -- same
+
+ *    When message is transferred, it will have the unique message id
+ *    that indicates that the port transfer is now final.  At that
+ *    point, the new sender can move the right to the destination task.
+
+	
+There's a special case where a receive right is being transferred and
+one of the messages which is being forwarded contains a send right for
+the same port as the receive right.  This probably won't even involve
+the SRX protocol since it doesn't involve third parties, but it is
+something that needs to be closely examined to make sure it will work.

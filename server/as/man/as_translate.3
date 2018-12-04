@@ -1,0 +1,105 @@
+.TH AS_TRANSLATE 3 8/2/88
+.CM 4
+.SH NAME
+as_translate_group_id \- returns information about a group given its identifier
+.br
+as_translate_group_name \- returns information about a group given its name
+.SH SYNOPSIS
+.B #include <mach.h>
+.br
+.B #include <auth_defs.h>
+.PP
+.B kr = as_translate_group_id(server_port, group_id, owner_id, group_name,
+.B group_type, full_name)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B group_id_t group_id;
+.br
+.B group_id_t *owner_id;
+.br
+.B group_name_t group_name;
+.br
+.B group_type_t *group_type;
+.br
+.B full_name_t full_name;
+.PP
+.B kr = as_translate_group_name(server_port, group_name, owner_id, group_id,
+.B group_type, full_name)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B group_name_t group_name;
+.br
+.B group_id_t *owner_id;
+.br
+.B group_id_t *group_id;
+.br
+.B group_type_t *group_type;
+.br
+.B full_name_t full_name;
+.SH DESCRIPTION
+.I as_translate_group_id
+takes an access control group identifier,
+.I group_id,
+and returns the information held by the authentication service about the group.
+This information includes:
+.I owner_id,
+the identity of the group that is allowed to change membership information for
+.I group_id;
+.I group_name,
+the name of
+.I group_id;
+.I group_type,
+the type,
+.B AS_PRIMARY
+or
+.B AS_SECONDARY,
+of
+.I group_id;
+and
+.I full_name,
+the unabbreviated name of
+.I group_id.
+.PP
+.I as_translate_group_name
+takes an access control group name,
+.I group_name,
+and returns the information held by the authentication service about the group.
+This information includes:
+.I owner_id,
+the identity of the group that is allowed to change membership information for
+.I group_name;
+.I group_id,
+the numerical identifier for
+.I group_name;
+.I group_type,
+the type,
+.B AS_PRIMARY
+or
+.B AS_SECONDARY,
+of
+.I group_name;
+and
+.I full_name,
+the unabbreviated name of
+.I group_name.
+.PP
+For both calls, the
+.I server_port
+parameter must be the authentication server's public
+service port.
+.SH "SEE ALSO"
+as_group(3),
+as_list(3),
+as_login(3),
+as_password(3),
+as_token(3)
+.SH HISTORY
+.TP 
+02-Aug-88  Robert Sansom (rds) at Carnegie-Mellon University
+Created.

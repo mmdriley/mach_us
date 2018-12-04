@@ -1,0 +1,175 @@
+% 
+% event.tex
+%
+% $Revision: 1.13 $
+% $Date: 1993/02/05 19:13:06 $
+%
+
+\section{Event Library}
+
+The event library provides a mechanism for scheduling a procedure to
+be called after a certain amount of time. By registering a procedure
+with the event library, protocols are able to ``timeout'' and act on
+messages that have not been acknowledged or to perform periodic
+maintenance functions. 
+
+\subsection{Type Definitions}
+
+The only event-related type that protocol programmers need be
+aware of is the type {\em Event}. However, this type is defined
+by the underlying platform and is opaque to the protocol programmer.
+
+\subsection{Operations}
+
+\subsubsection{evSchedule}
+
+Schedule an event that executes function {\em f} with argument {\em a}
+after delay {\em t} usec; {\em t} may equal 0.  A handle to the event
+is returned, and this can be used to cancel the event at some later
+time.  When an event fires, a new thread is created to run function
+{\em f}. Note that even after an event fires and a thread had been
+scheduled to handle it, the thread does not run until sometime
+after the currently executing thread gives up the processor.  See
+Section \ref{thread} for a description of how threads are scheduled.
+\medskip
+
+{\sem Event} {\bold evSchedule} ({\sem EvFunc} {\caps f}, {\sem void}*
+{\caps a}, {\sem int} {\caps t})
+
+{\sem typedef void} ({\bold * EvFunc} )
+( {\sem Event} *, {\sem void} * )
+
+
+\medskip
+
+Function {\em f} must be of type {\em void} and take two arguments:
+the first, of type {\em Event}, is a handle to the event itself
+and the second,
+of type {\em void *}, is the argument passed to evSchedule.  
+In order to satisfy the C compiler type checking
+rules when accessing the arguments, function {\em f} must
+begin by casting its second argument to be a non-void type.
+
+\subsubsection{evDetach}
+
+Releases a handle to an event. As soon as {\em f} completes, the
+internal resources associated with the event are freed.  All events
+should eventually be either detached or canceled
+to assure that system resources are released.
+\medskip
+
+{\sem void}  {\bold evDetach} ({\sem Event} {\caps e})
+\medskip
+
+\subsubsection{evCancel}
+
+Cancels event {\em e} and returns EVENT\_FINISHED if the event has
+already happened, EVENT\_RUNNING if the event is currently running, and
+EVENT\_CANCELLED if the event has not run and can be guaranteed to not
+run. In the case where {\bold evCancel} returns EVENT\_RUNNING, the
+caller must be careful to not delete resources required by the event.
+\medskip
+
+{\sem EvCancelReturn} {\bold evCancel} ({\sem Event} {\caps e})
+
+
+\subsubsection{evIsCancelled}
+
+Returns true if an {\bold evCancel} has been performed on the event. 
+Because event handlers receive their event as the first calling
+argument, it is possible for a handler to check for cancellation
+of itself from other threads.
+
+\medskip
+
+{\sem int} {\bold evIsCancelled} ({\sem Event} {\caps e})
+
+
+\subsubsection{evDump}
+
+Displays a {\em ps}-style listing of \xk{} threads in \xk{}'s compiled
+with DEBUG mode.  The address of the entry function, the thread state
+(pending, scheduled, running, finished, or blocked), the
+time relevant to the thread state, and flags (detached or cancelled), are
+displayed for each thread controlled by \xk{} monitor.  The meaning
+of the time entry varies according to the state.  For pending threads,
+the time is the time until it will be scheduled; for other states
+it is the time the thread has spent in that state.  The time is reset
+on each transition, i.e., it is not cumulative.
+
+\medskip
+
+{\sem void} {\bold evDump} ({\sem void})
+
+
+
+\subsection{Usage Rules}
+
+\subsubsection{Repeating Events}
+
+Each event that is scheduled executes at most one time. Repeating
+events are programmed as follows:
+
+\begin{verbatim}
+
+        foo_init()
+        {
+            ...
+            evDetach( evSchedule( f, argument, INTERVAL ) );
+        }
+        
+        
+        f( Event self, void *arg )
+        {
+            actual work
+            ...
+            evDetach( evSchedule( f, arg, INTERVAL ) );
+        }
+        
+\end{verbatim}
+
+
+\subsubsection{Cancellable Events}
+
+The evIsCancelled routine is designed to make it easy to write events
+which might be cancelled before (or while) they run.  It is common
+practice, for example, for a session to pass session state to a
+timeout event.  The evIsCancelled notification can be used to
+synchronize the timeout event and the possible destruction of the
+session state.  Here is an example:
+
+
+\begin{verbatim}
+
+        foo_destroy()
+        {
+            ...
+            evCancel( state->timeoutEvent );
+            ...
+        }
+        
+        
+        foo_timeout( Event self, void *state )
+        {
+           ...
+           xPush(lls, retransmitMsg);
+           /* 
+            * xPush may have blocked -- check to see if state is 
+            * still valid
+            */
+            if ( evIsCancelled(self) ) {
+                return;
+            }
+            state->timeoutEvent = evSchedule( foo_timeout, arg, INTERVAL );
+        }
+        
+\end{verbatim}
+
+
+\subsubsection{Event Granularity}
+
+Although the event library uses an efficient representation (timing
+wheels) protocol programmers should be careful to not schedule events
+that are too fine grained. For example, in TCP, it is better to schedule
+one event for every session rather than for every message that is
+sent.

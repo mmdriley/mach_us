@@ -1,0 +1,184 @@
+.TH AS_GROUP 3 8/2/88
+.CM 4
+.SH NAME
+as_create_group \- creates a new access control group
+.br
+as_delete_group \- deletes an access control group
+.br
+as_add_from_group \- adds a group to the set of members of another group
+.br
+as_remove_from_group \- removes a group from the set of members of another group
+.br
+as_change_owner \- changes the owner of a group
+.SH SYNOPSIS
+.B #include <mach.h>
+.br
+.B #include <auth_defs.h>
+.PP
+.B kr = as_create_group(server_port, private_port, group_name, group_type,
+.B full_name, pass_word, owner_group, group_id)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B port_t private_port;
+.br
+.B group_name_t group_name;
+.br
+.B group_type_t group_type;
+.br
+.B full_name_t full_name;
+.br
+.B pass_word_t pass_word;
+.br
+.B group_name_t owner_group;
+.br
+.B group_id_t *group_id;
+.PP
+.B kr = as_delete_group(server_port, private_port, group_name)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B port_t private_port;
+.br
+.B group_name_t group_name;
+.PP
+.B kr = as_add_to_group(server_port, private_port, group_name, add_group_name)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B port_t private_port;
+.br
+.B group_name_t group_name;
+.br
+.B group_name_t add_group_name;
+.PP
+.B kr = as_remove_from_group(server_port, private_port, group_name,
+.B remove_group_name)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B port_t private_port;
+.br
+.B group_name_t group_name;
+.br
+.B group_name_t remove_group_name;
+.PP
+.B kr = as_change_owner(server_port, private_port, group_name, new_owner)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B port_t private_port;
+.br
+.B group_name_t group_name;
+.br
+.B group_name_t new_owner;
+.SH DESCRIPTION
+.I as_create_group
+creates a new access control group.
+The
+.I private_port
+allows the authentication service to identify the user making the
+.I create_group
+call.
+The
+.I group_type
+of the new access group can be either
+.B AS_PRIMARY
+or
+.B AS_SECONDARY.
+Primary groups represent individual users in the distributed system, have a
+password associated with them, may
+only be created by the system administrator and may not have any members.
+Secondary groups represent arbitrary access groupings in the distributed system,
+may be created by any user and may have other groups as members.
+A new group's name is given by
+.I group_name
+and its unabbreviated name by
+.I full_name.
+By default the authentication service allocates an identifier for the new
+group and returns it in
+.I group_id.
+The system administrator can, however, specify that the new group should have
+an identifier given by
+.I group_id.
+If the new group is a primary group, then its initial password is given by
+.I pass_word.
+If the new group is a secondary group, then its owner, the set of users who are
+allowed to add members to the group, is given by
+.I owner_id.
+The system administrator is the owner of all private groups.
+.PP
+.I as_delete_group
+deletes the access control group
+.I group_name.
+The
+.I private_port
+allows the authentication service to identify the user making the
+.I create_group
+call.
+Only the owner of a group, or the system administrator, is allowed
+to delete the group.
+.PP
+.I as_add_to_group
+adds
+.I add_group_name
+to the list of members of
+.I group_name.
+The
+.I private_port
+allows the authentication service to identify the user making the
+.I add_to_group
+call.
+Only the owner of a group, or the system administrator,
+is allowed to add a member to the group.
+.PP
+.I as_remove_from_group
+removes
+.I remove_group_name
+from the list of members of
+.I group_name.
+The
+.I private_port
+allows the authentication service to identify the user making the
+.I remove_from_group
+call.
+Only the owner of a group, or the system administrator,
+is allowed to remove a member from the group.
+.PP
+.I as_change_owner
+changes the owing group for
+.I group_name
+to be
+.I new_owner.
+The
+.I private_port
+allows the authentication service to identify the user making the
+.I owner_group
+call.
+Only the current owner of a group, or the system administrator,
+is allowed to change the owner for a group.
+.PP
+For all the calls, the
+.I server_port
+parameter must be the authentication server's public
+service port.
+.SH "SEE ALSO"
+as_list(3),
+as_login(3),
+as_password(3),
+as_token(3),
+as_translate(3)
+.SH HISTORY
+.TP 
+02-Aug-88  Robert Sansom (rds) at Carnegie-Mellon University
+Created.

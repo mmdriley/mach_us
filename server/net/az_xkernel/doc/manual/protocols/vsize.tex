@@ -1,0 +1,42 @@
+\subsection*{NAME}
+
+\noindent VSIZE (Size Virtual-Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent 
+S. O'Malley and L. Peterson.  A Dynamic Network Architecture.  {\it
+ACM Transactions on Computer Systems 10}, 2 (May 1992), 110--143.
+
+\medskip
+\noindent  S. O'Malley and L. Peterson. {\it A New Methodology for
+Implementing Network Software}, University of Arizona Tech Report
+TR90-29, August 1990.
+
+\subsection*{SYNOPSIS}
+
+\noindent VSIZE is a virtual protocol that selects a lower-level
+network protocol (e.g., BLAST vs. ETH) based on the size of the
+message being sent.
+
+\subsection*{REALM}
+
+VSIZE is in the ASYNC realm.
+
+\subsection*{PARTICIPANTS}
+
+VSIZE passes participants to the lower protocols without manipulating
+them. 
+
+\subsection*{CONTROL OPERATIONS}
+
+VSIZE forwards control operations to the ``large message'' protocol.
+
+\subsection*{CONFIGURATION}
+
+VSIZE expects to be configured above two ASYNC protocols with the
+``short message'' protocol first.
+
+\subsection*{AUTHOR}
+
+\noindent Ed Menze

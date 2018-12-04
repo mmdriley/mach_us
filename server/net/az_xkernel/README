@@ -1,0 +1,11 @@
+
+			     x-kernel v3.2
+
+Documentation is in the 'doc' directory.  Information on installing
+the x-kernel is in a section of the xkernel Programmer's manual in
+doc/manual/manual.{dvi,ps} or in doc/manual/install.tex.  Instructions
+for installing the x-kernel inside a Mach kernel are in the file 
+doc/install.mach.kernel
+
+
+

@@ -1,0 +1,233 @@
+%
+% config.tex
+%
+% $Revision: 1.16 $
+% $Date: 1993/01/19 17:27:37 $
+%
+
+\section{Configuring a Kernel}
+\label{config}
+
+This section describes how to configure and build an \xk{}.
+
+\subsection{Specifying a Protocol Graph}
+\label{compose}
+
+A new instance of the $x$-kernel is configured by specifying the
+collection of protocols that are to be included in the kernel in a
+file called {\sanss graph.comp}. Example {\sanss graph.comp} files can
+be found in {\sanss xkernel/build/Template}.
+
+The {\sanss graph.comp} file is divided into three sections: device
+drivers, protocols, and miscellaneous configuration parameters.  The
+sections are separated by lines beginning with {\sanss @;} and each
+section may be empty.
+
+The first two sections, device drivers and protocols, describe the
+protocol graph to be configured into your kernel.  Device drivers and
+protocols are described by the same types of entries, as in the
+example:
+
+\let\tt=\COURIERtt
+\begin{verbatim}
+name=yap files=yap,yap_clnt,yap_srvr dir=yap, protocols=ip,eth trace=TR_MAJOR_EVENTS;
+\end{verbatim}
+\let\tt=\CMRtt
+
+The first field gives the protocol's name.  The rest of the fields are
+optional and may occur in any order.  The {\sanss dir} and {\sanss files}
+fields describe the names and locations of the source files used to
+build the protocol.  Files are specified without extensions.  If no
+dir entry is specified, {\em compose} will search for the source files in the
+current build directory, a subdirectory in the current build directory
+with the protocol's name, and finally in the system protocol library.
+An empty {\sanss files} entry defaults to a single {\sanss .c} file with the
+protocols name.  An entry for a protocol from the library should
+contain neither a {\sanss dir} nor a {\sanss files} entry.
+
+The {\sanss protocols} field indicates the protocols below the current
+protocol in the graph.  When this field contains multiple protocols, order is
+significant (the lower protocols will be loaded into the upper
+protocol's down vector in the order in which they are listed.)
+A protocol which expects multiple protocols below it will describe the
+expected semantics of the lower protocols in its manual page in
+appendix \ref{protman}.
+
+The {\sanss trace} field defines the debugging level used in trace
+statements depending on the protocol variable {\sanss traceyapp}.  See
+section \ref{kdebug} for the symbolic names associated with trace levels.
+
+Multiple instantiations of protocols are supported by using a ``/''
+character after the protocol name to add an extension.  In the following
+example, two instantiations of ``yap'' are indicated, one over ``ip'' and
+one over ``simeth,'' and both are used by the ``prt'' protocol.  In
+addition, the simeth protocol is instance ``0'', corresponding, by
+convention, to the SunOS ethernet device ``le0.''
+\let\tt=\COURIERtt
+\begin{verbatim}
+name=simeth/0;
+name=yaap/ip files=yap,yap_clnt,yap_srvr dir=yap,protocols=ip trace=TR_MAJOR_EVENTS;
+name=yaap/eth protocols=simeth/0;
+name=prt files=prt dir=prt, protocols=yaap/ip,yaap/eth trace=TR_ERRORS;
+\end{verbatim}
+\let\tt=\CMRtt
+
+\noindent Only the first of multiple instantiations should have {\sanss dir},
+{\sanss files}, or {\sanss trace} fields.
+
+The third section contains the names of files with protocol number
+tables that are to be loaded during initialization.  It also
+contains the names of subsystems and their configuration parameters.
+Currently trace variables are the only parameters that can be set
+here.  The following illustrates a typical use of the third section:
+
+\let\tt=\COURIERtt
+\begin{verbatim}
+@;
+#
+# You can also specify auxiliary protocol tables to be read in at boot
+# time.  DEFAULT loads the system protocol table file as listed in etc/site.h
+#
+prottbl=DEFAULT;
+prottbl=./prottbl;
+
+#subsystem tracing for messages and protocol operations
+name=msg	trace=TR_GROSS_EVENTS;
+name=protocol	trace=TR_MAJOR_EVENTS;
+\end{verbatim}
+\let\tt=\CMRtt
+
+The graph.comp file is read by an $x$-kernel utility program called
+{\em compose} which generates startup code to build the protocol
+graph and set up the described configuration.  The protocol graph is
+built bottom-up; when a protocol's initialization function is called,
+the lower level-protocols have already been initialized.
+
+\subsection{Build Procedure}
+
+A given instance of the \xk{} is built in a working directory.  Each
+working directory can support one \xk{} configuration at a time.
+Working directories may be organized within the \xk{} source tree
+(e.g., as subdirectories of {\sanss xkernel/build}) or outside of
+the source tree (e.g., in an \xk{} user's home directory.)  
+
+For the purpose of the following discussion, we assume the user is
+configuring a kernel so as to implement and evaluate protocol YAP 
+(yet another protocol.) A
+user configuring a kernel that contains only existing protocols should
+ignore all references to YAP.  The machine architecture in this
+example is ``sparc'' (used by the sunos platform); another supported 
+architecture is used by the DECstation mach3 platforms (``mips'').
+
+\begin{enumerate}
+
+\item{}
+Put {\sanss xkernel/bin/sparc} and {\sanss xkernel/bin} in
+your search path. These must be before
+{\sanss /bin} and {\sanss /usr/bin}. This will allow use of
+the version of {\sanss make} distributed with the $x$-kernel (GNU make
+v. 3.57) rather than the standard Unix {\sanss make}.
+
+\item{}
+Create a new working directory to hold your kernel.
+
+
+\item{}
+Change to your new working directory.
+
+\item{}
+Copy the Makefile
+from {\sanss xkernel/build/Template/Makefile.sunos} into your
+working directory under the name Makefile:
+
+\begin{quote}
+{\sanss cp xkernel/build/Template/Makefile.sunos Makefile}\\
+\end{quote}
+
+\item{}
+Make the Makefile writable:
+\begin{quote}
+{\sanss chmod u+w Makefile}\\
+\end{quote}
+
+\item{}
+Edit the Makefile.
+Select an appropriate {\sanss HOWTOCOMPILE}. Generally, you want {\sanss
+DEBUG} until you are ready to run serious performance tests, then
+change it to {\sanss OPTIMIZE}. (See Section \ref{kdebug}.)
+
+Check to see that the variable XRT in your Makefile is a path to
+the root of the xkernel source tree.
+
+
+\item{}
+If you are including a new protocol in your kernel, then create (at least)
+a shell for that protocol; e.g., create a shell version of {\sanss yap.c}.
+The protocol shell should define an initialization routine; 
+e.g., {\sanss yap\_init}.  You will also need to put an entry for your
+protocol in one of the protocol tables referenced by your graph.comp
+(see section \ref{protnum}.)
+If you are configuring a kernel that contains only existing protocols, 
+then this step is not necessary.
+
+\item{}
+Create
+{\sanss graph.comp}, as discussed in section \ref{compose},
+to specify the protocol graph for your kernel.  Example graph.comps
+are located in the {\sanss xkernel/build/Template} directory.
+
+\smallskip
+
+In steps \ref{en:make_compose} and
+\ref{en:make_depend}, you may see one or more compiler warning messages of the
+form:
+
+\begin{verbatim}
+         make[n]: fopen: Makedep.DEBUGsunos: No such file or directory
+\end{verbatim}
+
+These messages are expected and can be ignored.
+The dependency files referenced by these messages will be created in
+step \ref{en:make_depend}.
+
+The following
+two steps must be redone if {\sanss graph.comp} is later modified:
+\item{}
+\label{en:make_compose}
+{\sanss make compose}
+
+\item{}
+\label{en:make_depend}
+{\sanss make depend} 
+Note:  If you are the first person building a kernel at your site
+(i.e., if you are building a kernel as part of the installation
+procedure), you must run {\sanss make alldepend} here instead of
+{\sanss make depend.}  This will create the dependency files in all of
+the source directories, not just in your build directory.
+
+The dependency files built for the DEBUG and OPTIMIZE configurations
+are different.  The person installing the \xk{} should run {\sanss
+make alldepend} for both DEBUG and OPTIMIZE mode for each platform
+that will be used.
+
+\item{}
+{\sanss make}
+
+\end{enumerate}
+
+\subsection{Debug versus Optimized Mode}
+
+The $x$-kernel uses a trace package to generate debugging information.
+To enable the tracing facility, edit the Makefile to set {\sanss
+HOWTOCOMPILE} to {\sanss DEBUG}; tracing can be disabled by setting {\sanss
+HOWTOCOMPILE} to {\sanss OPTIMIZE}. Then type {\sanss make}.  See also
+section \ref{kdebug}.
+
+If you are interested in accurate performance timings, you should set
+{\sanss HOWTOCOMPILE} to {\sanss OPTIMIZE} in the Makefile.  This
+causes all trace of tracing code to be eliminated form the kernel.
+
+
+
+
+

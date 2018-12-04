@@ -1,0 +1,99 @@
+%
+% chan.tex
+%
+% $Revision: 1.9 $
+% $Date: 1993/02/04 08:20:07 $
+%
+
+\subsection*{NAME}
+
+\noindent CHAN (RPC Channel Micro-Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent 
+S. O'Malley and L. Peterson.  A Dynamic Network Architecture.  {\it
+ACM Transactions on Computer Systems 10}, 2 (May 1992), 110--143.
+
+
+\medskip
+\noindent  S. O'Malley and L. Peterson. {\it A New Methodology for
+Implementing Network Software}, University of Arizona Tech Report
+TR90-29, August 1990.
+
+\medskip
+\noindent  B. Welch. {\it The Sprite remote procedure call}. 
+University of California at Berkeley, Tech Report UCB/CSD 86/302,
+June 1986.
+
+\subsection*{SYNOPSIS}
+
+\noindent CHAN is a single protocol version of Sprite RPC's reliable
+request-reply channel. The algorithm was extracted from Sprite and
+made into a stand-alone protocol. Each CHAN session supports the
+Birrel-Nelson implicit acking RPC algorithm between two hosts.
+
+CHAN provides ``at most once'' RPC semantics.  When a CHAN call
+returns successfully, the protocol guarantees that the request has
+been processed exactly once by the server.  If CHAN returns
+unsuccessfully (XK\_FAILURE), the server may have processed the
+request once, or it may not have seen the request at all.  
+
+Channel numbers are entirely internal to the CHAN protocol.  When a
+new client channel session is created, a new host-host channel number
+is selected internally by CHAN.  When protocols openEnable CHAN, they
+will receive connections from any channel number on any remote host.  
+Each open of CHAN by a client session will result in the passive
+creation of a corresponding session on the server.
+
+Each channel session will accept only a single outstanding request.
+Sending additional requests on a channel before the first request has
+returned is not allowed. 
+
+CHAN relies on the BIDCTL and BID protocols to determine when a peer
+has rebooted.  When notified of a peer's reboot, CHAN will disable all
+active channels to that host.  Outstanding calls will return
+XK\_FAILURE, as will all subsequent calls on that channel session.
+Replies sent through disabled server channels will be discarded.
+
+\subsection*{REALM}
+
+CHAN lies on the boundary between the ASYNC realm and the RPC realm.
+That is, it looks like an ASYNC protocol to protocols below it, and
+an RPC protocol to protocols above it.
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt CHAN\_ABORT\_CALL:}]
+When invoked on a channel session, it causes the current call (if one
+is outstanding) to abort and return XK\_FAILURE.
+\begin{description}
+\item[{\rm Input:}] {\tt none }
+\item[{\rm Output:}] {\tt none }
+\end{description}
+
+\end{description}
+
+
+\subsection*{PARTICIPANTS}
+
+CHAN neither removes from nor adds to the participant stacks, passing
+the participants untouched to the transport protocol on an open and
+ignoring the participant structure on an openenable.
+
+\subsection*{CONFIGURATION}
+
+CHAN requires its lower transport protocol configured as the first
+lower protocol and BIDCTL configured as the second lower protocol.
+CHAN requires that it's transport protocol will deliver incoming messages
+from different hosts through different lower sessions and that all
+CHAN messages from the same host come from the same lower session.
+
+CHAN is a realm boundary protocol which assumes its transport protocol is
+symmetric (in the ASYNC realm.)
+
+\subsection*{AUTHOR}
+
+\noindent Sean O'Malley 

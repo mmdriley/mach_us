@@ -1,0 +1,182 @@
+%
+% vnet.tex
+%
+% $Revision: 1.2 $
+% $Date: 1992/08/20 21:54:16 $
+%
+
+\subsection*{NAME}
+
+\noindent VNET (Virtual Network Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent 
+
+VNET is a virtual protocol which manages multiple physical network
+protocols.  
+When opened with an IP address, VNET determines if the host can be
+reached directly on one of its physical networks.  If it can, a
+session on that network is opened.  If it can not be directly reached,
+an ERR\_XOBJ is returned.
+
+\subsection*{SYNOPSIS}
+
+\noindent
+
+VNET sits above pairs of network protocols (one per interface) and ARP
+protocols.  When opened with a remote IP address, VNET compares the
+net number with that of its lower protocols to determine if the host
+can be reached directly on a local network, opening the appropriate
+interface protocol (if possible.)
+
+If opened with an IP broadcast address, VNET will determine which
+networks are matched by the broadcast address and will open a lower
+session on each of those networks.  A push on a VNET broadcast session will
+result in a push on all of these lower network sessions.
+
+Use of the IP broadcast address 255.255.255.255 will result in a
+VNET session which broadcasts on all of the local networks.
+
+
+\subsection*{REALM}
+
+VNET is in the ASYNC realm.
+
+\subsection*{PARTICIPANTS}
+
+VNET removes a pointer to an IPhost from the top of the stack of the
+remote participant.  Only the remote participant is processed.  New
+participants are created for opening the lower network protocols.
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt VNET\_GETADDRCLASS:}]
+
+Determines the address class of the given IP host.  The address class
+is one of the following:
+
+\begin{description}
+\item[{\tt LOCAL\_ADDR\_C:}]
+	An address for the local host.
+
+\item[{\tt REMOTE\_HOST\_ADDR\_C:}]
+	Remote host directly reachable on a local net.
+
+\item[{\tt REMOTE\_NET\_ADDR\_C:}]
+	Remote host on a remote network.
+
+\item[{\tt BCAST\_LOCAL\_ADDR\_C:}]
+	255.255.255.255 -- broadcast address for all local nets.
+
+\item[{\tt BCAST\_NET\_ADDR\_C:}]
+	Broadcast address for a single network or a single subnet (if
+	subnets are being used.)
+
+\item[{\tt BCAST\_SUBNET\_ADDR\_C:}]
+	Broadcast for a network (more than a single subnet) when
+	subnets are being used.
+
+\end{description}
+
+\begin{description}
+\item[{\rm Input:}] { VnetClassBuf == \tt \{ int class; IPhost host; \} }
+\item[{\rm Output:}] VnetClassBuf 
+\end{description}
+
+
+
+\item[{\tt VNET\_GETNUMINTERFACES:}]
+
+Indicate the number of interfaces used by the VNET protocol (protocol only.)
+
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt int}
+\end{description}
+
+
+
+\item[{\tt VNET\_HOSTONLOCALNET:}]
+{
+
+Indicates (through the xControl return value) whether the given host
+is on one of VNET's interfaces.  When performed on a session, only
+those interfaces active on that session will be considered (a typical
+VNET session only uses one interface, though a broadcast session may
+have more than one.)  When performed on a protocol, all interfaces are
+considered. 
+
+Returns sizeof(IPhost) if it is
+on a local network, 0 if it is not.
+}
+
+\begin{description}
+\item[{\rm Input:}] {\tt IPhost}
+\item[{\rm Output:}] none
+\end{description}
+
+
+\item[{\tt VNET\_GETINTERFACEID:}]
+Returns an opaque identifier indicating the interface used by this
+session.  This identifier may be used in subsequent
+{\tt VNET\_DISABLEINTERFACE} and {\tt VNET\_ENABLEINTERFACE} calls.
+This operation will fail (and return 0) if performed on a broadcast session
+with more than one interface.  Broadcast sessions never process
+incoming packets, however, so this operation will always succeed when
+performed on a session delivering incoming packets.  (Session only.)
+
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] { \tt VOID * }
+\end{description}
+
+
+\item[{\tt VNET\_DISABLEINTERFACE:}]
+The session will no longer send messages out over the interface
+corresponding to the given interface identifier.  (Session only.)
+
+\begin{description}
+\item[{\rm Input:}] { \tt VOID * }
+\item[{\rm Output:}] none
+\end{description}
+
+
+\item[{\tt VNET\_ENABLEINTERFACE:}]
+Undoes the effect of a previous {\tt VNET\_DISABLEINTERFACE}
+(Session only.)
+
+\begin{description}
+\item[{\rm Input:}] { \tt VOID * }
+\item[{\rm Output:}] none
+\end{description}
+
+
+\item[{\tt VNET\_ISMYADDR:}]
+
+Indicates (through the xControl return value) whether the given host
+is an address which might be used to reach this host on VNET's local
+networks (i.e., if the address is one of this host's IP addresses or
+is a broadcast address.)
+Returns sizeof(IPhost) if it is local (or broadcast), 0 if it is not.
+
+\begin{description}
+\item[{\rm Input:}] {\tt IPhost}
+\item[{\rm Output:}] none
+\end{description}
+
+
+\end{description}
+
+\subsection*{CONFIGURATION}
+
+VNET expects its lower protocols to be configured in network/ARP
+pairs:
+
+\noindent {\tt name=vnet protocols=eth/1,arp/1,eth/2,arp/2;}
+
+\subsection*{AUTHOR}
+
+\noindent Ed Menze

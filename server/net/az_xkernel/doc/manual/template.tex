@@ -1,0 +1,64 @@
+\subsection*{NAME}
+
+\noindent Name of the protocol. This name, given in all lower-case letters,
+can be given as an argument to {\sanss xGetProtlByName} to get a capability
+for the protocol. Note that there are multiple implementations of various
+protocols; i.e., a given name might map to multiple implementations. The
+implementation bound to a name in a given kernel is set in {\tt graph.comp}.
+
+\subsection*{SPECIFICATION}
+
+\noindent Reference to a document that gives the specification for the
+protocol. In cases where no formal specification exists, this section
+gives a high-level description of the protocol.
+
+\subsection*{SYNOPSIS}
+
+\noindent A brief description of what the protocol does. Outlines
+any unusual features and bugs, including any features of the
+protocol specification not implemented.
+
+\subsection*{REALM}
+
+\noindent
+Indicates whether the protocol is in the ASYNC realm (supporting
+push, demux and pop), the RPC realm (supporting call,
+calldemux and callpop), the CONTROL realm (existing only to allow
+control operations), or the ANCHOR realm (interfacing with the host
+system.) 
+
+\subsection*{PARTICIPANTS}
+
+\noindent 
+A discussion of the number of participants the
+protocol expects to see and what it expects to see on the
+participants' stacks.
+
+\subsection*{CONTROL OPERATIONS}
+
+\noindent 
+Non-standard control operations supported by the protocol.  For each
+control operation, the type of the input and output argument is given
+(i.e., the type used to interpret the buffer argument) and whether the
+control operation is understood by {\tt x\_controlsessn} or {\tt
+controlprotl} (or both) is specified. In the case of control
+operations that take multiple arguments, we give a set of types.
+Non-primitive types are generally defined in the protocol's {\tt .h}
+file.
+
+\subsection*{EXTERNAL INTERFACE}
+
+Interfaces not encapsulated within \xk{} operations
+
+\subsection*{CONFIGURATION}
+
+\noindent 
+A description of configuration options for the protocol, including
+descriptions of 
+of what this protocol expects of the protocols below it.
+If the protocol can only be configured above a certain protocol, the
+appropriate graph.comp line is given explicitly.
+
+\subsection*{AUTHORS}
+
+\noindent Who to complain to when the protocol fails to work as advertized.

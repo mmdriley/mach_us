@@ -1,0 +1,103 @@
+
+Moving a receive right:
+
+
+ORR -- old holder of receive right
+NRR -- new holder of receive right
+SR -- holder of a send right
+
+
+ *    Lock rcv semaphore
+	No senders will be added or removed
+
+ *    Notify all senders that port is locked; get confirmations
+	We need to lock the senders (i.e., acquire their send
+	semaphores) to prevent their deallocation and to
+	prevent sending messages to the receiver while it is moving.
+	This lets us upper bound the number of messages that need to
+	be initially transferred.
+
+	Set the queue length of the receive right to be zero.  This
+	will cause holders of send rights on the local machine to
+	block, much like we got the holders of remote send rights to
+	block.
+
+	Messages may continue to come in from send-once rights.  They
+	will queue until we start forwarding.
+
+        If lock requests arrive, they will block on the RR rcv sem
+	until the transfer completes (and will then fail)
+
+	NRR reboot -- detected by ORR which sends out port death
+	messages (and releases locks?)
+
+	SR reboots -- processed by ORR in normal way
+
+	ORR reboot -- detected by SR's in the normal way
+
+ *    Notify new receiver of port, sender list, msgId; get confirmation.
+ *    Receiver can create local structure.
+	this sender list must contain BID's for the senders.  NRR
+	must confirm these BID's on receipt of the list in order to
+	determine who rebooted during transit.
+
+	NRR must keep track of these ports and the host from
+	which it is expecting the 'finalized' message (ORR).  If ORR
+	reboots, this port must be killed.
+
+	NRR reboot -- same as above
+
+	ORR reboot -- detected by SR's in the normal way
+		NRR will deallocate port and send out port-death
+		notifications (which in this case are redundant)
+
+	SR reboots -- detected by NRR when it confirms BID's, later
+		processed by NRR in the normal way (not processed by ORR)
+
+ *    Set up the network send right state to be in 'forwarding' state.
+ 
+	This is basically a network send right, but it can't go away
+	since send-once rights might need its forwarding services.  
+
+ *    release sender locks, 
+
+	NRR reboot -- detected by some SR's, others are notified of port
+		death by ORR
+
+	ORR reboot -- detected by some SR's, all are notified of port
+		death by NRR
+
+	SR reboots -- same as above
+
+ *    Deliver any queued messages to the port (on NRR.)  
+	Senders should have finished any
+	sends before agreeing to lock (though there may still be
+	incoming messages from send-once rights (but a finite number))
+
+	The new receiver marks the port in FORWARDING_QUEUE state.
+	When messages are sent to it while it is in this state, it
+	will block them unless they come from the old receiver (i.e.,
+	until the messages in the queue have been forwarded.)  Receipt
+	of the machIPC message which completes the port transfer will
+	cause transition out of the FORWARDING_QUEUE state.
+
+	NRR -- same as above
+
+	ORR -- same as above
+
+	SR reboots -- processed by NRR in normal way
+
+ *    When message is delivered, receiver can transfer right to destination
+ *    task.
+
+ *    Release requests blocked at ORR rcv sem
+
+	they can return with an error status which they will resolve
+	now that they know where the new receiver is
+
+
+later:
+
+We don't really have to require that only one send right moves at a
+time.  Something more along the lines of a readers-writer
+synchronization would be less restrictive.

@@ -1,0 +1,86 @@
+@;
+
+name=xklance/SE0;
+
+name=eth protocols=xklance/SE0
+	trace=TR_ERRORS
+;
+
+name=arp 	protocols=eth			
+	trace=TR_ERRORS
+;
+
+name=vnet	protocols=eth,arp
+	trace=TR_ERRORS
+;
+
+name=ip 	protocols=vnet
+	trace=TR_ERRORS
+;
+
+name=icmp 	protocols=ip			
+	trace=TR_ERRORS
+;
+
+
+name=vmux	protocols=vnet,ip
+	trace=TR_ERRORS
+;
+
+
+name=blast 	protocols=vmux
+	trace=TR_ERRORS
+;
+
+
+name=vsize	protocols=vmux,blast
+	trace=TR_ERRORS
+;
+
+
+name=udp	protocols=ip			
+ 	trace=TR_ERRORS
+;
+
+#name=sunrpc	protocols=udp
+#	trace=TR_ERRORS
+#;
+
+#name=tcp 	protocols=ip			
+# 	trace=TR_ERRORS
+#;
+
+name=bidctl 	protocols=vmux
+ 	trace=TR_ERRORS
+;
+
+name=bid 	protocols=vsize,bidctl
+ 	trace=TR_ERRORS
+;
+
+name=chan	protocols=bid,bidctl
+	trace=TR_ERRORS
+;
+
+
+#name=xrpctest		protocols=chan;
+#name=sunrpctest		protocols=sunrpc;
+#name=tcptest		protocols=tcp;
+name=udptest		protocols=udp;
+# name=rarptest 	protocols=arp;
+# name=iproutetest;
+# name=porttest		protocols=udp;
+# name=enabletest	protocols=ip;
+
+@;
+
+#
+# Non-protocol trace variables
+#
+
+# name=event	trace=TR_ERRORS;
+name=protocol	trace=TR_ERRORS;
+name=prottest	trace=TR_ERRORS;
+name=ptbl	trace=TR_ERRORS;
+name=init	trace=TR_ERRORS;
+

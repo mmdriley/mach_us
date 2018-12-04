@@ -1,0 +1,41 @@
+%
+% ssr-test.tex
+%
+% $Revision: 1.1 $
+% $Date: 1993/02/01 22:33:16 $
+%
+
+\subsection*{NAME}
+
+\noindent SSR test (tests port transfers with MachNetIPC and SSR)
+
+\subsection*{SYNOPSIS}
+
+\noindent 
+
+\subsection*{REALM}
+
+SSR test is not a protocol; it is specific to the Mach3 platform.
+
+\subsection*{CONFIGURATION}
+
+SSR test communicates with MachNetIPC and SSR.  There must be an \xk{}
+task with MachNetIPC running on the host, and there must be a 
+Mach nameserver running on the host.
+
+SSR test takes command line arguments.  The first argument specifies
+the test type.  The simplest test is the {\em postcard} test.  Other
+test types are documented in the source code.
+
+To start a postcard server at debugging level 1:
+
+\noindent {\tt ssr-test -t p -l 1 \& };
+
+To start a postcard client at debugging level 1, communicating with a
+server at IP address 192.12.69.211, using 10 round-trips:
+
+\noindent {\tt ssr-test -t p -p 192.12.69.211 -l 1 \& };
+
+\subsection*{AUTHORS}
+
+\noindent Hilarie Orman

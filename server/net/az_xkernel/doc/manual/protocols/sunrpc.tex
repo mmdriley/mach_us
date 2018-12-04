@@ -1,0 +1,180 @@
+%
+% sunrpc.tex
+%
+% $Revision: 1.5 $
+% $Date: 1992/02/11 01:37:18 $
+%
+
+\subsection*{NAME}
+
+\noindent SUNRPC (Sun Remote Procedure Call Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent  {\it Remote Procedure Calls: Protocol Specification}.
+Sun Microsystems, Inc., Mountain View, Calif., May 1988.
+
+\subsection*{SYNOPSIS}
+
+\noindent Sun RPC is a fairly complete implementation of Sun's remote
+procedure call protocol. This implementation is compatible with Sun's
+native implementation. The interface to our implementation of Sun RPC
+in no way resembles Sun's. The Sun Portmapper is treated as a separate
+protocol that sits on top of Sun RPC. This implementation only
+supports UDP as a lower level protocol. The protocol supports
+unreliable remote procedure calls to possibly heterogeneous hosts. Our
+implementation of the Sun RPC protocol uses most but not all of the
+original Sun RPC include files and XDR files.  Thus, you must have
+access to Sun include and XDR files to compile this protocol.
+
+\subsection*{REALM}
+
+SUNRPC is in the RPC realm.
+
+\subsection*{PARTICIPANTS}
+
+SUNRPC removes three pointers to longs from the remote
+participant stack, representing the procedure, version and program
+number (starting from the top of the stack.)
+
+The local participant may be present, in which case it is passed on
+untouched to the next protocol, or it may be absent.
+
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt SUNRPC\_CLNTGETERROR:}]
+Returns an RPC error status structure.  (session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt struct rpc\_err}
+\end{description}
+
+\item[{\tt SUNRPC\_CLNTSETTOUT:}]
+Sets the client timeout value; the amount of time the client 
+will wait before resending the message.  (session only)
+\begin{description}
+\item[{\rm Input:}] {\tt struct timeval }
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt SUNRPC\_CLNTGETTOUT:}]
+Returns the client timeout value.  (session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt struct timeval }
+\end{description}
+
+\item[{\tt SUNRPC\_CLNTSETWAIT:}]
+Sets the client wait value, the amount of time the client will 
+wait before returning an error.  (session only)
+\begin{description}
+\item[{\rm Input:}] {\tt struct timeval }
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt SUNRPC\_CLNTGETWAIT:}]
+Returns the client wait value.  (session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt struct timeval }
+\end{description}
+
+\item[{\tt SUNRPC\_GETCREDTYPE:}]
+Returns the type of authentication credentials used.
+Valid types are NULL authentication, Unix authentication and DES
+authentication.  Note that the protocol or user above Sun RPC is 
+completely responsible for all authentication; the Sun RPC 
+protocol merely copies credentials into and out of the header.
+(session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt int  }
+\end{description}
+
+\item[{\tt SUNRPC\_GETCRED:}]
+Returns the authentication credentials used in an 
+opaque byte string.  (session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt char *   }
+\end{description}
+
+\item[{\tt SUNRPC\_SETCREDTYPE:}]
+Sets the type of authentication credentials used (session only) 
+\begin{description}
+\item[{\rm Input:}] {\tt int  }
+\item[{\rm output:}] none
+\end{description}
+
+\item[{\tt SUNRPC\_SETCRED:}]
+Sets the authentication credentials used in an 
+opaque byte string (already xdr'ed).  (session only) 
+\begin{description}
+\item[{\rm Input:}] {\tt char * }
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt SUNRPC\_GETVERFTYPE:}]
+Returns the type of authentication verification used.
+Valid types are NULL authentication, Unix authentication, and DES
+authentication.  (session only) 
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt int  }
+\end{description}
+
+\item[{\tt SUNRPC\_GETVERF:}]
+Returns the authentication verification used contained in an 
+opaque byte string.  (session only) 
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt char *   }
+\end{description}
+
+\item[{\tt SUNRPC\_SETVERFTYPE:}]
+Sets the type of authentication verification used.  (session only) 
+\begin{description}
+\item[{\rm Input:}] {\tt int  }
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt SUNRPC\_SETVERF:}]
+Sets the authentication verification used contained in an 
+opaque byte string (already xdr'ed) (session only) 
+\begin{description}
+\item[{\rm Input:}] {\tt char *   }
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt SUNRPC\_SVCAUTHERR:}]
+Causes session to return authentication error message and 
+terminate.  (session only) 
+\begin{description}
+\item[{\rm Input:}] {\tt char *   }
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt SUNRPC\_SVCSYSTEMERR:}]
+Causes session to return a system error message and 
+terminate.  (session only) 
+\begin{description}
+\item[{\rm Input:}] {\tt char *   }
+\item[{\rm Output:}] none
+\end{description}
+
+\end{description}
+
+\subsection*{CONFIGURATION}
+
+SUNRPC is a realm
+boundary protocol which assumes
+its lower protocol is symmetric (in the ASYNC realm.)
+
+\noindent {\tt name=sunrpc  protocols=udp;}
+
+\subsection*{AUTHOR}
+
+\noindent Sean O`Malley

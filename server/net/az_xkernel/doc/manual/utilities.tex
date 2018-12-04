@@ -1,0 +1,144 @@
+\section{Utility Routines}
+
+\subsection{Storage: xMalloc and xFree}
+
+These are just like Unix malloc and free functions.  The {\em xMalloc}
+function will cause an $x$-kernel abort if no storage is available;
+therefore, it has no error return value.
+\medskip
+
+{\sem char} {\bold *xMalloc}({\sem int} {\caps size})\\
+\medskip
+
+{\sem int} {\bold xFree}({\sem char} *{\caps buf})
+
+\subsection{Time}
+
+The \xk{} uses the same time structure as Unix:
+
+\begin{tabbing}
+xxxx \= xxxxxxxx \= xxxxxxxxxxx \= \kill
+\>{\sem typedef struct} \{\\
+\>\>  {\sem long}  sec;\\
+\>\>  {\sem long}  usec;\\
+\>\} {\bold XTime} ;\\
+\end{tabbing}
+
+
+\subsubsection{xGetTime}
+
+Set {\em *t} to the current time of day:
+\medskip
+
+{\sem void} {\bold xGetTime} ({\sem XTime} *{\caps t})
+
+
+\subsubsection{xAddTime}
+
+Sets the {\em res} to the sum of {\em t1} and {\em t2.}
+Assumes {\em t1} and {\em t2} are in standard time format (i.e., does not
+check for integer overflow of the usec value.)
+\medskip
+
+{\sem void} {\bold xAddTime} 
+({\sem XTime} *{\caps res}, {\sem XTime} {\caps t1}, {\sem XTime} {\caps t2})
+
+
+\subsubsection{xSubTime}
+
+Sets the {\em res} to the difference of {\em t1} and {\em t2.}
+The resulting value may be negative.
+\medskip
+
+{\sem void} {\bold xSubTime} 
+({\sem XTime} *{\caps res}, {\sem XTime} {\caps t1}, {\sem XTime} {\caps t2})
+\medskip
+
+
+
+
+\subsection{Byte Order: ntohs, ntohl, ntons, and htonl}
+
+The byte order functions are the same as the Unix functions.
+\medskip
+
+\begin{tabbing}
+xxxx \= xxxxxxxx \= xxxxxxxxxxx \= \kill
+\>{\sem u\_short} {\bold ntohs}({\sem u\_short} {\caps n})\\
+\>{\sem u\_long} {\bold ntohl}({\sem u\_long} {\caps n})\\
+\>{\sem u\_short} {\bold htons}({\sem u\_short} {\caps n})\\
+\>{\sem u\_long} {\bold htonl}({\sem u\_long} {\caps n})\\
+\end{tabbing}
+
+\subsection{Checksum}
+
+\subsubsection{inCkSum}
+
+Calculate a 16-bit 1's complement checksum over the buffer
+{\em *buf} (of length {\em len}) and the msg {\em *m}, returning the bit
+complement of the sum.  {\em len} should be even and the buffer must be
+aligned on a 16-bit boundary.  {\em len} may be zero.
+\medskip
+
+{\sem u\_short} {\bold inCkSum} ({\sem Msg} *{\caps m}, {\sem u\_short} *{\caps buf}, {\sem int} {\caps len});
+
+\subsubsection{ocsum}
+
+Return the 1's complement sum of the {\em count} 16-bit words pointed
+to by {\em hdr}, which must be aligned on a 16-bit boundary.
+\medskip
+
+{\sem u\_short} {\bold ocsum} ( {\sem u\_short} *{\caps hdr}, {\sem int} {\caps count});
+
+
+\subsection{Strings to Hosts}
+
+Utility routines exist for converting from string representations of
+IP and Ethernet addresses to their structural counterparts and
+vice-versa.  
+
+\subsubsection{ipHostStr}
+
+Returns a string with a ``dotted-decimal'' representation of IP host 
+{\em h} (e.g., ``192.12.69.1'')  
+This string is in a static buffer, so it must be copied if
+its value is to be preserved.
+\medskip
+
+{\sem char *} {\bold ipHostStr} ( {\sem IPhost} *{\caps h} )
+
+
+\subsubsection{str2ipHost}
+
+Interprets {\em str} as a ``dotted-decimal'' 
+representation of an IP host and assigns the fields of 
+{\em h} accordingly.  The operation fails if {\em str} does not seem
+to be in dotted-decimal form.
+\medskip
+
+{\sem xkern\_return\_t} {\bold str2ipHost} 
+( {\sem IPhost} *{\caps h}, {\sem char } *{\caps str} )
+
+
+\subsubsection{ethHostStr}
+
+Returns a string with a representation of Ethernet host 
+{\em h} (e.g., ``8:0:2b:ef:23:11'')  
+This string is in a static buffer, so it must be copied if
+its value is to be preserved.
+\medskip
+
+{\sem char *} {\bold ethHostStr} ( {\sem ETHhost} *{\caps h} )
+
+
+\subsubsection{str2ethHost}
+
+Interprets {\em str} as a six-hex-digit-colon-separated 
+representation of an Ethernet host and assigns the fields of 
+{\em h} accordingly.  The operation fails if {\em str} does not seem
+to be in the correct format.
+\medskip
+
+{\sem xkern\_return\_t} {\bold str2ethHost} 
+( {\sem ETHhost} *{\caps h}, {\sem char } *{\caps str} )
+

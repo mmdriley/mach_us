@@ -1,0 +1,134 @@
+- use lrpc protocol instead of MIG (portable among x-kernels except for
+  lrpc protocol itself) => may be too much work without buying anything
+  substantial; check first whether it's really worth it
+
+- readv/writev not implemented yet
+
+- sendmsg/recvmsg not implemented yet
+
+- SO_KEEPALIVE not implemented yet (makes sense for TCP only)
+
+- SO_LINGER not implemented yet (makes sense for TCP only)
+
+- SO_DEBUG not implemented yet (does it make sense at all?)
+
+- SIGIO not implemented yet
+
+- check for memory leaks (vm_deallocate out-of-line data)
+
+- the assumption is client thread communicating sequentially with xsi
+  (i.e., there is either only one thread doing xsi calls or the threads
+   synchronize with each other).
+
+- isn't it better to create one thread per client? (how to guarantee absence
+  of dead-lock otherwise?)
+
+- error reporting capability of x-kernel is very limited (i.e., only
+  SUCCESS vs. FAILURE?)
+
+- how to disable routing? what is the meaning of disabling routing in
+  the socket library?
+
+- condition variables would be efficient (especially in the Mach case
+  where semaphores are based on condition variables) [but less important
+  if signalling is finer-grained]
+
+- why not use INADDR_ANY instead of ANY_HOST????
+
+- ideally, a thread would not do a MASTER_UNLOCK as long as there is
+  work available from the mach_msg() call; several possibilities exist
+  to implement this:
+
+	- try to get a msg by doing a mach_msg() with a timeout of 0 (i.e.,
+	  do a poll), if no msg available, do a blocking mach_msg() call
+	  after MASTER_UNLOCK => this has not the desired effect, as
+	  blocked threads will fetch msgs an block on MASTER_LOCK while
+	  the active thread is doing other work; when it comes back, it
+	  will find the mach-port queue empty (this could made to work by
+	  changing the mach_msg() call to make sure a thread gets a new
+	  request only if it won't block on MASTER_LOCK, if we could
+	  change the mach_msg() call, everything could be simplified)
+
+	- keep a pool of threads on a semaphore; each time a thread is
+	  about to block somewhere other than the mach_msg() call, it
+	  has to make sure that there is at least one other thread
+	  not blocked or blocked on the mach_msg() call => the problem
+	  here is that operations like xPush() can block and we have
+	  no way to make sure the above invariant is mainted before
+	  the process goes to sleep (a possible solution would be
+	  to have a "callback" for each thread which is executed before
+	  a process goes to sleep and another that is executed after
+	  it has been awakened)
+
+- awakening/blocking should be finer-grained (e.g., per client instead of
+  global "selectable_event"); this requires maintaining a list of blocked
+  clients => it's not clear how much could be gained in performance by
+  this as the management of who's blocked where would be much more complex
+
+- (ftp) after disabling the use of PORT commands:
+  the Mach ftp blocks until a data-connection can be opened while the
+  xksocket interface currently returns an error message (do "sendport",
+  "dir"; "dir" to see the difference)
+========================================================================
+
++ select of both Unix and xsi descriptors is currently not possible
++ is Msg the appropriate structure to queue up messages?
++ revise types in xsi.defs (pointers don't work [iovec, for example];
+  decide wether to use inline or outline data for variable sized buffers;
+  what is the influence of max message size?)
++ opendone must add new socket to active_map
++ demux must distinguish between UDP and TCP connections (so has bind())
++ use dummy port to get notified when client dies
++ (ftp) nlist command reports many "bare" linefeeds (probably ok; there
+  was a bug in ftp which caused the report of 4*10^9 bare line feeds...)
++ if two ftp session are running at the same time an EADDRINUSE error
+  is generated for one of the sessions!
++ inetd does not do a listen() for UDP connections
++ (ftp) after disabling the PORT commands via "sendport", ftp doesn't work
+  anymore;  this is because ftp wants to listen() on it's control-address
+  (which has a temporary port number); in this case, the connections would
+  looks like this (in the BSD socket library, such a configuration can only
+  be reached if the SO_REUSE option is in effect):
+
+			ftp:		ftpd:
+			      ctrl
+			x <----------->	21
+			      data
+			x <-----------> 20
+
+  => this works after disabling the port locks in the [tcp|udp]OpenEnable
++ recvfrom/sendto don't work... (problem with UDP)  Could be made work if
+  it were work possible to do a passive open and an active open on the
+  same local port but it would still be inefficient
+  => this works after disabling the port locks in the [tcp|udp]OpenEnable
+  (but it's still inefficient)
++ CreateProcess() should be an official x-kernel call, shouldn't it?
+  => use evSchedule instead!
++ how to find a lower-level protocol?  currently tcp and udp are hardcoded
+  leading to a problem if the order in graph.comp is changed =>
+  use "name" field in XObj to look for appropriate protocol name
++ is there a "clean" way to get an unused port number? if the port number
+  is 0 the "system" should choose a port number, but udp/tcp will only
+  tell us the chosen port number after a passive open occured, which
+  is too late (ftp assumes it can do a getsockname() to figure the
+  chosen port number) => Jul 2, 92: discussed with Hilarie, should
+  have xControl for this (for UDP and TCP control ops xxx_GET_FREE_PROT_NUM
+  and xxx_RELEASE_PROT_NUM were introduced)
++ what happens if we try to send a huge message via TCP? => that's OK,
+  TCP will split it anyway
++ currently there can be at most one outstanding UDP message because
+  each UDP-demux overwrites the so_session field; fix it (requires
+  a queue of sessions; recvfrom has to be changed too)
++ so_rcv should be a queue of messages; for UDP, each message has to be
+  tagged with it's sender
++ how to do control flow?  do I need to block threads when there
+  is too much data?  do_select() must be adapted if this is implemented
+  because do_select() currently reports sockets as always writeable;
+  for TCP, the window size and receive/send queues have to be managed by
+  the xksocket protocol
++ how to do out-of-band message transmission? => use message attributes
+  and change TCP to support urgent data
++ implementing non-blocking xPush() for TCP (and UDP?)
++ SIGURG doesn't work reliably
++ test OOB message transmission
++ measure TCP and UDP roundtrip time

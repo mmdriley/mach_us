@@ -1,0 +1,57 @@
+
+			      CHAN Notes
+
+Reference counts
+
+Both client and server sessions abuse the external reference count
+mechanism to represent a "transmitted but not yet acknowledged"
+message.  This can be safely done because the server sessions will
+remove this reference count before they send up a new message to a
+server and before the check to see if openDone should be called.
+
+
+session caching
+
+Sessions are not cached.  When their reference count goes to zero, the
+channel is said to be 'dormant': the session objects is destroyed and
+the sequence number is stored in the appropriate 'idle' map.
+
+Dormant client sessions are not recreated for incoming messages and
+are dormant server sessions are only recreated for incoming messages
+if the correct openenable exists.
+
+
+			      mapChains
+
+'mapChains' are nested maps of the form:
+
+	{ peer(IPhost) -> { hlpNum(long) -> { chan -> xxx } } }
+
+where xxx is either a session or a sequence number representing an
+idle session.  These maps are used to make it reasonably quick to look
+for idle sessions corresponding to a particular peer/hlp and to find
+the relevant sessions when a peer reboots.
+
+
+				 maps
+
+actSvrHostMap, actCliHostMap
+	 -- Map chains storing active session objects.
+
+actSvrKeyMap, actCliKeyMap
+	 -- activeKey -> session, storing active session objects.
+
+idleSvrMap, idleCliMap
+	 -- Map chains storing sequence numbers for idle channels.
+
+newChanMap
+	-- { peer(IPhost) -> { hlpNum(long) -> chan } }
+	    indicates the next channel to be used when a new channel
+	    session to the particular host/hlpNum needs to be be
+	    established.  The presence of an entry for the peer in
+	    newChanMap indicates that at least one open channel exists
+	    for that host.
+
+passiveMap
+	-- standard openenable map
+

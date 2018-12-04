@@ -1,0 +1,206 @@
+
+			     Bidctl Notes
+
+
+The BootId protocol is designed to advise workstations that a peer has
+rebooted, to protect protocols from receiving messages generated
+during previous boot sessions, and to inform higher protocols of a
+peer's reboot in a timely fashion.
+
+The BootId protocol is divided into a control protocol (BIDCTL) and a
+filter protocol (BID).
+
+
+				Usage
+
+
+Protocols which wish to be informed when a peer reboots will register
+with BIDCTL via an openEnable.  The peer in which they are interested
+appears on the stack of the participant.
+
+Such protocols should also be configured in a graph above (but not
+necessarily directly above) the BID filter protocol so that their
+messages will go through a BID session.  When BIDCTL protocol detects
+a peer reboot, it informs all interested protocols of the event via a
+control operation.
+
+If an upper protocol registers with the bootid protocol and messages
+from its session pass through bootid sessions, the bootid protocol
+guarantees that a message from a rebooted peer will not be sent to an
+upper protocol until the upper protocol has been informed of the
+reboot.  
+
+
+			      Philosophy
+
+A guiding design decision of the bootid protocol is that reboot
+conditions should be confirmed before being reported.  Upper protocols
+may take relatively severe actions (such as shutting down all open
+connections) as a result of a reboot report, so a reboot report should
+not result from a single mangled packet.  This decision has resulted
+in a slightly more complicated, but much more useful protocol.
+
+
+
+				Header
+
+                  0              15 16             31  
+                 +--------+--------+--------+--------+ 
+                 |      flags      |     checksum    | 
+                 +--------+--------+--------+--------+ 
+		 |            src BootId	     |
+                 +--------+--------+--------+--------+ 
+		 |            dst BootId	     |
+                 +--------+--------+--------+--------+ 
+		 |            request Tag	     |
+                 +--------+--------+--------+--------+ 
+		 |             reply Tag	     |
+                 +--------+--------+--------+--------+ 
+
+
+'flags' identifies the type of the message.  There are three flags:
+
+	QUERY -- The sender of the message is unclear about the
+	destination bootid.  The recipient should send a reply
+	message. 
+
+	RESPONSE -- This is a response to a previous query
+
+	BCAST -- This message is a broadcast sent on reboot.
+
+A 'keepalive' message may be sent with no flags.  A message may be
+both a QUERY and a RESPONSE.
+
+'checksum' is a 16-bit 1's complement checksum over the BIDCTL
+message. 
+
+'src BootId' is the BootId of the sender.  It is always valid. 
+
+'dst BootId' is the sender's current notion of the recipient's BootId.
+It is not valid when either the QUERY or the BCAST flag are set.
+
+'request Tag' is an identifier used to pair requests and replies.  It
+is valid only when the QUERY flag is set.
+
+'reply Tag' is an identifier which matches a previous 'request Tag.'
+It is valid only when the RESPONSE flag is set.
+
+
+
+			    State Diagram
+
+For each peer, BIDCTL maintains a BootidState.  This state can be
+represented with the finite state machine diagramed in the file
+Bidctl_fsm.ps.  Transitions in this diagram are of the form
+
+	type / action
+
+where 'type' represents a BIDCTL message:
+
+	Bx -- Broadcast reboot notification.  
+	Qx -- Query message	
+	Rz -- Response message
+	Kxy -- keepalive message
+
+In each of the type descriptions, 'x' indicates whether the source
+(remote) bootid in the message is correct (C) or different (D), 'y'
+indicates whether the destination (local) bootid was correct or not,
+and 'z' indicates whether the response Tag matched the most recent
+query tag.  Asterisks are used as wildcards.
+
+
+			   Bootid Selection
+
+The bootid protocol uses 32-bit bootid's.  For complete correctness,
+bootid's should be selected so a different bootid is selected for each
+reboot (e.g., monotonically increasing bootid's.)
+
+If such guarantees on bootid's can not be maintained, it is possible
+that bootid peers will not be informed of a reboot (i.e., the
+guarantee in the 'Usage' section will not hold.)
+
+
+			 Query Tag selection
+
+The source bootid's in queries (and the destination bootid in
+responses) are actually tags that are used to associate a query with a
+response.  The current implementation uses the concatenation of the
+following bytes from the Unix time structure:
+
+				1	2	3	4
+		seconds				xxx	xxx
+		microseconds		xxx	xxx
+
+This gives a unique query tag every 256 microseconds (well below the
+BootId query timeout) and puts the wraparound limit at about 18 hours.
+	
+
+			      Mechanisms
+
+State creation / lookup
+
+Both registration (via openEnable) and lookup (via xControl) create
+a new BidctlState if the appropriate state does not already exist.
+BIDCTL provides both blocking and non-blocking versions of lookup
+control operations.  If the blocking operation is used, the thread
+will block until BIDCTL determine's the peer's BootId (the lookup will
+eventually timeout if contact with the peer can not be established.)
+The non-blocking lookup will simply fail if the peer's BootId has not
+yet been determined.
+
+
+Notification
+
+BIDCTL notifies registered upper XObjects of two events.  A
+BIDCTL_PEER_REBOOTED notification is made when a peer's reboot has
+been confirmed and a BIDCTL_FIRST_CONTACT notification is made when
+BIDCTL first determines the peer's BootId.  The FIRST_CONTACT
+notification is useful when an upper protocol performs non-blocking
+lookups on BIDCTL.
+
+
+Broadcast
+
+When the bootid protocol initializes, it will broadcast its new bootid
+to the local network.  This will cause peer machines to recognize and
+confirm the reboot so they can inform their local protocols of the
+reboot quickly.  The broadcast is an optimization and is not required
+for correctness.
+
+New BidctlStates are not created to process reboots messages.  If a
+BidctlState already exists (indicating that some protocol on the local
+host cares about that particular peer), the reboot message will be
+processed, but if no BidctlState preexists, the reboot message will be
+dropped. 
+
+
+Keepalives
+
+Active bootid sessions send keepalive messages to each other at
+regular intervals to detect and report reboots in a timely fashion. 
+
+
+Caching
+
+When all protocols interested in a particular peer's reboot have
+indicated that they are no longer interested, the BidctlState can
+safely be removed.  BidctlStates are cached and expired if no interest
+is expressed.  If keepalives are received by a BidctlState, its cache
+timer is reset.
+
+
+
+			       Timeouts
+
+The timeout in the QUERY state doesn't use exponential backoff, but
+that's OK since:
+
+	1) We give up after a number of timeouts
+
+    and
+
+	2) The keepalive messages will have nearly the same effect
+	   that the query timeout would have after a few exponential
+	   backoff iterations (i.e., prompting a resync when the
+	   remote host decides to start responding.)
+

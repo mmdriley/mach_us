@@ -1,0 +1,87 @@
+/*
+ *  Locking a port for adding a sender.  When the lock request is received:
+ *    If no activity on the port, lock it.  This means we won't
+ *    move any rights for it, will postpone deallocation, etc.
+ *    If message receive is in progress on the port, just honor the lock,
+ *    there is no conflict.
+ *
+ *  Locking a port for moving receiver.  Finish sends in progress, then
+ *   acknowledge lock, don't try to move any rights.
+ *
+ *  A request for lock for moving receiver has priority over request for
+ *    lock for moving sender.
+ *
+ *  If a sender move lock is requested while a receiver move is in progress,
+ *    the old receiver will not respond to the lock request.  When the
+ *    move is complete, the old receiver will reply with "bogus request",
+ *    because it is no longer the receiver.  The new receiver will notify
+ *    the node that is requesting the send lock of the new receiver address;
+ *    then the previous send lock request should be aborted (when it
+ *    receives "bogus request") and retried with the new receiver.
+ *
+ *  If a port is deallocated during a right transfer it is possible that
+ *    it will turn into a dead name.  It's possible that it will be transferred
+ *    and turn into a dead name before the data part of the message is sent.
+ *    In that case, the data will carry the dead name indicator; the
+ *    dead name notification will arrive separately.
+ *
+ *  Move send right.
+ *    Notify receiver to lock port using message id; get confirmation
+ *    and a lock id.
+ *
+ *    Notify new sender of right, using lock id;
+ *    get confirmation.  Sender can create local structure.
+ *
+ *    If receiver lock request arrives, honor it and wait until
+ *    port is unlocked before proceeding.
+ *
+ *    Sender should have reliably notified receiver 
+ *    to unlock port, using lock id.
+ *
+ *    When message is transferred, it will have the unique message id
+ *    that indicates that the port transfer is now final.  At that
+ *    point, the new sender can move the right to the destination task.
+ *
+ *  Move receive right.
+ *    Problems: message in queue, additional message arriving
+ *    
+ *    Notify all senders that port is locked; get confirmations
+ *    If lock requests arrive, do not honor them.  If port is already
+ *    locked, wait until unlocked before proceeding.  Can tell senders
+ *    about new receiver.  While we are waiting, we still own the port,
+ *    and if the new receiver reboots, we must generate dead_name
+ *    notifications for the receivers.
+ *
+ *    Notify new receiver of port and sender list; get confirmation.
+ *    Use message id.  Receiver can create local structure.
+ *
+ *    Deliver any in transit messages to the port.  This is a local operation.
+ *    Senders should have finished any sends before agreeing to lock.
+ *
+ *    Move all pending messages reliably to the new receiver.
+ *
+ *    When message is delivered, receiver can transfer right to destination
+ *    task.
+ *
+ *  Reboots.  When a port is locked, it is assumed to belong to the
+ *     new sender or receiver  If that node reboots, we must deallocate.
+ *     If we are in the middle of locking and the node initiating the
+ *     transfer dies, we act as though that node were still the holder
+ *     of the right.
+ *
+ */
+
+
+Send_once rights require that a receive right must be kept available for
+forwarding until the "real" receiver deallocates the port.  This is
+more motivation for adding ukernel mechanism to associate so right with
+receive right.
+
+Port transfers will require that the port side tell the data side that
+a port is blocked.  This can go in the portdescriptor structure.
+Also, sessions in progress on the port must be found and blocked.
+Everything will wait on one semaphore defined in the portdescriptor
+structure.
+
+Must straighten out difference between port descriptor and port right
+descriptor.

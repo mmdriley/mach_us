@@ -1,0 +1,84 @@
+%
+% machnetipc.tex
+%
+% $Revision: 1.6 $
+% $Date: 1993/02/05 20:40:59 $
+%
+
+\subsection*{NAME}
+
+\noindent MachNetIPC (a network implementation of Mach IPC)
+
+\subsection*{SPECIFICATION}
+
+Mach3 Kernel Principles, with appropriate extensions.
+
+\subsection*{SYNOPSIS}
+
+\noindent MachNetIPC generalizes Mach IPC to work between machines
+connected by networking services.
+
+\subsection*{REALM}
+
+MachNetIPC is in the anchor protocol realm; it is specific to the Mach3
+platform.
+
+\subsection*{PARTICIPANTS}
+
+The SSR protocol communicates trivially with MachNetIPC using
+two elements in the participant stack: the Mach reply port for
+the client request, and the IP address of the remote host.  To
+accomplish this, SSR and MachNetIPC must reside in the same Mach task.
+
+SSR is only used to bootstrap initial Mach ports.  All other addressing
+is done implicitly through Mach message passing that involves MachNetIPC
+as an intermediary.
+
+\subsection*{CONTROL OPERATIONS}
+
+There are no control operations.
+
+\subsection*{CONFIGURATION}
+
+MachNetIPC uses CHAN as its transport protocol, and BIDCTL for detecting
+host reboots.  There is an unused option for two transport protocols, and
+that is why {\em udp } occurs in the configuration line:
+
+\noindent {\tt name=machripc protocols=chan,udp,bidctl;}
+
+In addition, the {\em srx} and {\em rrx} protocols must be included in
+the configuration.  There is a tight interface between these and MachNetIPC
+that is achieved via subroutine calls, not \xk{} operations.
+
+The protocol numbers for MachNetIPC are not included in the standard
+protocol table.  The graph.comp entry for these should include a
+reference to a local protocol table containing the following:
+
+\begin{verbatim}
+machripc	10010
+{
+	ssr	1
+}	
+ssr		10011
+portmaint	10016
+\end{verbatim}
+
+\subsection*{CAVEATS and DISCLAIMERS}
+
+The network port identifiers are fragile for the time
+being.  They are based on the lower 24 bits of the IP address
+and an 8 bit sequence number.  This is inadequate and will be
+changed in the near future.
+
+Behavior under heavy load or with machine reboots during complex
+port transfers have not been tested.
+
+Embedded port right transfers have been tested only lightly.
+
+Support for heterogeneous architectures is not included.  Some
+of the header load and store routines attempt to be architecture
+independent, but this work is still in progress.
+
+\subsection*{AUTHORS}
+
+\noindent Hilarie Orman

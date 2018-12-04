@@ -1,0 +1,32 @@
+%
+% debug.tex
+%
+% $Revision: 1.4 $
+% $Date: 1992/02/12 23:48:50 $
+%
+
+\section{Debugging a Kernel}
+
+\subsection{Tracing}
+\label{debug}
+The $x$-kernel uses a trace package to generate debugging information.
+To enable the tracing facility, edit the Makefile to set {\tt
+HOWTOCOMPILE} to {\tt DEBUG}; tracing can be disabled by setting {\tt
+HOWTOCOMPILE} to {\tt OPTIMIZE}. Then type {\tt make}.  See also
+section \ref{kdebug}.
+
+If you are interested in accurate
+performance timings, you should set {\tt HOWTOCOMPILE} to {\tt
+OPTIMIZE} in the Makefile.  This causes all trace of tracing code to
+be eliminated form the kernel.
+
+If you are writing a new protocol, you should insert trace statements.
+(Even though there will never be bugs left after you release your
+protocol, it may help other in debugging their protocol which sits
+on top of, or below, yours.)  Don't delete these very helpful debugging
+libraries when you are done.
+
+\subsection{Memory Leaks}
+
+The memory debugging library has not yet been ported to either the
+sunos or the mach3 platform.

@@ -1,0 +1,116 @@
+
+			       ORR code
+
+move_receive_right
+
+	get NRR BID
+	open NRR channel
+	confirm NRR BID
+	block on netport->rcvSem
+	add the receive right to the netport structure (or is this
+		already done by port management?)	
+	for each host in senderMap {
+		get that host's BID
+		send a RCV_LOCK_REQ to that host
+		if lock does not fail
+			/* This may fail if the send rights have been
+			 * deallocated 
+			 */
+			Add host to NEW_RECEIVE_RIGHT transfer message
+	}
+	Add self to sender list of message
+	set queue length of the receive right to zero
+	Send NEW_RECEIVE_RIGHT message to NRR
+	if send fails, do port death notification for each of the senders
+	Mark the netport as FORWARDING_QUEUE
+	for each host in senderMap {
+		send a RCV_UNLOCK_REQ 
+			This should not fail (at the level of the transfer
+			protocol, can fail at the CHAN level) If it
+			does, scream and continue
+	}
+
+
+	/* 
+	 * The remainder of this will be done by Mach IPC on return
+	 */
+	Read all messages off of the receive right and send them to
+		NRR (through some machIpc interface function (since these
+		messages might themselves have port rights))
+	Restore queue length of the receive right
+	Do something to start up a listening thread on the receive
+	right (in case there are any local send rights)
+}	
+		
+
+-------------------------------------------------
+
+			       SR code
+
+
+receive RCV_LOCK_REQ
+
+	if netport does not exist, return FAILURE
+	if ( port is in a normal sending state )
+		block on netport->sendSem
+		keep track of the locked port so we can release the
+		semaphore if ORR reboots
+	else if ( port is locked )
+		return SUCCESS
+	else ( port has been deallocated )
+		return FAILURE
+
+	
+
+receive UNLOCK_SEND_RIGHT request
+	if netport does not exist, return FAILURE
+	if port is not locked, return SUCCESS
+	if BID of NRR confirmed {
+		Record new receiver for this port
+	} else {
+		Do whatever is done to generate dead_name notification
+	}
+	signal netport->sendSem
+	return SUCCESS
+
+-------------------------------------------------
+
+			       NRR code
+
+
+receive NEW_RECEIVE_RIGHT message
+
+	create new netport structure (if necessary)
+		port should be in FORWARDING_QUEUE state
+		(block message sends which are not from ORR.)
+		We *do* have to allow send rights to move in the
+		FORWARDING_QUEUE state.
+	If we have netport send rights for this port, convert them to
+		loopbacks (This doesn't actually have to be done --
+		we're still correct if the loopback occurs at the IP
+		(or ETH) level.)
+
+		Does this happen automatically in the machNetIpc code?
+
+	for each sender in the senders list {
+		If BID confirmed {
+			Add host to senders list of netport
+		} 
+	}
+	if ORR's BID is confirmed {
+		request notification of ORR reboot
+	} else {
+		remove local structure (don't bother with the
+		remote dead_name notifications)
+	}
+
+    reboot handler:
+	Perform dead_name notification, remove local structure
+}
+
+
+receive TRANSFER_COMPLETE message (from netIPC with msg ID)
+
+	remove reboot interest in ORR
+	transition out of FORWARDING_QUEUE state
+

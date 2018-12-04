@@ -1,0 +1,156 @@
+#
+# Makefile.local
+#
+# x-kernel v3.2
+#
+# Copyright (c) 1993,1991,1990  Arizona Board of Regents
+#
+# $Revision: 1.23 $
+# $Date: 1993/02/01 23:59:01 $
+#
+#
+# targets for directories where objects are actually compiled
+# (as opposed to higher "organizational" directories like 
+# xkernel/protocols)
+
+#
+# If $(HOW) is not defined, don't include anything.
+#
+
+ifeq ($(HOW),) 
+
+This paragraph is not valid make syntax and should cause the make to
+abort if the variable $(HOW) is not defined.  There must be a more
+elegant way of doing this.
+
+else
+
+%.o : %.c
+
+% :: SCCS/s.%
+
+% :: s.%
+
+% :: RCS/%,v
+
+% :: %,v
+
+.PRECIOUS : %_ts
+
+.SUFFIXES:
+
+# Default rule
+# make object directory if it doesn't exist
+#
+DEFAULTRULE = @if [ ! -d $(dir $@) ] ; then mkdir $(shell echo $(dir $@) | sed 's+/$$++'); fi ; \
+	      echo $(CC) -c $(CFLAGS) -o $@ $< ; \
+	      $(CC) -c $(CFLAGS) -o $@ $<
+
+$(HOW)/%.o : %.c 
+	$(DEFAULTRULE)
+
+
+.PRECIOUS : $(HOW)/%.o
+$(LIB)(%.o) : $(HOW)/%.o
+	echo $< >> $(OBJECTFILE)
+
+localclean:
+	rm -f $(HOW)/*
+
+localdepend: $(SRC)
+ifeq ($(SRC),)
+	touch Makedep.$(HOW)
+else
+	@rm -f makedepsed
+	@-for name in $(SRC) ; do \
+	    xxx=`basename $$name .c`; \
+	    xxx2=`basename $$name .S`; \
+	    yyy=`dirname $$name`; \
+	    echo "s+^$$xxx.o:+$$yyy/\$${HOW}/$$xxx.o:+" >> makedepsed ; \
+	    echo "s+^$$xxx.o :+$$yyy/\$${HOW}/$$xxx.o :+" >> makedepsed ; \
+	    echo "s+^$$xxx2.o:+$$yyy/\$${HOW}/$$xxx2.o:+" >> makedepsed ; \
+	    echo "s+^$$xxx2.o :+$$yyy/\$${HOW}/$$xxx2.o :+" >> makedepsed ; \
+	 done
+	@$(CC) -M $(CFLAGS) $(SRC) | sed -f makedepsed > Makedep.$(HOW)
+	@rm -f makedepsed
+endif
+#	@echo '/^# DO NOT DELETE THIS LINE/+1,$$d' >>eddep
+#	@echo '$$r makedep' >>eddep
+#	@echo 'w' >>eddep
+#	@cp $(MAKEFILE) Makefile.bak
+#	@ex - $(MAKEFILE) < eddep
+#	@rm eddep makedep
+
+Makedep.$(XPLATFORM):
+	touch $@
+
+Makedep.$(HOW):
+	touch $@
+
+localSRCLIST:
+	@if [ -r Makedep.$(HOW) ] ; then 				\
+		awk  ' { for(i=1; i<=NF; i++) {				\
+			    suf = substr($$i, length($$i) - 1); 	\
+			    if ((suf == ".c") || (suf == ".S") ||	\
+				(suf == ".s")) 				\
+				       print $$i			\
+			  } 						\
+			}' 						\
+		Makedep.*$(XPLATFORM) > $(OBJECTFILE)  ;		\
+	else								\
+		true ; 							\
+	fi
+
+localHDRLIST:
+	@if [ -r Makedep.$(HOW) ] ; then 				\
+		awk  '	{ for(i=1; i<=NF; i++) {			\
+				if (substr($$i, length($$i) - 1) == ".h") \
+				       print $$i 			\
+			  } 						\
+			}' 						\
+		 Makedep.*$(XPLATFORM) > $(OBJECTFILE)  ;		\
+	else								\
+		true ; 							\
+	fi
+
+localdotodirs:
+ifeq ($(OBJ),)
+	@true
+else
+	@-if [ ! -d DEBUG$(XPLATFORM) ] ; then umask 2; mkdir DEBUG$(XPLATFORM) ; fi
+	@-if [ ! -d OPTIMIZE$(XPLATFORM) ] ; then umask 2; mkdir OPTIMIZE$(XPLATFORM) ; fi
+endif
+
+
+ifndef XK_BYPASS_RCS
+
+% : RCS_ts/%_ts
+ifeq ($(MAKE_DEBUG),)
+	@echo -n
+else
+	@echo RCS_ts dummy rule for stem $*
+endif
+
+
+
+#
+# target pattern: DIR/RCS_diff/file
+#
+%_ts :: ../RCS/%,v
+	@stem=$(subst RCS_ts/,,$*) ;					\
+	echo RCS rule for stem $$stem ; 				\
+	if rcsdiff $(RCS_DIFF_FLAGS) $$stem > /dev/null 2>&1 ; then	\
+		true ; 							\
+	else 								\
+		if [ ! -s $$stem ] || fperm $$stem 222 ; then		\
+			co $(RCS_CO_FLAGS) $$stem	; 		\
+		else							\
+			true ; 						\
+		fi ; 							\
+	fi ; 								\
+	umask 2; touch $@ ; 						\
+	true
+
+endif	# ! XK_BYPASS_RCS
+
+endif

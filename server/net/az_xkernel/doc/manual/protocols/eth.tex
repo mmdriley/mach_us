@@ -1,0 +1,84 @@
+%
+% eth.tex
+%
+% $Revision: 1.3 $
+% $Date: 1992/09/23 00:56:22 $
+%
+
+\subsection*{NAME}
+
+\noindent ETH (Ethernet Protocol)
+
+\subsection*{SYNOPSIS}
+
+\noindent 
+This hardware-independent protocol 
+provides the interface between the rest of the \xk{} protocols and the
+actual ethernet drivers.  It has a UPI interface to protocols above it
+and interacts with the drivers through a specialized UPI interface.
+There should be a separate instantiation of the ETH protocol for each
+driver protocol.
+
+\subsection*{REALM}
+
+ETH is in the ASYNC realm.
+
+\subsection*{PARTICIPANTS}
+
+ETH expects a single remote participant with an ETHhost pointer on the
+top of the stack.  If the local participant is
+present it is ignored.  
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt ETH\_SETPROMISCUOUS:}]
+Sets the corresponding device controller in promiscuous mode and
+deliver copies of all packets to this session.  (session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] none
+\end{description}
+
+\end{description}
+
+\subsection*{EXTERNAL INTERFACE}
+
+Ethernet driver protocols should include the file 
+{\sanss protocols/eth/eth\_i.h} which defines the interface between ETH
+and the drivers.
+
+ETH will openenable its driver protocol once at initialization time,
+without a participant list.  This gives the driver protocol
+the XObj it should use in xDemux when it delivers messages.
+
+ETH calls xPush with the driver {\em protocol} object (not a session)
+to send a message.  ETH never opens the lower protocol.
+
+ETH will attach a pointer to an ETHhdr as a message attribute for each
+outgoing message:
+
+\begin{verbatim}
+
+        typedef struct {
+            ETHhost     dst;
+            ETHhost     src;
+            u_short     type;
+        } ETHhdr;
+
+\end{verbatim}
+
+ETH requires that the driver attach a message attribute pointing to an
+appropriate ETHhdr structure for every incoming message.  For both
+incoming and outgoing messages, the ETHhdr type field will be in 
+network byte order.
+
+ETH requires the driver protocol to implement the control op GETMYHOST.
+
+
+\subsection*{CONFIGURATION}
+
+Each instantiation of ETH should be configured above its corresponding
+driver protocol.
+

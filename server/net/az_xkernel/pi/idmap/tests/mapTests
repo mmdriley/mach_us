@@ -1,0 +1,25 @@
+#!/bin/csh -f
+#
+# $RCSfile: mapTests,v $
+# 
+# Copyright (c) 1993,1991,1990  Arizona Board of Regents
+#
+#
+# $Revision: 1.2 $
+# $Date: 1993/02/01 23:56:26 $
+#
+# Runs the map correctness tests
+
+set sizes = ( 2 4 6 8 10 12 16 20 24 28 32 )
+
+foreach k ( $sizes )
+	echo Key size == $k
+	echo testing hash functions
+	mapTestCor -k $k
+	set n = 100
+	echo testing map operations
+	while ( $n )
+		mapTestCor2 -k $k
+		@ n--
+	end
+end

@@ -1,0 +1,85 @@
+%
+% ip.tex
+%
+% $Revision: 1.6 $
+% $Date: 1992/07/21 00:12:54 $
+%
+
+\subsection*{NAME}
+
+\noindent IP (Internet Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent J. Postel. {\it Internet Protocol}. Request for Comments 
+768, USC Information Sciences Institute, Marina del Ray, Calif., Aug. 1980.
+
+\subsection*{SYNOPSIS}
+
+\noindent IP handles fragmentation and routing required in
+transmitting messages across heterogeneous interconnected networks.
+This implementation is complete, with the exception of some of the
+optional header fields.
+
+\subsection*{REALM}
+
+IP is in the ASYNC realm.
+
+\subsection*{PARTICIPANTS}
+
+IP removes a pointer to an IPhost
+from the top of the stack of each participant.  If the local
+participant is missing or if the local IPhost pointer is ANY\_HOST, 
+IP will select an appropriate local IPhost.  
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt IP\_MYNET:}]
+Return local host's IP network number.
+This is an IP address with the host
+component set to 0.  (session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt IPhost}
+\end{description}
+
+\item[{\tt IP\_REDIRECT:}] Modifies routing table to use a specified
+gateway when delivering packets to a specified IP address.
+The first address is for the destination
+and the second is for the gateway.  (session or protocol)
+\begin{description}
+\item[{\rm Input:}] {\tt IPhost[2]}
+\item[{\rm Output:}] none
+\end{description}
+
+\end{description}
+
+\subsection*{CONFIGURATION}
+
+IP must be configured above VNET:
+
+\begin{verbatim}
+         name=ip protocols=vnet;
+\end{verbatim}
+
+\medskip
+
+If an explicit route for a remote network is not specified, 
+IP will forward packets for that network to a {\em default gateway}.
+The default gateway is initialized to IP\_SITE\_GTW from {\tt
+xkernel/etc/site.h}, but this can be overridden by a rom file entry of the
+form:
+\begin{verbatim}
+         ip    gateway     127.1.22.11
+\end{verbatim}
+
+If the default gateway is the distinguished address {\tt 0.0.0.0} or
+can not be reached directly, IP will operate without a default gateway
+and ERR\_XOBJ will be returned in cases where a default gateway would
+otherwise have been used.
+
+\subsection*{AUTHOR}
+
+\noindent Clinton Jeffery, David Kays and Ed Menze

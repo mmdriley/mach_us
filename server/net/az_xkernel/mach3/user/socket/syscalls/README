@@ -1,0 +1,4 @@
+This directory contains the assembly code interface to some system calls.
+The system calls are renamed by prefixing them with "sc_".  This makes
+it possible to implement additional stuff in the original function,
+calling the actual system call only if necessary.

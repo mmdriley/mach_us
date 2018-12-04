@@ -1,0 +1,98 @@
+%
+% $Revision: 1.10 $
+% $Date: 1992/02/11 23:17:18 $
+%
+
+\section{ Composing a kernel: graph.comp }
+\label{compose}
+
+A new instance of the $x$-kernel is configured by specifying the
+collection of protocols that are to be included in the kernel in a
+file called graph.comp (example graph.comp files are in
+xkernel/build/Template.)  
+
+The graph.comp file is divided into three sections which describe device
+drivers, protocols and miscellaneous configuration parameters. 
+The sections are separated by lines beginning with
+{\tt @;} and each section may be empty. 
+
+The first two sections, device drivers and protocols, describe the
+protocol graph to be configured into your kernel.  Device drivers and
+protocols are described by the same types of entries, as in the example:
+
+\font\tt=PS-Courier at 9pt
+\begin{verbatim}
+name=yap files=yap,yap_clnt,yap_srvr dir=yap, protocols=ip,eth trace=TR_MAJOR_EVENTS;
+\end{verbatim}
+\font\tt=cmtt10 at 11pt
+
+The first field gives the protocol's name.  The rest of the fields are
+optional and may occur in any order.
+
+The {\tt dir} and {\tt files} fields describe the names and
+locations of the source files used to build the protocol.  Files are
+specified without extensions.  An empty {\tt dir} field will cause
+a search for the source files in the current build directory, a
+subdirectory in the current build directory with the protocol's name,
+and finally in the system protocol library.  An empty {\tt files}
+entry defaults to a single {\tt .c} file with the protocols name.
+An entry for a protocol from the library should contain neither a
+{\tt dir} nor a {\tt files} entry.
+
+The {\tt protocols} field indicates the protocols below the current
+protocol in the graph.  When this field contains multiple protocols, order is
+significant (the lower protocols will be loaded into the upper
+protocol's down vector in the order in which they are listed.)
+A protocol which expects multiple protocols below it will describe the
+expected semantics of the lower protocols in its manual page in
+appendix \ref{protman}.
+
+The {\tt trace} field defines the debugging level used in trace
+statements depending on the protocol variable {\tt traceyapp}.  See
+section \ref{kdebug} for the symbolic names associated with trace levels.
+
+Multiple instantiations of protocols are supported by using a ``/''
+character after the protocol name to add an extension.  In the following
+example, two instantiations of ``yap'' are indicated, one over ``ip'' and
+one over ``eth,'' and both are used by the ``prt'' protocol:
+
+\font\tt=PS-Courier at 9pt
+\begin{verbatim}
+name=yaap/ip files=yap,yap_clnt,yap_srvr dir=yap,protocols=ip trace=TR_MAJOR_EVENTS;
+name=yaap/eth protocols=eth;
+name=prt files=prt dir=prt, protocols=yaap/ip,yaap/eth trace=TR_ERRORS;
+\end{verbatim}
+\font\tt=cmtt10 at 11pt
+
+Only the first of multiple instantiations should have {\tt dir},
+{\tt files}, or {\tt trace} fields.
+
+The third section contains the names of files with protocol number
+tables that are to be loaded during initialization.  It also
+contains the names of subsystems and their configuration parameters.
+Currently trace variables are the only parameters that can be set
+here.  The following illustrates a typical use of the third section:
+
+\font\tt=PS-Courier at 9pt
+\begin{verbatim}
+@;
+#
+# You can also specify auxiliary protocol tables to be read in at boot
+# time.  DEFAULT loads the system protocol table file as listed in etc/site.h
+#
+prottbl=DEFAULT;
+prottbl=./prottbl;
+
+#subsystem tracing for messages and protocol operations
+name=msg	trace=TR_GROSS_EVENTS;
+name=protocol	trace=TR_MAJOR_EVENTS;
+\end{verbatim}
+\font\tt=cmtt10 at 11pt
+
+The graph.comp file is read by an $x$-kernel utility program called
+{\em compose} which generates startup code to build the protocol
+graph and set up the described configuration.  The protocol graph is
+built bottom-up; when a protocol's initialization function is called,
+the lower level-protocols have already been initialized.
+
+

@@ -1,0 +1,186 @@
+#
+# graph.comp.example2
+#
+# x-kernel v3.2
+#
+# Copyright (c) 1993,1991,1990  Arizona Board of Regents
+#
+#
+# $Revision: 1.8 $
+# $Date: 1993/02/02 22:21:47 $
+# 
+# This is an example graph.comp file.  graph.comp is divided into
+# three sections, delimited by the character '@'.  Protocols listed in
+# the first section are 'driver' protocols.  
+
+
+name=simeth
+#	trace=TR_FULL_TRACE
+#	trace=TR_MAJOR_EVENTS
+	trace=TR_ERRORS
+#	trace=0
+;
+
+@;
+
+
+name=eth	protocols=simeth
+#	trace=TR_FULL_TRACE
+#	trace=TR_EVENTS
+#	trace=TR_MAJOR_EVENTS
+#	trace=TR_ERRORS
+;
+
+
+name=arp	protocols=eth
+#	trace=TR_FULL_TRACE
+#	trace=TR_EVENTS
+#	trace=TR_MAJOR_EVENTS
+	trace=TR_ERRORS
+#	trace=0
+;
+
+name=vnet	protocols=eth,arp
+#	trace=TR_FULL_TRACE
+#	trace=TR_EVENTS
+#	trace=TR_MAJOR_EVENTS
+	trace=TR_ERRORS
+#	trace=0
+;
+
+name=ip 	protocols=vnet
+#	trace=TR_FULL_TRACE
+#	trace=TR_EVENTS
+#	trace=TR_MAJOR_EVENTS
+	trace=TR_ERRORS
+#	trace=0
+;
+
+
+name=icmp 	protocols=ip			
+#	trace=TR_FULL_TRACE
+	trace=TR_ERRORS
+#	trace=0
+;
+
+
+name=vmux	protocols=vnet,ip
+#	trace=TR_FULL_TRACE
+#	trace=TR_MAJOR_EVENTS
+	trace=TR_ERRORS
+;
+
+
+name=blast 	protocols=vmux
+#	trace=TR_FULL_TRACE
+#	trace=TR_MORE_EVENTS
+#	trace=TR_EVENTS
+	trace=TR_SOFT_ERRORS
+#	trace=TR_MAJOR_EVENTS
+#	trace=TR_ERRORS
+;
+
+
+name=vsize	protocols=vmux,blast
+#	trace=TR_MAJOR_EVENTS
+	trace=TR_ERRORS
+#	trace=0
+;
+
+
+name=udp	protocols=ip			
+# 	trace=TR_SOFT_ERRORS
+#	trace=TR_EVENTS
+ 	trace=TR_ERRORS
+;
+
+#name=sunrpc	protocols=udp
+#	trace=TR_MORE_EVENTS
+#	trace=0
+#;
+
+name=tcp 	protocols=ip			
+#	trace=TR_FULL_TRACE
+# 	trace=TR_SOFT_ERRORS
+ 	trace=TR_ERRORS
+;
+
+name=chan	protocols=bid,bidctl
+#	trace=TR_FULL_TRACE
+#	trace=TR_DETAILED
+#	trace=TR_MORE_EVENTS
+#	trace=TR_EVENTS
+	trace=TR_SOFT_ERRORS
+#	trace=TR_MAJOR_EVENTS
+#	trace=TR_ERRORS
+;
+
+
+#name=mselect	protocols=chan
+#	trace=TR_FULL_TRACE
+#	trace=TR_MAJOR_EVENTS
+#	trace=TR_ERRORS
+#;
+
+
+#name=select	protocols=ip
+#	trace=TR_FULL_TRACE
+#	trace=TR_MAJOR_EVENTS
+#	trace=TR_ERRORS
+#;
+
+
+name=bidctl	protocols=vmux
+#	trace=TR_FULL_TRACE
+#	trace=TR_MORE_EVENTS
+#	trace=TR_SOFT_ERRORS
+	trace=TR_MAJOR_EVENTS
+#	trace=TR_ERRORS
+;
+
+
+name=bid	protocols=vsize,bidctl
+	trace=TR_ERRORS
+#	trace=TR_EVENTS
+#	trace=TR_MAJOR_EVENTS
+#	trace=TR_FULL_TRACE
+;
+
+
+name=vcache	protocols=chan
+#	trace=TR_FULL_TRACE
+	trace=TR_EVENTS
+#	trace=TR_ERRORS
+;
+
+#name=vcache/tcp	protocols=tcp;
+
+
+#name=blasttest	protocols=vsize;
+name=chantest		protocols=vcache;
+#name=ethtest 		protocols=eth;
+#name=icmptest 	protocols=icmp;
+#name=iptest	protocols=vsize;
+#name=sunrpctest	protocols=sunrpc;
+#name=tcptest		protocols=tcp;
+#name=udptest		protocols=udp;
+
+
+@;
+
+#
+# Non-protocol trace variables
+#
+
+# name=event	trace=TR_ERRORS;
+name=protocol	trace=TR_ERRORS;
+name=prottest	trace=TR_EVENTS;
+name=ptbl	trace=TR_ERRORS;
+name=netmask	trace=TR_EVENTS;
+name=sessngc	trace=TR_FULL_TRACE;
+# name=idmap	trace=TR_FULL_TRACE;
+#name=xferp	trace=TR_FULL_TRACE;
+
+prottbl = DEFAULT;
+
+

@@ -1,0 +1,22 @@
+This directory contains the programmer's manual. The source is
+in the .tex files; file manual.ps contains a postscript version of
+the manual. You should be able to print out manual.ps; i.e., type
+
+lpr manual.ps
+
+The manual is about 75 pages long.
+
+If this doesn't work, you can try to run the source document through
+LaTex. To do this, type
+
+make
+rm manual.dvi
+make
+
+You have to run make twice to clean up forward label references.
+This will result in a file named manual.dvi, which you can print
+using your local print command.
+
+If all else fails, send mail to xkernel-bugs@cs.arizona.edu and
+we'll mail you a hard copy of the manual.
+

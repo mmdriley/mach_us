@@ -1,0 +1,140 @@
+#
+# Mach Operating System
+# Copyright (c) 1993-1988 Carnegie Mellon University
+# All Rights Reserved.
+# 
+# Permission to use, copy, modify and distribute this software and its
+# documentation is hereby granted, provided that both the copyright
+# notice and this permission notice appear in all copies of the
+# software, derivative works or modified versions, and any portions
+# thereof, and that both notices appear in supporting documentation.
+# 
+# CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS"
+# CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND FOR
+# ANY DAMAGES WHATSOEVER RESULTING FROM THE USE OF THIS SOFTWARE.
+# 
+# Carnegie Mellon requests users of this software to return to
+# 
+#  Software Distribution Coordinator  or  Software.Distribution@CS.CMU.EDU
+#  School of Computer Science
+#  Carnegie Mellon University
+#  Pittsburgh PA 15213-3890
+# 
+# any improvements or extensions that they make and grant Carnegie Mellon 
+# the rights to redistribute these changes.
+#
+#	mach3  - files for generic mach 3 functions
+
+# HISTORY
+# $Log:	Makefile-include,v $
+# Revision 2.10  94/06/29  15:01:52  mrt
+# 	Updated for odemake.  Removed mach_init.o, mach_msg_destroy.o
+# 	and mach_msg_server.o which were all coming from libmach_sa.a anyways
+# 	[94/04/20            mrt]
+# 
+# Revision 2.9  92/03/05  14:56:43  jms
+# 	Remove port_enable.o and mach3_msg.o.
+# 	[92/02/26  17:44:44  jms]
+# 
+# Revision 2.8  91/12/20  17:43:44  jms
+# 	Strip out the MK_{SRC,REL} definitions.  Now in Makeconf.
+# 	[91/12/20  15:29:00  jms]
+# 
+# Revision 2.7  91/10/06  22:27:14  jjc
+# 	Added notify.defs.  Defined MK_SRC, MK_REL, PATH, LPATH, CPATH.
+# 	Added mach_message_server() and mach_message_destroy() to 
+# 	DEFAULT_OFILES.
+# 	Moved ${LOCAL_RELDIR}/include/servers to end of VPATH, so we will
+# 	pick up defs files from the current directory before the release area.
+# 	[91/09/18            jjc]
+# 
+# Revision 2.6  90/10/29  17:26:51  dpj
+# 	Use netname.defs and service.defs from the released include area
+# 	instead of from the source area.
+# 	[90/10/27  19:48:04  dpj]
+# 
+# 	Cleaned-up installation rules.
+# 	Replaced lock.o with mach3_lock.o.
+# 	[90/10/21  21:18:52  dpj]
+# 
+# 	Merged-up to U25
+# 	[90/09/02  20:00:17  dpj]
+# 
+# 	Added mach3_abort.o.
+# 	[90/08/02  10:19:27  dpj]
+# 
+# Revision 2.5  90/08/22  18:08:51  roy
+# 	Added mach3_abort.
+# 	[90/08/14  12:28:45  roy]
+# 
+# Revision 2.4  90/07/29  14:10:01  dpj
+# 	Fixed mistake in configuration-specific file lists.
+# 	[90/07/29  11:01:33  dpj]
+# 
+# Revision 2.3  90/07/26  18:25:49  dpj
+# 	Added support for MACH3_UNIX configuration (different set of files).
+# 
+# Revision 2.2  90/07/26  12:36:34  dpj
+# 	First version
+# 	[90/07/24  14:23:51  dpj]
+# 
+# Revision 2.4  90/07/29  14:10:01  dpj
+# 	Fixed mistake in configuration-specific file lists.
+# 	[90/07/29  11:01:33  dpj]
+# 
+#
+######################################################################
+
+
+# us/include/mach for notify.defs
+VPATH			+= ${EXPORTBASE}/us/include/mach
+
+MIG_USRS		+= netnameUser.c serviceUser.c notifyUser.c
+MIG_SRVS		+= netnameServer.c notifyServer.c
+
+
+SOJBS			= lock.o syscall.o
+MACH3_OFILES		= console.o error_codes.o mach3_filbuf.o \
+			  mach3_findiop.o mach3_flsbuf.o mach_error.o \
+			  mach_priv_pt.o \
+			  mach3_config.o mach_time.o malloc.o \
+			  mach3_exit.o mach3_setjmp.o mach3_abort.o \
+			  mach_except.o mach3_lock.o \
+			  netnameUser.o serviceUser.o \
+			  netnameServer.o notifyServer.o notifyUser.o \
+			  ${SOJBS}
+
+#  These can now come from libmach_sa
+#  mach_msg_server.o mach_msg_destroy.o mach_init.o
+
+SHORTNAMES		+= mach_priv_pt.c mach3_config.c mach_except.c
+mach_priv_pt.c_LONGNAME	= mach_privileged_ports.c
+mach3_config.c_LONGNAME = mach3_configuration.c
+mach_except.c_LONGNAME	= mach_exception.c
+
+error_codes.o: err_ipc.sub err_kern.sub err_server.sub err_us.sub
+
+# -----------Rules follow -----------------
+
+
+# These two files do not need to be run through CPP
+${SOJBS}: $${.TARGET:S/.o/.s/g}
+	${_AS_} ${_ASFLAGS_} -o ${.TARGET} ${.IMPSRC}
+
+# mig rules to generate intermediate source files in the object directory
+# Make all the mig targets depend on a single "timestamp" source. Othewise
+# the mig rule gets run once for each target.
+
+netnameServer.c netnameUser.c: netname_stamp
+netname_stamp: netname.defs
+	${MIG} ${_MIGFLAGS_}  -user netnameUser.c \
+		-server netnameServer.c  ${netname.defs:P} && \
+	touch netname_stamp
+
+notifyServer.c notifyUser.c: notify_stamp
+notify_stamp: notify.defs
+	${MIG} ${_MIGFLAGS_}  -user notifyUser.c \
+		-server notifyServer.c  ${notify.defs:P} && \
+	touch notify_stamp
+
+

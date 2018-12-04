@@ -1,0 +1,227 @@
+%
+% participant.tex
+%
+% $Revision: 1.6 $
+% $Date: 1993/02/03 22:17:46 $
+%
+
+\section{Participant Library}\label{part}
+
+Participant lists identify members of a session and are used for
+opening connections.  Upper protocols interested in establishing a
+connection will construct the participant list and pass it to the
+lower protocol as a parameter of an open routine.  The lower protocol
+will then extract information from the participant list, possibly
+passing the participant list on to its own lower protocol.
+
+Each participant in the list contains a participant address stack,
+designed to facilitate a general method of communicating encapsulated
+address information between protocol layers.  By using pointers to
+address information, one layer can pass address information through a
+lower layer without having the lower layer manipulate the address
+information at all, not even by copying.  The address information for
+each participant is kept as a stack of {\em void *} pointers to
+address components and the lengths of each component.
+The component pointers are pushed or popped onto
+the stack by utility functions.
+
+\subsection{Type Definitions}
+
+The participant data structure is used to collect addressing
+information for opening connections.  A participant list is defined to
+be an array of type {\em Part}, and a {\em PartStack} is the main
+field in a single {\em Part}. The fields of these structures should
+not be directly accessed by the protocol developer.
+
+\begin{tabbing}
+xxxx \= xxxx \= xxx \= xxxxxx \= xxxxxxxxxxxxxxxxxxxx \= \kill
+\>\#define\>\>\>PART\_MAX\_STACK\>20\\
+
+\>{\sem typedef struct}  \{\\
+\>\>    struct \{\\
+\>\>       \>{\sem void *}     \>ptr;\\
+\>\>       \>{\sem int}        \>len;\\
+\>\>    \} {\caps arr}[PART\_MAX\_STACK];\\
+\>\>    {\sem int}	\>\>{\caps top};\\
+\>\} {\bold PartStack};\\
+\\
+\>{\sem typedef struct} \{\\
+\>\>    {\sem int}	\>\>{\caps len};\\
+\>\>    {\sem PartStack}\>\>{\caps stack}; \\
+\>\} {\bold Part};
+\end{tabbing}
+
+\subsection{Participant List Operations}
+
+The following operations provide a convenient interface that hides the
+{\em PartStack} data structure. However, the fact that a participant
+list is really an array of type {\em Part} is visible to the
+programmer.
+
+\subsubsection{partInit}
+Initialize participant list {\em p} of {\em N} participants.\medskip
+
+{\sem void} {\bold partInit}({\sem  Part *}{\caps p}, {\sem int} {\caps N} );
+\medskip
+
+\subsubsection{partPush}
+Push address {\em addr}, pointing to {\em len} bytes, onto the 
+stack of participant {\em p}.   A length of 0 indicates a ``special-value''
+pointer (e.g., ANY\_HOST) whose value as a
+pointer should be preserved across protection boundaries (and not
+dereferenced.)  See section \ref{part_usage} below.
+
+\medskip
+
+{\sem void} {\bold partPush}
+( {\sem Part } {\caps p}, {\sem void *} {\caps addr}, {\sem int} {\caps len})
+\medskip
+
+\subsubsection{partPop}
+Pop an address off the stack of participant {\em p}.  Returns NULL if
+there are no more elements on the stack.
+\medskip
+
+{\sem void *} {\bold partPop}({\sem Part }{\caps p} )
+\medskip
+
+\subsubsection{partLen}
+Report the number of participants in participant list {\em p}.\medskip
+
+{\sem int} {\bold partLen}( {\sem Part *} {\caps p} )
+\medskip
+
+
+\subsubsection{partExternalize}
+Takes a participant list {\em p} and externalizes it
+into {\em buf} in a form appropriate for transmission across a
+protection boundary, essentially dereferencing all the pointers
+except special-value pointers pushed with length == 0.  The {\em int}
+ pointed to by {\em len} holds
+the size of the buffer going in and holds the number of bytes written
+to the buffer on return.  If the buffer is not large enough, 
+{\em partExternalize} will fail.
+\medskip
+
+{\sem xkern\_return\_t} {\bold partExternalize}
+( {\sem Part *} {\caps pList}, {\sem void *} {\caps buf}, 
+  {\sem int *} {\caps len} )
+\medskip
+
+
+\subsubsection{partInternalize}
+Takes an externalized participant buffer {\em buf} resulting
+from {\em partExternalize} and recreates the participants in the
+uninitialized participant list {\em p}.
+\medskip
+
+{\sem void} {\bold partInternalize}
+( {\sem Part *} {\caps p}, {\sem void *} {\caps buf} )
+\medskip
+
+
+\subsubsection{partExtLen}
+Report the number of participants in an externalized participant
+buffer {\em buf} resulting from {\em partExternalize}.  
+This can be useful for allocating the appropriate
+sized participant list to pass to {\em partInternalize}.
+\medskip
+
+{\sem int} {\bold partExtLen}( {\sem void *} {\caps buf} )
+\medskip
+
+
+\subsection{Relative Protocol Numbers}
+\label{relprotnum}
+
+Participant lists are used for passing addressing information between
+protocols. An additional problem is how a high-level protocol
+identifies {\em itself} to a low-level protocol.  In most conventional
+protocols, a low-level protocol uses a {\em relative protocol number}
+to identify the protocols above it; e.g., IP identifies UDP with
+protocol number 17 and TCP as protocol number 6. However, protocols
+that have been especially designed to use the \xk{} use an
+{\em absolute} addressing scheme.
+
+Version 3.2 of the \xk{} reconciles these two approaches by
+maintaining a table of relative protocol numbers.  (See Section
+\ref{protnum} for the format of this table.)  Rather than embed
+protocol numbers in the protocol source code, protocols learn the
+protocol numbers of protocols above them by querying this table using
+the following operation:
+\medskip
+
+{\sem long}	{\bold relProtNum}( {\sem XObj} {\caps hlp}, {\sem XObj} {\caps llp} )
+\medskip
+
+\noindent This operation returns the protocol number of the high-level
+protocol relative to the low-level protocol, or -1 if no such binding
+has been configured in the protocol tables.  This number will have to
+be cast into the appropriate type; e.g., an unsigned short by the
+ETH protocol and an unsigned char by IP.
+
+\subsection{Usage Rules}
+\label{part_usage}
+
+By convention, active participant lists have the remote participant(s)
+first followed by an optional local participant.  The local
+participant can often be omitted, in which case the protocol tries to
+use a reasonable default.  For example, a UDP participant contains a
+UDP port and an IP host.  If the local participant is missing from an
+active participant list, UDP selects an available port for the local
+participant.
+
+In some cases, it is necessary to specify part of the information in a
+participant, but it is convenient to allow the lower protocol to
+``fill in'' the rest.  To allow this flexibility, one can use the
+constant pointer ANY\_HOST to specify ``wildcard'' hosts.  For
+example, if one wants to open UDP with a specific local port, but does
+not care which local host number is used, one could construct a local
+participant with the specific local port but with the pointer
+ANY\_HOST pushed on the stack.  The protocol that interprets the host
+part of the participant stack could then choose a reasonable default.
+Similarly, a wildcard value ANY\_PORT exists for protocols that use ports
+on their stacks.  Protocols that support wildcards indicate this
+in their manual page.
+
+The following example illustrates how a protocol that is about to invoke
+{\em xOpen} on a low-level protocol initializes the participant list, and 
+then how the low-level protocol extracts that information from the
+participant list.
+
+\begin{verbatim}
+{
+    ...
+    /* set participant addresses before calling low-level protocol's open */
+    partInit(p, 2);
+    partPush(p[0], &ServerHostAddr, sizeof(IPhost));  /* remote */
+    partPush(p[0], &ServerPort, sizeof(long));        /* remote */
+    partPush(p[1], ANY_HOST, 0);                      /* local  */
+    partPush(p[1], &ClientPort, sizeof(long));        /* local  */
+    xOpen(self, self, llp, p);
+    ...
+}
+
+
+llpOpen( XObj self, XObj hlpRcv, XObj hlpType, Part *p )
+{
+    /* get participant addresses within low-level protocol's open */
+    remoteport = (long *) partPop(p[0]);
+    localport = (long *) partPop(p[1]);
+    ...
+}
+\end{verbatim}
+
+Notice in this example how the high-level protocol pushes two 
+items (a host address and a port number) onto each participant's
+address stack, but the low-level protocol pops only one item off.
+This is because the low-level protocol does not interpret the first
+item; it just passes it on to {\em its} low-level protocol. Also note
+that when using participants that have been passed from other
+protocols, the user must keep in mind that the address pointers may be
+valid only for the duration of the current subroutine.  Data that is
+needed beyond this time should be explicitly copied into static
+storage.  In addition, because the participant structure is passed by
+reference in the {\em xOpen} call, the caller should consider the
+contents invalid after the return.
+

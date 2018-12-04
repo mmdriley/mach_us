@@ -1,0 +1,23 @@
+%
+% $Revision: 1.2 $
+% $Date: 1992/02/11 23:18:49 $
+%
+
+\section{Releasing a Protocol}
+
+Once you have debugged and tuned a new protocol, you can make it
+available for others to use by creating a new directory in {\sanss
+/usr/xkernel/protocols}, copying your source files into that
+directory, creating a makefile in that directory, and modifying the
+makefile in {\sanss /usr/xkernel/protocols}.  If your protocol is a
+device driver, put the source files in {\sanss
+/usr/xkernel/PLATFORM/drivers} instead of {\sanss
+/usr/xkernel/protocols}.
+
+If you want to make your new protocol available to other sites, then
+make a tar file of your protocol available and drop a note to {\sanss
+xkernel-bugs@cs.arizona.edu}.  We will include your protocol in the
+next release. You should also create a ``man page'' for you protocol
+similar to those found in Appendix A. The source files for these
+man pages are in {\sanss /usr/xkernel/doc/manual/protocols}.
+

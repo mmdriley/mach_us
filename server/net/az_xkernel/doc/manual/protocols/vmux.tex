@@ -1,0 +1,42 @@
+\subsection*{NAME}
+
+\noindent VMUX ( Virtual Muliplexing Protocol )
+
+\subsection*{SPECIFICATION}
+
+VMUX sits above several lower protocols, making them appear as a
+single protocol.  VMUX makes very simple decisions about which
+protocol to use for each connection.
+
+\subsection*{SYNOPSIS}
+
+VMUX is only active during connection establishment.  When
+openenabled, VMUX openenables all of its lower protocols on behalf of
+the upper protocol.  When opened, VMUX attempts opens its lower
+protocols in the order in which they were specified in the down vector
+until a successful open occurs.  The successfully opened lower session
+is then returned.
+
+\subsection*{REALM}
+
+Since VMUX is active only during open, it should be considered in the
+same realm as the protocols below it (which should probably all be in
+the same realm.)
+
+\subsection*{PARTICIPANTS}
+
+VMUX passes its participants to the lower protocols unmodified.
+
+\subsection*{CONTROL OPERATIONS}
+
+VMUX forwards control operations to the last protocol in the down
+vector list.
+
+\subsection*{CONFIGURATION}
+
+The lower protocols will be opened in the order in which they are
+listed in the configuration entry.
+
+\subsection*{AUTHOR}
+
+\noindent Ed Menze

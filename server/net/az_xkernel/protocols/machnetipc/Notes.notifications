@@ -1,0 +1,21 @@
+
+NO_MORE_SENDERS
+
+Tue Aug  4 16:14:11 MST 1992
+
+No more senders notification will be sent like a regular mach IPC
+message (i.e., the sender will wait on the local semaphore structure
+(to prevent the receive right from moving) and then send the message.)
+
+There will be no explicit locking of the receive right to send a
+notification.  A race between a no-more-senders notification and
+transferring a new send right via SRX will be handled by having the
+notification contain a 'make_send_count' which the receiver can
+compare with the make_send_count it has for that host before taking
+local steps in response to the notification.  This adds the complexity
+of maintaining a make_send_count for each host but prevents locking
+before sending a no_more_senders notification.
+
+
+
+

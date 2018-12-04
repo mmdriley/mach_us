@@ -1,0 +1,38 @@
+%
+% socket.tex
+%
+% $Revision: 1.4 $
+% $Date: 1993/02/05 20:42:02 $
+%
+
+\subsection*{NAME}
+
+\noindent XSI (the \xk{} socket interface)
+
+\subsection*{SPECIFICATION}
+
+\noindent BSD Socket operations as implemented by the Mach3 Unix Single-Server.
+
+\subsection*{SYNOPSIS}
+
+\noindent Sockets are an application interface to UDP and TCP networking
+services.
+
+\subsection*{REALM}
+
+Sockets are in the anchor protocol realm.  This version is specific
+to the Mach3 platform.
+
+\subsection*{PARTICIPANTS}
+
+Sockets use IP addresses.  The addresses are passed in messages generated
+by MiG stubs.
+
+
+\subsection*{CONFIGURATION}
+
+\noindent {\tt name=xsi protocols=udp,tcp;}
+
+\subsection*{AUTHORS}
+
+\noindent David Mosberger

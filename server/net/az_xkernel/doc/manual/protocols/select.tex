@@ -1,0 +1,49 @@
+%
+% select.tex
+%
+% $Revision: 1.3 $
+% $Date: 1993/02/04 08:22:27 $
+%
+
+\subsection*{NAME}
+
+\noindent SELECT (RPC Select Micro-Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent 
+S. O'Malley and L. Peterson.  A Dynamic Network Architecture.  {\it
+ACM Transactions on Computer Systems 10}, 2 (May 1992), 110--143.
+
+\medskip
+\noindent  S. O'Malley and L. Peterson. {\it A New Methodology for
+Implementing Network Software}, University of Arizona Tech Report
+TR90-29, August 1990.
+
+\medskip
+\noindent  B. Welch. {\it The Sprite remote procedure call}. 
+University of California at Berkeley, Tech Report UCB/CSD 86/302,
+June 1986.
+
+\subsection*{SYNOPSIS}
+
+\noindent SELECT is a micro-protocol that performs the addressing
+function of Sprite RPC; i.e., it demultiplexes request messages to the
+appropriate procedure.  
+
+\subsection*{REALM}
+
+SELECT is in the RPC realm.
+
+\subsection*{PARTICIPANTS}
+
+SELECT removes a pointer to a long (the remote procedure number) from
+the top of the stack of the first participant.  
+
+\subsection*{CONFIGURATION}
+
+SELECT expects one RPC realm protocol below it.
+
+\subsection*{AUTHOR}
+
+\noindent Sean O'Malley 

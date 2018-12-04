@@ -1,0 +1,86 @@
+This directory contains a collection of documents about Mach-US: the
+CMU Mach3.0 multi-server operating system.
+
+Details in some files may be  out of date. Each file name contains a 
+date or a release number corresponding to the point when the 
+associated information was current. Reader beware...!
+
+These files are ordered by relative relevance/importance to the casual
+reader.
+
+---------------------- System Documments --------------------
+whatis_MachUS.mss	A short introduction to Mach-US.
+whatis_MachUS.ps	J. Mark Stevenson
+whatis_MachUS.doc
+  07/94
+
+us_analyze.tex		Preliminary DRAFT: Brief overview of Mach-US,
+us_analyse.ps		motivation for system design choices,
+  07/94			and an analysis of OS architecture features as
+			demonstrated by the system.  "Mach-US: Unix On 
+			Generic	OS Object Servers"
+			J. Mark Stevenson, Daniel P. Julin.
+
+machnix-91.tex		Generalized Emulation Services for Mach 3.0
+machnix-91.ps		Overview, Experiences and Current Status
+  11/91			Julin, Chew, Stevenson, Guedes, Neves, Roy
+			Usenix Mach Symposium, Nov 1991
+
+overview-0791.tex	Informal technical overview. More technical
+overview-0791.ps	than machnix-91.
+  07/91			"The Mach3.0 Multi-Server System Overview" - Dan Julin
+
+us_client_server.ps	TechReport: Examine requirements and
+  09/94			implementation of remote invocation and binding
+			maintainence for: transparent invocation, 
+			authentication, forking, object-lifetime,
+			and interruption.  "Client-Server Interactions In
+			Multi-Server Operating Systems: The Mach-US Approach"
+			J. Mark Stevenson, Daniel P. Julin.
+
+usenix-c++-92.tex	Two papers about the C++ package for dynamic
+usenix-c++-92.ps	(and remote) object invocations.
+i-wooos-91.tex		"Writing a Client-Server Application in C++"
+i-wooos-91.ps		Paulo Guedes, Dan Julin
+			"Object-Oriented Interfaces in the Mach 3.0
+			Multi-Server" - Paulo Guedes, Dan Julin
+  			IEEE Workshop on Object Orientaton in Operating Systems
+			1991
+
+naming-0891.tex		Paper about the naming subsystem.
+naming-0891.ps		"Naming Facilities for Operating System Emulation in
+  08/91			Mach 3.0" - Dan Julin
+
+------------------------ Usage Documents --------------------
+us-install.ps		"Installing and Running Mach-US" -
+us-install.mss		Mary R. Thompson
+  07/94
+
+status.tex		Description of the current state of the Mach-US
+status.ps		system and a short look at future releases.
+  10/94			J. Mark Stevenson
+
+
+------------------------ Developer Documents ----------------------
+The following files are most useful to people wishing to do further system
+developement.
+
+us_clues.ps		A tour of the system sources and useful clues
+us_clues.tex		about how to expand or modify parts of the system.
+  07/94			"Mach-US: Clues For Developers" - J. Mark Stevenson.
+
+libus-ref-1192.tex	Reference manual for the C++ package for
+libus-ref-1192.ps	dynamic (and remote) object invocations.
+  11/92			"Libus++ Reference Manual" - Paulo Guedes
+
+interrupts-0791.note	Usage notes for the interrupt facility
+  07/91			(interrupted system calls, signals, etc.)
+
+config-server-US42.note	Release note for the configuration/startup
+  11/91			server.
+
+malloc-tracer-US29.note	A simple malloc tracer for multi-server
+  10/90			debugging.
+
+temp-agencies-US47.note	Note on "temporary" items that have special GC
+  01/93			in the name space.

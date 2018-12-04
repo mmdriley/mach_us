@@ -1,0 +1,64 @@
+\subsection*{NAME}
+
+\noindent ARP (Address Resolution Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent D. Plummer. {\it An Ethernet Address Resolution Protocol}.
+Request for Comments 826, USC Information Sciences Institute, Marina
+del Ray, Calif., Nov. 1982.
+
+\subsection*{SYNOPSIS}
+
+\noindent ARP translates IP addresses into ethernet addresses, and
+vice versa (i.e., it also implements RARP).  This implementation of
+ARP supports a single interface, but may be multiply instantiated to
+support several network interfaces.
+
+\subsection*{REALM}
+
+ARP is in the CONTROL realm.  There are no ARP sessions -- control
+operations may be performed on the protocol object only.
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt RESOLVE:}]
+Maps an IP address into an ethernet address.
+\begin{description}
+\item[{\rm Input:}] {\tt IPhost }
+\item[{\rm Output:}] {\tt ETHhost}
+\end{description}
+
+\item[{\tt RRESOLVE:}]
+Maps an ethernet address into an IP address.
+\begin{description}
+\item[{\rm Input:}] {\tt ETHhost}
+\item[{\rm Output:}] {\tt IPhost}
+\end{description}
+
+\item[{\tt ARP\_INSTALL:}]
+Installs an IP address to ETH address binding.
+\begin{description}
+\item[{\rm Input:}] { ArpBinding == \tt \{ETHhost eth; IPhost ip;\} }
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt ARP\_GETMYBINDING:}]
+Return the IP and ETH address of the local host for the interface.
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] { ArpBinding == \tt \{ETHhost eth; IPhost ip;\} }
+\end{description}
+
+
+\end{description}
+
+\subsection*{CONFIGURATION}
+
+\noindent {\tt name=arp protocols=eth;}
+
+\subsection*{AUTHORS}
+
+\noindent Larry Peterson and Norm Hutchinson

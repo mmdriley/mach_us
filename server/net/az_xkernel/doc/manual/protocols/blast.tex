@@ -1,0 +1,95 @@
+%
+% blast.tex
+%
+% $Revision: 1.5 $
+% $Date: 1993/02/04 08:19:10 $
+%
+
+\subsection*{NAME}
+
+\noindent BLAST (RPC Blast Micro-Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent 
+S. O'Malley and L. Peterson.  A Dynamic Network Architecture.  {\it
+ACM Transactions on Computer Systems 10}, 2 (May 1992), 110--143.
+
+
+\medskip
+\noindent  S. O'Malley and L. Peterson. {\it A New Methodology for
+Implementing Network Software}, University of Arizona Tech Report
+TR90-29, August 1990.
+
+\medskip
+\noindent  B. Welch. {\it The Sprite remote procedure call}. 
+University of California at Berkeley, Tech Report UCB/CSD 86/302,
+June 1986.
+
+\subsection*{SYNOPSIS}
+
+\noindent 
+BLAST is a micro-protocol version of Sprite RPC's
+fragmentation algorithm. The algorithm was extracted from Sprite and
+made into a stand-alone protocol. BLAST takes a large message,
+fragments it into smaller packets, and sends them. 
+The maximum packet size accepted by BLAST (as returned by the GETMAXPACKET
+control op) is the product of the maximum number of fragments handled
+by BLAST (16 by default) and the optimal packet size of BLAST's lower
+protocol. 
+
+The receiver gathers all of the packets and sends a NACK if it has
+reason to believe (through timeouts or other considerations) that
+a packet has been dropped.
+BLAST can handle any
+number on outstanding messages between two hosts (buffer space
+permitting, of course). The protocol is bi-directional; i.e., it
+supports blasts in both directions over the same session. Small
+messages take a short cut through the protocol and do not require the
+allocation of any resources.  
+
+The sender keeps a copy of the message
+around until a timeout occurs or the higher level protocol that sent
+the message notifies BLAST that it can free the message (through a
+FREERESOURCES control op.)
+Because the sending BLAST may timeout and release a message before all
+fragments have been received, BLAST is not reliable. 
+It is, however, very persistent.
+
+\subsection*{REALM}
+
+BLAST is in the ASYNC realm.
+
+\subsection*{PARTICIPANTS}
+
+BLAST neither removes nor adds anything to the participant stacks.
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt BLAST\_SETOUTSTANDINGMSGS:}]
+Set the number of outstanding messages allowed (protocol only).
+\begin{description}
+\item[{\rm Input:}] {\tt int} 
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt BLAST\_GETOUTSTANDINGMSGS:}]
+Get the number of outstanding messages allowed (protocol only).
+\begin{description}
+\item[{\rm Input:}]  none
+\item[{\rm Output:}] {\tt int} 
+\end{description}
+
+\end{description}
+
+\subsection*{CONFIGURATION}
+
+BLAST requires only its lower transport protocol.  Since BLAST doesn't
+use host addresses, it can sit on top of protocols using different
+address types without modification.
+
+\subsection*{AUTHOR}
+
+\noindent Sean O'Malley and Ed Menze

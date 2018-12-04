@@ -1,0 +1,54 @@
+%
+% icmp.tex
+%
+% $Revision: 1.3 $
+% $Date: 1992/02/11 01:37:18 $
+%
+
+\subsection*{NAME}
+
+\noindent ICMP (Internet Control Message Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent J. Postel. {\it Internet Protocol}. Request for Comments 
+792, USC Information Sciences Institute, Marina del Ray, Calif., Sept. 1981.
+;
+\subsection*{SYNOPSIS}
+
+\noindent ICMP handles control messages for IP. This implementation is
+complete in that it handles all possible incoming ICMP requests.
+
+\subsection*{REALM}
+
+ICMP is in the CONTROL realm.  ICMP sessions may be opened to allow
+control operations.
+
+\subsection*{PARTICIPANTS}
+
+ICMP neither removes nor adds anything to the participant stacks.  
+It passes the participants directly to IP. 
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt ICMP\_ECHO\_REQ:}]
+Send an ICMP Echo Request message to the peer host and wait for a
+reply.  The buffer contains the length of the message.  Returns 0 if
+successful, -1 if a timeout occurred.  (session only)
+\begin{description}
+\item[{\rm Input:}] {\tt int} 
+\item[{\rm Output:}] none
+\end{description}
+
+\end{description}
+
+
+\subsection*{CONFIGURATION}
+
+\noindent {\tt name=icmp protocols=ip;}
+
+\subsection*{AUTHOR}
+
+\noindent Clinton Jeffery

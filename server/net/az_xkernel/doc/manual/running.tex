@@ -1,0 +1,282 @@
+%
+% running.tex
+%
+% $Revision: 1.16 $
+% $Date: 1993/02/05 22:49:05 $
+%
+
+\section{Running a Kernel}
+\label{running}
+
+This section describes the procedure for running a kernel
+in each platform. 
+
+\subsection{SunOS4}
+\label{running_sunos}
+
+How the \xk{} runs on top of SunOS depends on what ``device drivers''
+are configured into the kernel. In the standard release, the ethernet
+driver is really a simulator that uses UDP to send packets between
+hosts. In this case, if you implement IP and UDP \underbar{within} the
+\xk{}, then the simulated UDP packets you send are, in turn, encapsulated
+in real UDP packets. This means that protocols and programs built on top
+of simulated UDP can only talk to their peers in other simulators; they
+cannot communicate with ``real'' versions of those protocols running 
+stand-alone, for example, on a Unix machine.  
+
+An alternative is to write an ETH protocol that sends and receives
+real ethernet packets, perhaps by using the STREAM interface to the
+driver available in SunOS 4.1. Similarly, one could imagine writing a
+UNIXIP device driver that sends and receives real IP packets using a
+raw datagram socket. The rest of this section assumes the simulator
+version of ETH that runs on top of the UDP protocol provided by the
+SunOS kernel.
+
+As the result of configuring a kernel (section \ref{config}), a file named
+{\sanss xkernel} should exist in your current directory ({\sanss 
+/usr/xkernel/build/yap}). While in this directory, create a sub-directory
+for each host you want to simulate; e.g.,
+
+\begin{quote}
+\begin{tt}
+mkdir client\\
+mkdir server
+\end{tt}
+\end{quote}
+
+In each of these directories, create a file named {\sanss rom}.  This file
+contains information that the simulated host ``reads in from ROM''. The
+following are example {\sanss rom} files that might be contained in
+{\sanss client} and {\sanss server}, respectively.
+
+\begin{quote}
+\begin{tt}
+simeth	3050\\
+arp		128.10.5.54	192.12.69.1  3050\\
+arp		128.10.5.23	192.12.69.1  3051\\
+\end{tt}
+\end{quote}
+
+\begin{quote}
+\begin{tt}
+simeth	3051\\
+arp	128.10.5.54     192.12.69.1  3050\\
+arp	128.10.5.23	192.12.69.1  3051\\
+\end{tt}
+\end{quote}
+
+\noindent
+The first field of each line indicates the protocol for which the
+information is relevant.
+
+For the simeth entry, the second field indicates the UDP port number
+on which this simulated host will receive network packets. A unique
+port number must be used for each simulated host running on any given
+real processor.  Simulated hosts running on different processors can
+use the same port number. (In this example, the two simulated hosts
+run on the same real processor (192.12.69.1) and use different UDP port
+numbers: {\sanss 3051} and {\sanss 3050}.)  Note that the name of the
+ethernet protocol appears exactly as it does in the {\sanss graph.comp}
+file.
+
+For the arp entries, each line corresponds to a simulated IP host.
+The second field is the simulated IP host number, the third field is
+the actual IP host number where the simulator runs, and the third
+field is the simulator's UDP port number.  
+Note that the simulated IP host numbers
+do not necessarily correspond to the real IP address of the machine on
+which the simulated host is running.
+
+Each simulated host runs as a separate Unix process.  If you using a
+windowing user interface, then you will probably want to start each
+process in a separate window.  You will also want to have each {sanss
+rom} file in a subdirectory below the xkernel image that is being
+tested.  For each simulated host, open a shell command window, {\sanss
+cd} to the sub-directory that contains that host's {\sanss rom}
+file---e.g., {\sanss cd client}---and then type {\sanss ../xkernel}.
+To stop a simulated host, type {\sanss DELETE} or {\sanss CTRL-C}.
+
+\subsection{Mach 3}
+
+As the result of configuring a kernel (section \ref{config}), a file
+named {\sanss xkernel} should exist in your current directory ({\sanss
+/usr/xkernel/build/yap}).  You may optionally create a file named
+{\sanss rom} in this directory.  This file contains information that
+the host ``reads in from ROM''.  This is an example {\sanss rom} file:
+
+\begin{quote}
+\begin{tt}
+ethdrv/SE0      priority 200\\
+arp		192.12.69.88  8:0:20:1:51:E6\\
+arp		192.12.69.89  8:0:20:1:50:40\\
+\end{tt}
+\end{quote}
+
+The first field of each line indicates the protocol for which the
+information is relevant.
+
+Each ARP entry corresponds to an initial binding between the IP
+address and the ethernet address.  These entries 
+are not necessary if you have hosts on your network which will
+respond to your RARP and ARP requests.
+
+The ethdrv entry indicates the priority of the Mach packet filter used by
+the \xk{}.  The default priority, 200, causes
+the \xk{} to grab ethernet packets and not allow
+the native Mach networking code to see them.  This allows the \xk{} to
+fully communicate with other hosts, but makes it difficult to run
+\xk{} tests from a remote host.  
+
+By lowering the filter priority below 100, both Mach and the \xk{} see
+all ethernet packets.  This is useful for allowing normal network
+activity while running \xk{} tests, but can result in troublesome
+interaction between the \xk{} protocols and the Mach protocols running
+on the same host.  If you want to lower the filter priority, we
+recommend either
+
+\begin{itemize}
+
+\item
+Configuring your \xk{} without TCP, SUNRPC and any other protocols which
+might cause interaction problems
+
+or
+
+\item
+modifying your protocol table file to create an alternate protocol
+number for IP relative to ETH (the default is x0800.)  In this case,
+of course, the \xk{} protocols will only be able to communicate with 
+other hosts running the \xk{} with the althernate protocol table.
+
+\end{itemize}
+
+Since the \xk{} reads from the ethernet device, it needs to run with
+root uid.  You will need to either su to root before running it or run
+it setuid root.  Some Unix servers will allow members of group {\em kmem}
+to read the device; in this case members of the group need not su to root.
+
+See the man page for the Mach ethernet driver {\em ethdrv} in appendix
+\ref{protman} for
+additional configuration requirements.
+
+Since the \xk{} on the Mach platform does not respond well to
+CTRL-C's, we recommend running it in the background so you can easily
+send it a SIGKILL with the 'kill' command.
+
+
+\subsection{Mach 3 \xk{} in the Mach kernel}
+
+For this configuration, the ethernet driver name should be
+``xklance/SE0.''  At this time no options are defined for the ethernet
+driver.  The arp entries are the same as described above.
+
+
+\subsection{Running Test Suites}
+If you have configured protocols from the {\sanss test} directory into
+the kernel, you can run any subset of them by putting the test names
+onto the command line, e.g.:
+
+\begin{quote}
+\begin{tt}
+xkernel -testip -testudp
+\end{tt}
+\end{quote}
+
+With no command line test selections, all of the configured test protocols
+will run.
+
+Some of the tests run with a ``client side'' and a ``server side''.
+If the macros SITE\_CLIENT* and SITE\_SERVER* in xkernel/etc/site.h
+reflect the client and server you will be using, no additional
+parameters are necessary.  If you are running the client and server
+on different hosts, the server should be started up with a ``-s''
+flag:
+
+\begin{quote}
+\begin{tt}
+xkernel -testip -testudp -s
+\end{tt}
+\end{quote}
+
+The client side
+must also be told the IP address of the server host test peer.  This can be
+done with the ``-c'' command line option, e.g.:
+
+\begin{quote}
+\begin{tt}
+xkernel -testip -testudp -c192.12.69.1
+\end{tt}
+\end{quote}
+
+
+
+\subsection{Troubleshooting}
+
+Many of the problems encountered when running an \xk{} turn out to be
+configuration problems.  Here are a few common symptoms and some
+things you might want to check if these symptoms occur (setting the
+debugging variable {\tt traceprotocol} to {\tt TR\_EVENTS} or higher
+can be very helpful in identifying problems):
+
+\begin{itemize}
+
+\item{}
+\xk{} hangs in arp\_init. 
+
+ARP's initialization routine will not return until it has discovered
+the binding for its local IP address.  If the \xk{} hangs in
+arp\_init, ARP is probably sending out RARP requests which are not
+being answered.  Multiple warning messages of the form:
+
+\begin{quote}
+\begin{tt}
+ARP: Could not get my IP address for interface eth (still trying)
+\end{tt}
+\end{quote}
+
+are an indicator of this problem.
+
+If you are running the sunos simulator, you must have
+an ARP binding in your ROM file for your local host (see section
+\ref{running_sunos}.)  On other platforms, an ARP binding for the local
+host is not necessary if another host on your network will respond to
+RARP broadcasts.  If you do not have such a host (or if it is not
+responding for whatever reason), adding a local binding to your ROM
+file should fix the problem.
+
+\item{}
+Messages sent out on one host are never received on the destination host.
+
+Check your ROM file.  If it contains an initial binding for the
+destination host which is incorrect, the destination host will not see
+packets from the sending host.  
+
+\item{}
+An xOpen hangs for a while and then fails.
+
+An open may fail if ARP can not resolve the IP address of the
+destination (turning ARP tracing on can help identify this problem.)
+ARP requests should never be sent on the sunos simulator platform.  If
+you are running on the sunos platform and you see ARP requests being
+sent, check the ROM file on the sending host and make sure there is an
+ARP binding for the destination host.
+
+
+\item{}
+The \xk{} aborts before a protocol's init routine is called.
+
+If the \xk{} can't find a protocol number for your protocol in any of
+its tables, it will abort before calling the protocol's initialization
+routine.  You will need to add an entry for your protocol in one of
+the tables (see section \ref{protnum}.)
+
+\item{}
+Messages get to the destination host but never make it up to the
+appropriate protocol.
+
+Make sure that the source and destination hosts are running with
+identical protocol table entries for the protocol in question.  If the
+numbers are different, messages won't get to the appropriate protocol
+on the destination host.
+
+\end{itemize}

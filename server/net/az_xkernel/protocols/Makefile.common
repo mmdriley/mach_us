@@ -1,0 +1,46 @@
+#
+# default protocol makefile
+#
+# x-kernel v3.2
+#
+# Copyright (c) 1993,1991,1990  Arizona Board of Regents
+#
+# $Revision: 1.5 $
+# $Date: 1993/02/01 22:29:50 $
+#
+# The following variables must be defined (either defined in a
+# previous makefile, set on the command line, or passed in through
+# environment variables):
+#
+# HOW	(e.g., "DEBUGsparc")
+# LIB   (library in which to archive object files)
+
+XRT=../..
+MAKEFILE=Makefile.$(XPLATFORM)
+#INCLUDES = -I. -I$(XRT)/include -I$(XRT)/include/prot -I$(XRT)/etc \
+#	   -I$(XRT)/$(XPLATFORM)/include
+
+SRC = $(addsuffix .c,$(FILES)) $(OTHERSRC)
+LIBPREFIX = $(LIB)(
+LIBSUFFIX = .o)
+OBJ = $(addprefix $(LIBPREFIX), $(addsuffix $(LIBSUFFIX), $(FILES)))
+
+
+objects: $(OBJ)
+
+
+clean dotodirs SRCLIST HDRLIST depend : % : local%
+
+include $(XRT)/bin/Makefile.local
+
+#
+# This RCS rule is now superseded by the one in xkernel/bin/Makefile.local
+#
+# % :: RCS/%,v
+# 	@if [ -w $@ ] ; then \
+# 		echo "" ; \
+# 		echo "$@ is writable but RCS file more recent" ; \
+# 		echo "" ; \
+# 	else	\
+# 		co $@	; \
+# 	fi

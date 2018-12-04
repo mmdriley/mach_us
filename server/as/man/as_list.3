@@ -1,0 +1,107 @@
+.TH AS_LIST 3 8/2/88
+.CM 4
+.SH NAME
+as_list_members \- list the members of a group
+.br
+as_list_memberships \- list the groups of which a user or group is a member
+.br
+as_list_all_groups \- list all the groups known to the authentication service
+.SH SYNOPSIS
+.B #include <mach.h>
+.br
+.B #include <auth_defs.h>
+.PP
+.B kr = as_list_members(server_port, group_name, trans_closure,
+.B groups_ids, group_idsCnt)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B group_name_t group_name;
+.br
+.B boolean_t trans_closure;
+.br
+.B group_id_list_t *group_ids;
+.br
+.B unsigned int *group_idsCnt;
+.PP
+.B kr = as_list_memberships(server_port, group_name, trans_closure,
+.B groups_ids, group_idsCnt)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B group_name_t group_name;
+.br
+.B boolean_t trans_closure;
+.br
+.B group_id_list_t *group_ids;
+.br
+.B unsigned int *group_idsCnt;
+.PP
+.B kr = as_list_all_groups(server_port, groups_ids, group_idsCnt)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B group_id_list_t *group_ids;
+.br
+.B unsigned int *group_idsCnt;
+.SH DESCRIPTION
+.I as_list_members
+lists the members of a secondary access control group.  The list is returned in
+.I group_ids
+and the number of groups found in
+.I group_idsCnt.
+If
+.I trans_closure
+is set to false then only the direct members of
+.I group_name
+are listed.
+But if it is set to true, then direct and indirect members of
+.I group_name
+are listed.
+Indirect members are those groups that are members of other groups
+that are either direct or indirect members of
+.I group_name.
+.PP
+.I as_list_memberships
+lists the groups of which 
+.I group_name
+is a member.  The list is returned in
+.I group_ids
+and the number of groups found in
+.I group_idsCnt.
+If
+.I trans_closure
+is set to false then only the groups of which
+.I group_name
+is a direct member are listed.
+But if it is set to true, then groups of which
+.I group_name
+is either a direct or indirect member are listed.
+.PP
+.I list_all_groups
+lists all the groups (primary or secondary) known to the authentication service.
+The list of groups is returned in
+.I group_ids
+and the number of groups found in
+.I group_idsCnt.
+.PP
+For all the calls, the
+.I server_port
+parameter must be the authentication server's public
+service port.
+.SH "SEE ALSO"
+as_group(3),
+as_login(3),
+as_password(3),
+as_token(3),
+as_translate(3)
+.SH HISTORY
+.TP 
+02-Aug-88  Robert Sansom (rds) at Carnegie-Mellon University
+Created.

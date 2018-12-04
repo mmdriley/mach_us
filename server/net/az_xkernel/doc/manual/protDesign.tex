@@ -1,0 +1,50 @@
+% 
+% protDesign.tex
+%
+% $Revision: 1.1 $
+% $Date: 1992/01/03 18:19:04 $
+%
+
+\section{Protocol Design}
+
+This section has some protocol design rules which protocol writers
+should follow in order to develop ``well-behaved'' protocols that
+interact properly with the other protocols in a kernel.
+
+\subsection{Symmetry}
+
+While designing a protocol, one needs to determine whether the
+protocol will be {\sl symmetric}.  In a symmetric protocol, all
+sessions process both incoming and outgoing packets for the
+connection.  Asymmetric protocols, typically request-reply RPC
+protocols, have different kinds of sessions for clients and servers.
+
+If an upper protocol assumes that its lower protocol is symmetric, it
+can push a message on any lower session from which it receives a
+message.  Upper protocol code becomes more complicated (and less
+efficient) if it can not make assumptions of symmetry.  
+
+So in the interests of simplifying protocol code, all asynchronous
+protocols should be symmetric.  Synchronous (RPC) protocols may be
+asymmetric.  Boundary protocols (such as SUNRPC and CHAN) which are
+asymmetric but expect a symmetric protocol below them will be so
+indicated in their manual pages in appendix \ref{protman}.
+
+
+\subsection{Thread Turnaround}
+
+Protocols should refrain from taking threads which are shepherding
+outgoing messages down the protocol stack and turning them around to
+accompany messages traveling up the protocol stack.  Since protocols
+{\em are} allowed to reverse thread direction from incoming to outgoing,
+allowing turnaround from outgoing to incoming could lead to a thread
+caught in a recursive loop.
+
+If an outgoing thread needs to send a message back up, it should start
+a new thread to do this.  The push routine of the ethernet protocol
+({\sanss /usr/xkernel/protocols/eth}) has an example of how this is done.
+
+
+
+
+

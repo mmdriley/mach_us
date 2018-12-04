@@ -1,0 +1,177 @@
+.\" 
+.\" HISTORY
+.\" $Log:	mallck.man,v $
+.\" Revision 2.2  94/06/01  18:19:53  mrt
+.\" 	Renamed from mallck.1
+.\" 	[94/04/25  14:45:32  mrt]
+.\" 
+.\" Revision 2.2  90/10/29  17:34:26  dpj
+.\" 	Created.
+.\" 	[90/10/27  18:03:52  dpj]
+.\" 
+.\" 	First working version.
+.\" 	[90/10/21  21:41:06  dpj]
+.\" 
+.TH MALLCK 1 "25 August 1988"
+.ds li libmalloc.a
+.SH NAME
+mallck \- check memory allocation and deallocation calls
+.SH SYNOPSIS
+.B mallck
+[ program ] [ tracefile ]
+.SH DESCRIPTION
+.IX  mallck  ""  "\fLmallck\fP \(em check memory allocation and deallocation calls
+.I Mallck
+is used in conjunction with the library
+.IR \*(li .
+.PP
+If a program is linked with that library
+then when it is run, it will generate a trace record for all the calls to
+.IR malloc ,
+.IR realloc ", and
+.IR free .
+All trace records are printed on stderr, or buffered inside the
+program if the global variable
+.I malloc_trace_buffer_output
+is set to true. The trace buffer can be printed to stderr by calling the
+function
+.I malloc_trace_dump()
+, and it can be reset by calling the function
+.I malloc_trace_clean()
+. Overall tracing can be disabled by setting the global variable
+.I malloc_trace_enabled
+to false.
+.PP
+.I Mallck
+is used to scan a file containing trace records and look for calls
+that do not pair up\(emeither 
+.IR malloc s
+without
+.IR free s,
+or vice versa, or calls where the amount freed (taken from the
+internal information that
+.I free
+uses) does not correspond to the amount allocated.
+.I Mallck
+also reports the high-water mark of
+memory that it knows (see Bugs section) to have been allocated.
+.PP
+.I Mallck
+also examines the symbol table of the program, to format the tracebacks
+usefully.
+Its first argument
+.I program
+should be either the executable program, not stripped, or the output
+from running
+.I nm
+on the executable program.
+(Only the `T' entries are examined and their sequence does not matter, so
+.IR "nm -gp" "'s
+output would suffice.)
+If no arguments are given,
+.I a.out
+is used for
+.IR program .
+.PP
+The second argument
+.I malloctrace
+is the trace file described above. All trace records are prefixed with
+the string
+.I MALLOC_TRACE
+, so that the trace file may contain other information as well, which
+is simply ignored.
+.SH AUTHOR
+Daniel Julin at Carnegie Mellon University.
+.PP
+Adapted from the package by Mark Brader, SoftQuad Inc., 1987-88,
+itself based on the paper
+.I "A Technique for Finding Storage Allocation Errors in C-language Programs
+by David R. Barach, David H. Taenzer, and Robert E. Wells, in
+.IR "SIGPLAN Notices" ,
+.BR 17 ,
+5 (May 1982).
+.PP
+The
+.I malloc
+family functions to which the tracing was added to create
+.I \*(li
+are the one from the Mach cthreads library.
+.SH DIAGNOSTICS
+Self-explanatory, as they say.
+Since memory being allocated but never freed may be a harmless
+situation, it is reported in lower case, while other messages
+are more emphatic.
+.SH SEE ALSO
+nm(1), malloc(3)
+.SH FILES
+a.out
+.br
+\*(li
+.SH BUGS
+There is no way to verify that the trace
+file did in fact come from the program
+.IR program ;
+nonsensical tracebacks are the only hint.
+Even if the program is the correct one, functions declared static are
+not seen by
+.I nm
+and thus tracebacks from calls in such functions will be misleading.
+.PP
+Due to interactions between
+.I stdio
+and the traced
+.I malloc
+family, programs may be unstable as to whether they report the
+calls to the
+.I malloc
+family that
+.I stdio
+functions may make.
+Thus
+.I stdio
+buffers may be counted in the high-water mark or not, depending only
+on what input the program received.
+The first
+.I stdio
+buffer is never reported.
+.PP
+Calls to
+.I realloc
+are treated internally as successive calls to two functions,
+.I realloc
+and 
+.I realloc-to
+(equivalent to
+.I free
+and
+.IR malloc ),
+and are so referred to in the output report.
+.PP
+The sizes reported in ``never freed'' messages
+exclude the overhead added by the
+.I malloc
+family functions, even though the allocation statistics do report it.
+(This is because the overhead may differ slightly on otherwise identical calls,
+and if this is ignored, their reports can be combined.)
+.PP
+The code in
+.I \*(li
+that produces the calling stack traceback was written
+without the aid of documentation on the Sun's stack format.
+Since it depends on the stack format, it is not portable.
+.PP
+The format of the trace file is somewhat verbose and it can rapidly
+consume large amounts of disk space.
+A pipe cannot be used because
+.I mallck
+reads the trace file twice.
+.SH NOTES
+.I Mallck
+is a shell script consisting principally of 3 invocations of
+.IR awk ,
+3 of
+.IR sort ,
+and one each of
+.IR sed ,
+.IR grep ", and
+.IR nm .

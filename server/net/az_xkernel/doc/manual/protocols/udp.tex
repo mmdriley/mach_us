@@ -1,0 +1,86 @@
+%
+% udp.tex
+%
+% $Revision: 1.6 $
+% $Date: 1993/01/14 00:37:05 $
+%
+
+\subsection*{NAME}
+
+\noindent UDP (User Datagram Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent J. Postel. {\it User Datagram Protocol}. Request for Comments 
+768, USC Information Sciences Institute, Marina del Ray, Calif., Aug. 1980.
+
+\subsection*{SYNOPSIS}
+
+\noindent UDP is a trivial protocol that dispatches messages that arrive 
+at the host to a process running on the host.
+
+\subsection*{REALM}
+
+UDP is in the ASYNC realm.
+
+\subsection*{PARTICIPANTS}
+
+UDP removes a pointer to a long (the UDP port number) from the
+participant stack.  UDP ports must be less than 0x10000.  
+If the local participant is missing, or if the
+local protocol number is ANY\_PROT, UDP will select an unused local
+port. 
+
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt UDP\_ENABLE\_CHECKSUM:}]
+Cause the session to use checksums on its outgoing packets.  
+(session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt UDP\_DISABLE\_CHECKSUM:}]
+Cause the session to not use checksums on its outgoing packets.
+(session only) 
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] none
+\end{description}
+
+
+\item[{\tt UDP\_GETFREEPROTNUM:}]
+Returns an unused UDP port number.  This port number will not be given
+out to subsequent UDP\_GETFREEPROTNUM calls until it is released with
+UDP\_RELEASEPROTNUM.  This allows an opener to separate reservation of
+free ports from the actual open operation, if desired.
+(protocol only) 
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] long
+\end{description}
+
+
+\item[{\tt UDP\_RELEASEPROTNUM:}]
+Releases a UDP portnumber previously acquired with UDP\_GETFREEPROTNUM.
+(protocol only)
+\begin{description}
+\item[{\rm Input:}] long
+\item[{\rm Output:}] none
+\end{description}
+
+
+
+\end{description}
+
+\subsection*{CONFIGURATION}
+
+\noindent {\tt name=udp protocols=ip;}
+
+\subsection*{AUTHORS}
+
+\noindent Larry Peterson and Sean O'Malley

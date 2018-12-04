@@ -1,0 +1,284 @@
+#
+# Makefile.common
+#
+# x-kernel v3.2
+#
+# Copyright (c) 1993,1991,1990  Arizona Board of Regents
+#
+# $Revision: 1.29 $
+# $Date: 1993/02/01 23:55:07 $
+#
+#
+# Build-level makefile rules which are common to all platforms
+#
+
+ifeq ($(RCS_VERSION),)
+#
+# This variable sets the RCS_VERSION to be the name of this source
+# hierarchy directory.  It is only invoked if the RCS_VERSION
+# environment variable is not set
+# 
+RCS_VERSION := $(shell cd $(XRT); pwd | awk -F/ '{ print $$NF }')
+endif
+ifeq ($(RCS_VERSION),)
+	an error here indicates RCS_VERSION was not set
+endif
+RCS_CO_FLAGS = -r$(RCS_VERSION)
+RCS_CI_FLAGS = -N$(RCS_VERSION)
+RCS_DIFF_FLAGS = $(RCS_CO_FLAGS)
+
+MAKE_INCLUDE = $(XRT)/makefiles
+
+PROTDIR = $(XRT)/protocols
+PLATDIR = $(XRT)/$(XPLATFORM)
+PIDIR = $(XRT)/pi
+USERDIR = $(XRT)/$(XPLATFORM)/user
+LIBS = protocols $(XPLATFORM) pi
+LIBPROT = $(PROTDIR)/libProt_$(HOW) 
+LIBPXK =  $(PLATDIR)/libPxk_$(HOW)
+LIBPI = $(PIDIR)/libPi_$(HOW)
+LIBUSER = $(XRT)/$(PLATFORM)/user/libUser_$(HOW)
+
+XINCLUDES = 						\
+	-I. 						\
+	-I$(XRT)/include 				\
+	-I$(XRT)/include/prot 				\
+	-I$(XRT)/etc 					\
+	-I$(XRT)/$(XPLATFORM)/include 			\
+	-I$(XRT)/pi/include
+
+# Order is important in XLIBS -- LIBPI should come after LIBPXK to give
+# the platform-specific code the opportunity to override the default
+# implementations in libPi.
+#
+XLIBS = $(LIBPROT) $(LIBPXK) $(LIBPI)
+
+OBJ =	\
+	${PCDOTOS} \
+	${PRIVOBJ} \
+	$(HOW)/traceLevels.o \
+	$(HOW)/protocols.o   \
+	$(HOW)/protTbl.o 
+
+SRC =	\
+	${PCDOTCS} \
+	${PRIVSRC} \
+	traceLevels.c \
+	protocols.c \
+	protTbl.c
+
+xall:	libs all
+
+obj:
+	@echo $(OBJ)
+
+compose: graph.comp
+	compose $(COMPOSEFLAGS) $(LIBPROT) $(LIBPXK) < graph.comp
+	@if [ -s ./protocols.sed ] ; then \
+		cp -p Makefile Makefile.bak ; \
+		$(SED) -f protocols.sed <Makefile | $(SED) -e '/^@/s/^/	/' >Maketemp ; \
+		cp Maketemp Makefile ; \
+		rm Maketemp protocols.sed ; \
+	else  \
+		true ; \
+	fi
+
+setup:	alldotodirs
+	if [ ! -r ./graph.comp ] ; then \
+		cp $(XRT)/build/Template/graph.comp.$(XPLATFORM) ./graph.comp ; \
+		chmod +w graph.comp ; \
+	fi
+
+alldepend allclean alldotodirs : all% : %
+	cd $(PLATDIR); $(MAKE) $*
+	cd $(PIDIR); $(MAKE) $*
+	cd $(PROTDIR); $(MAKE) $*
+
+depend: localdepend
+dotodirs: localdotodirs
+
+clean:	cleanjunk
+	@echo Removing dotos ...
+	@echo $(OBJ)
+	@rm -f $(OBJ)
+
+cleanjunk:
+	@echo Removing dotss ...
+	@rm -f  *.c2 *.ccom *.cpp *.bak *.ckp *.ss all.* cscope.dep \
+	    cscope.out cscope.tsort routines.sizes routines.list \
+	    allnames.dep ${ASM}
+
+
+include $(MAKE_INCLUDE)/Makefile.local
+
+
+
+#-----------------------------------------------------------------------
+#			  xkernel libraries
+#-----------------------------------------------------------------------
+#
+# forcing rules
+#
+.PHONY: libs libProt libPxk libPi
+libs: libPi libProt libPxk 
+
+libProt:
+	cd $(PROTDIR); $(MAKE) 
+libPxk:
+	cd $(PLATDIR); $(MAKE) 
+libPi:
+	cd $(PIDIR); $(MAKE)
+
+libUser:
+	cd $(USERDIR); $(MAKE)
+
+#
+# non-forcing rules
+#
+$(LIBPROT):
+	make libProt
+$(LIBPXK):
+	make libPxk
+$(LIBPI):
+	make libPi
+
+$(LIBUSER):
+	make libUser
+
+userclean userdepend: user% : %
+	cd $(USERDIR); $(MAKE) $*
+
+
+
+#-----------------------------------------------------------------------
+#			Source and Header list
+#-----------------------------------------------------------------------
+#
+# lists of all source and header files in both the local directory 
+# and the libraries
+#
+# non-forcing rules
+#
+hdrList: 
+	@echo rebuilding header list
+	@make hdrlist
+srcList: 
+	@echo rebuilding source list
+	@make srclist
+#
+# forcing rules
+#
+.PHONY: srclist hdrlist
+srclist:
+	@make SRCLIST OBJECTFILE:=srcList
+
+hdrlist:
+	@make HDRLIST OBJECTFILE:=hdrList
+
+SRCLIST HDRLIST:
+	@make local$@ ;						\
+	for lib in $(LIBS) ; do					\
+	 	( cd $(XRT)/$$lib ; 				\
+	 	  $(MAKE) $@ OBJECTFILE:=$@.$$$$ ;		\
+		) ;						\
+		cat $(XRT)/$$lib/$@.$$$$ |			\
+			fixRelPaths $$lib | 			\
+			fixRelPathsDown 2 >> $(OBJECTFILE) ;	\
+		rm -f $(XRT)/$$lib/$@.$$$$ ;			\
+	done ;							\
+	sort -u $(OBJECTFILE) > $(OBJECTFILE).$$$$	;	\
+	mv $(OBJECTFILE).$$$$ $(OBJECTFILE)		
+ 
+SRC OBJ:
+	@make local$@ ;						\
+	for lib in $(LIBS) ; do					\
+	 	( cd $(XRT)/$$lib ; 				\
+	 	  $(MAKE) $@  ;					\
+		) ;						\
+	done ;							\
+	true
+
+#-----------------------------------------------------------------------
+#			 RCS related targets
+#-----------------------------------------------------------------------
+#
+# ciList -- list of files which require checking in
+#
+ciList:	srcList hdrList
+	@for file in `make ciFilter` ; do \
+	    if [ -w $$file ] ; then \
+ 	        rcsdiff $(RCS_DIFF_FLAGS) $$file > /dev/null 2>&1 || echo $$file ; \
+	    fi ; \
+	done ; true
+
+
+#
+# ci -- check in (unlocked) all source and header files which have changed
+#
+ci:	srcList hdrList
+	@for file in `make ciList` ; do 			\
+ 		echo $$file ; ci -q -u $(RCS_CI_FLAGS) $$file ; 	\
+	done ; true
+
+#
+# ci2 -- like 'ci', but lists file differences before checking in
+#
+ci2:	srcList hdrList
+	@for file in `make ciList` ; do 			\
+		rcsdiff $(RCS_DIFF_FLAGS) $$file ; 		\
+		echo $$file ; 					\
+		ci -q -u $(RCS_CI_FLAGS) $$file ; 		\
+	done ; true
+	
+#
+# ciAuto -- like 'ci', but doesn't prompt for a message, using CI_MSG instead.
+#
+ciAuto:	srcList hdrList
+	@for file in `make ciList` ; do 			\
+ 		echo $$file ; 					\
+		ci -q -u $(RCS_CI_FLAGS) -m"$(CI_MSG)" $$file ; 	\
+	done ; true
+
+ciFilter:	
+	@for file in `cat srcList hdrList | egrep -v \
+		'^/|localinit\.c|protocols\.c|protocols\.h|protTbl\.c|traceLevels\.c|^tst/|/site\.h'` ; do \
+	    XX=`echo $$XX $$file` ; \
+	done ; \
+	echo $$XX 
+
+
+#-----------------------------------------------------------------------
+#				 tags
+#-----------------------------------------------------------------------
+#
+# creates an emacs tag file for all xkernel source and header files
+# (including libraries)
+#
+.PHONY: tags
+tags:	srcList hdrList
+	make TAGS ALLSRC="`cat srcList hdrList | tr '\012' ' '`"
+
+TAGS:	$(ALLSRC)
+	@etags -tw -f TAGS $(ALLSRC)
+
+
+
+#-----------------------------------------------------------------------
+#				 grep
+#-----------------------------------------------------------------------
+#
+# greps for the target G in all xkernel source and header files
+# example usage:  make grep G="x_create"
+#
+G = xkernel
+GREP = egrep
+GFLAGS=
+
+grep:	srcList hdrList
+	-@$(GREP) -n $(GFLAGS) -e "$G" `cat srcList` `cat hdrList`
+
+
+#-----------------------------------------------------------------------
+
+rcsVers:
+	echo $(RCS_VERSION)

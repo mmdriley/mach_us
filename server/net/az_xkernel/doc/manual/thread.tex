@@ -1,0 +1,253 @@
+% 
+% thread.tex
+%
+% $Revision: 1.17 $
+% $Date: 1993/02/05 22:42:11 $
+%
+
+\section{Thread Library}
+\label{thread}
+
+The \xk{} uses a ``thread-per-message'' model of computation, and
+provides primitives for synchronizing threads.  The operations affect
+thread scheduling.  Of these, only {\em semWait}
+can cause the $x$-kernel to run a different thread than the current one.
+
+Note that this section does not define any operations for creating or
+destroying threads. This is because \xk{} threads are created and
+destroyed implicitly: threads are created by the device driver (in the
+case of incoming messages), by the system call interface (in the case
+of outgoing messages), and by the event library (in the case of an
+event firing). Threads are destroyed when they return from the
+outer-most procedure.
+
+\subsection{Type Definitions}
+
+The only thread-related type that protocol programmers need be
+aware of is the type {\em Semaphore}. However, this type is defined
+by the underlying platform and is opaque to the protocol programmer.
+
+\subsection{Synchronization Operations}
+
+\subsubsection{semInit}
+
+Initializes semaphore {\em s} with a count of {\em cnt}.  Semaphores
+in the kernel are normally allocated statically (i.e., {\em Semaphore
+x}) and must be initialized ({\em semInit(\&x, 1)}) before they are
+used.\medskip
+
+{\sem void} {\bold semInit} ({\sem Semaphore}  *{\caps s}, {\sem int} {\caps cnt})\\
+
+\subsubsection{semWait}
+
+Increments the use count for the semaphore.  The current thread will
+either acquire the semaphore {\em s} or give up control until a {\em
+semSignal} is done by another thread and the scheduler runs.
+\medskip
+
+{\sem void} {\bold semWait} ({\sem Semaphore}  *{\caps s})\\
+
+\subsubsection{semSignal}
+
+The current thread decrements the use count for semaphore {\em s}.
+The current thread continues executing.  Note that if multiple threads
+are blocked on the semaphore, there is no policy about which thread
+will be awakened by the {\em semSignal.}
+\medskip
+
+{\sem void} {\bold semSignal} ({\sem Semaphore}  *{\caps s})
+
+
+\subsection{Delay}
+
+Delays the current thread for at least {\em msec} milliseconds.  
+This is not a thread primitive, but a library routine built on top of
+{\em semWait}/{\em semSignal}.
+Note that the argument is in milliseconds, while the time argument to {\em
+evSchedule} is in microseconds.
+\medskip
+
+{\sem void} {\bold Delay} ( {\sem int} {\caps} msec )
+
+
+\subsection{Locking Operations}
+
+The \xk{} provides a readers/writers lock synchronization type, {\em
+ReadWriteLock}.  This type is currently built on top of the \xk{} {\em
+Semaphore} type.  Although originally developed for the machNetIPC
+protocols, the lock can be used for more general synchronization.  The
+{\em ReadWriteLock} implementation favors writers (i.e., if queues of
+readers and writers both exist, writers will always be favored.)
+
+Note that we expect these locking operations to be used in a
+multiprocessor environment, although we have not yet used them for
+this purpose. Protocol developers working in an MP environment should
+attempt to adhere to this interface. However, we consider locking on
+an MP to be an unresolved issue, and so we are eager to hear about
+experiences using these operations in such an environment.
+
+\subsubsection{rwLockInit}
+
+Initializes the lock for subsequent operations.  
+
+\medskip
+{\sem void} {\bold rwLockInit} ({\sem ReadWriteLock} *)
+
+
+\subsubsection{rwLockDestroy}
+
+All threads waiting on this lock will be released and their locking
+operations will return {\em XK\_FAILURE}.  When both the reader and writer
+queue are empty, the user-supplied {RwlDestroyFunc} will be called
+with a pointer to the lock and the {\em void}* argument.
+
+\medskip
+
+{\sem void} {\bold rwLockDestroy} 
+( {\sem ReadWriteLock} *, {\sem RwlDestroyFunc}, {\sem void} *)
+
+\medskip
+{\sem typedef void} ({\bold *RwlDestroyFunc} )
+( {\sem ReadWriteLock} *, {\sem void} * );
+
+
+\subsubsection{readerLock}
+
+Acquire a reader lock.  Many readers may hold the lock at one time,
+but no writers will acquire the lock while at least one reader holds
+the lock.  Will return {\em XK\_FAILURE} if the lock was destroyed before
+the lock was acquired.
+
+\medskip
+{\sem xkern\_return\_t} {\bold readerLock} ( {\sem ReadWriteLock} * )
+
+
+\subsubsection{readerUnlock}
+
+Releases a reader lock.  It is an error to call {\em readerUnlock}
+without holding a reader lock.
+
+\medskip
+{\sem void} {\bold readerUnlock} ( {\sem ReadWriteLock} * )
+
+
+\subsubsection{writerLock}
+
+Acquire a writer lock.  While a writer lock is held, no other reader
+or writer may acquire the lock.  
+Will return {\em XK\_FAILURE} if the lock was destroyed before
+the lock was acquired.
+
+\medskip
+{\sem xkern\_return\_t} {\bold writerLock} ( {\sem ReadWriteLock} * )
+
+
+\subsubsection{writerUnlock}
+
+Releases a writer lock.  It is an error to call {\em writerUnlock}
+without holding a writer lock.
+
+\medskip
+{\sem void} {\bold writerUnlock} ( {\sem ReadWriteLock} * )
+
+
+
+\subsection{Usage Rules}
+
+\subsubsection{Scheduling and Preemption}
+
+The currently executing thread gives up control by either terminating
+or executing a {\em semWait} operation.  In other words, the \xk{}
+does not preempt threads; threads voluntarily give up control of the
+processor.  However, because each protocol is assumed to be an
+independent component, protocols are written to assume that control
+may be given up when a higher or lower level protocol is invoked.
+Therefore, all protocol-protocol operations are considered to have the
+potential to cause a thread switch, and all data structures must be
+``secured'' before calling such operations.
+
+\subsubsection{Blocking}
+
+Although the \xk{} advocates a ``thread-per-message'' model, and it
+provides primitives for blocking threads, as a general rule, threads
+should not block except when waiting for a reply in an RPC-like
+protocol. In most other cases, should a thread (message) not be able
+to proceed, it should put the message in a protocol-dependent queue
+and return. Later, another thread can pick the message up out of the
+queue and continue processing it.
+
+For example, when an incoming thread/message arrives in IP and
+discovers that it is just one fragment of a larger datagram, rather
+than blocking the thread and wait for the other fragments to arrive,
+the thread should insert the fragment into a reassembly buffer and
+return. The thread that delivers the last fragment will then
+reassemble the fragments into a single datagram and continue.
+
+\subsubsection{External Threads}
+\label{ext-threads}
+
+Where the $x$-kernel is embedded in another operating system, there
+may be asynchronous threads representing device drivers or user
+requests that want to enter the \xk{}.  These threads must, in
+general, acquire the \xk{} master lock (i.e., enter the \xk{} monitor)
+with {\em xk\_master\_lock} before performing any \xk{} operations,
+including other thread synchronization operations.  (This isn't
+necessary for normal \xk{} threads because threads started by {\em
+evSchedule} acquire the master lock automatically when they start
+running.)  Unless a call is explicitly documented otherwise, threads
+may not make \xk{} system or library calls without holding the master
+lock.
+
+A thread acquires and releases the master \xk{} lock with the following
+operations.
+\medskip
+
+{\sem void} {\bold xk\_master\_lock} ( {\sem void} )
+
+\bigskip
+\noindent
+{\bf xk\_master\_unlock}
+\smallskip
+
+\medskip
+
+{\sem void} {\bold xk\_master\_unlock} ( {\sem void} )
+
+\bigskip
+
+Note that normal protocols should not use these operations. The only
+place that they are meaningful is in anchor protocols, such as device
+drivers and application-level interface, that have to transition
+between the \xk{} and the host OS. Also note that this interface is
+not part of the official \xk{} interface; it is internal to the
+current implementation of the \xk{}.
+
+\subsubsection{Thread Turnaround}
+
+Protocols should refrain from taking threads which are shepherding
+outgoing messages down the protocol stack and turning them around to
+accompany messages traveling up the protocol stack.  Since protocols
+{\em are} allowed to reverse thread direction from incoming to
+outgoing, allowing turnaround from outgoing to incoming could lead to
+a thread caught in a recursive loop.  If an outgoing thread needs to
+send a message back up, it should start a new thread to do this.  The
+push routine of the ethernet protocol ({\sanss
+/usr/xkernel/protocols/eth}) has an example of how this is done.
+
+\subsubsection{Multiprocessor Support}
+
+To date, we do not have significant experience running the \xk{} on a
+multiprocessor. We have introduced locking operations that are useful
+in certain situations on a uniprocessor, and while these operations
+might extend to an MP environment, we cannot be certain that they
+will. Moreover, we certainly expect that the implementation of both
+the locking and the semaphore operations will need to change in an MP
+environment, even if the interface remains the same.
+
+It should be noted that the $x$-kernel, as currently implemented, is
+MP-safe, although probably not MP-performant. This is because all
+threads executing in the \xk{} must first aquire a master lock; i.e.,
+the \xk{} is currently implemented as a single monitor. Our experience
+suggests, however, that this implementation is reasonably efficient
+a small number of processors.
+

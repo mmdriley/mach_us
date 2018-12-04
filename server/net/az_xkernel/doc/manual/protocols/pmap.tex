@@ -1,0 +1,45 @@
+% $Revision: 1.4 $
+% $Date: 1993/02/02 21:31:36 $
+%
+
+\subsection*{NAME}
+
+\noindent Sun Portmapper
+
+\subsection*{SPECIFICATION}
+
+\noindent  {\it ?}
+Sun Microsystems, Inc., Mountain View, Calif., May 1988.
+
+\subsection*{SYNOPSIS}
+
+\noindent The portmapper supports four of the five of the
+procedures defined by Sun.  Indirect Call, Function 5, is
+not implemented.  This implementation is compatible with
+Sun's native implementation.  The $x$-kernel portmapper is
+treated as a separate protocol that sits on top of the
+$x$-kernel implementation of Sun RPC.  This implementation
+only supports UDP as a lower level protocol.  Client and
+server protocols running above the sunrpc protocol make
+remote procedures calls to the portmapper, using its
+well-known UDP port number 111.
+
+Our implementation of the Sun Portmapper protocol uses some
+of the original SUN\_RPC include files.  You must have access
+to Sun include files to compile this protocol.
+
+\subsection*{REALM}
+
+The portmapper is in the ASYNC realm.
+
+\subsection*{CONFIGURATION}
+
+The portmapper is a realm boundary protocol which assumes its single
+lower protocol is in the RPC realm.
+
+
+\noindent {\tt name=pmap  protocols=sunrpc;}
+
+\subsection*{AUTHOR}
+
+\noindent Sean O`Malley and Richard Schroeppel

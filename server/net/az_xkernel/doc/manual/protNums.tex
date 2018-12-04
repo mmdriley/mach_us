@@ -1,0 +1,118 @@
+% 
+% protNums.tex
+%
+% $Revision: 1.4 $
+% $Date: 1992/02/12 23:53:00 $
+%
+
+\section{Protocol Tables}
+\label{protnum}
+
+The \xk{} determines relative protocol numbers by reading protocol
+table files at boot time.  Here is an example of a file defining a
+protocol table (see section \ref{relprotnum} for an operation that
+queries this table):
+
+\begin{verbatim}
+#
+# prottbl
+#
+# This file describes absolute protocol id's 
+# and gives relative protocol numbers for those
+# protocols which use them
+#
+# x-kernel v3.2
+
+eth         1    
+{
+        ip         x0800
+        arp        x0806
+        rarp       x8035
+        #
+        # ethernet types x3*** are not reserved
+        #
+        blast      x3001
+}
+ip          2
+{
+        icmp       1
+        tcp        6
+        udp        17
+        #
+        # IP protocol numbers n, 91 < n < 255, are unassigned
+        #
+        blast      101
+}
+arp         3
+rarp        4
+udp         5
+tcp         6
+icmp        7
+blast       8
+sunrpc      9
+
+\end{verbatim}
+
+\noindent Each protocol has an entry of the form:
+
+\medskip
+
+\begin{quote}
+{\tt name   idNumber    [ \{  hlp1  relNum1  hlp2 relNum2  ... \} ] }
+\end{quote}
+
+\medskip
+
+\noindent where the idNumber uniquely identifies each protocol.
+
+There are two ways for a protocol to define its relative protocol
+number space.  Using the first technique (e.g., ETH and IP), the
+protocol explicitly indicates which protocols may be configured above
+it and what their relative numbers are.  Use of this numbering scheme
+is indicated by the presence of the optional hlp list after the
+protocol's idNumber.
+
+With the second technique, the protocol does not explicitly name its
+allowed upper protocols, but will implicitly use each protocol's
+unique idNumber as its relative protocol number.  BLAST, for example,
+employs this technique and would use SUNRPC's idNumber 9 as its
+relative protocol number above BLAST.  Protocols using this second
+scheme use a 4-byte field in their headers for the relative protocol
+number.
+
+The latter technique clearly allows more flexibility in how protocols
+may be composed.  As flexible composability is one of the goals of the
+\xk{}, all new protocols written in the \xk{} should use this absolute
+numbering scheme.
+
+All protocols must have an entry in the protocol table.  If you are
+writing a new protocol, you will probably want to define an auxiliary
+protocol table which assigns a temporary idNumber to your new protocol
+and then configure your kernel to read in both the system table and
+your auxiliary table (see section \ref{compose} for configuration
+examples.)  If you need to configure your new protocol above an
+existing protocol which uses explicit numbering, you can augment the
+table for the existing protocol as in this example:
+
+\begin{verbatim}
+#
+# Auxiliary protocol table 
+#
+
+yap	1000
+
+ip	2 	{
+        yap	200
+}
+\end{verbatim}
+
+Here we define our new protocol YAP and indicate that it has protocol
+number 200 relative to IP.  Note that when augmenting the tables of
+other protocols, the idNumber of the other protocol must match its
+number in the system file.
+
+The \xk{} runs consistency checks on the protocol tables and will give
+error messages and abort in the presence of inconsistencies.
+
+
+

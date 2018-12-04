@@ -1,0 +1,36 @@
+%
+% srx.tex
+%
+% $Revision: 1.2 $
+% $Date: 1993/02/04 08:22:49 $
+%
+
+\subsection*{NAME}
+
+\noindent SRX (transfer Mach send right).
+
+
+\subsection*{SYNOPSIS}
+
+SRX is a send-right transfer protocol, used to transfer a Mach send
+right when there are more than two parties involved (i.e., when the
+original holder of the send right, the new holder of the send right,
+and the holder of the receive right are on different hosts.)
+
+
+\noindent
+\subsection*{EXTERNAL INTERFACE}
+
+SRX uses subroutine calls to accept transfer requests, and to notify 
+{\em MachNetIPC} of the arrival of new rights.
+
+\subsection*{CONFIGURATION}
+
+SRX depends on a synchronous lower protocol and BIDCTL to detect
+reboots.
+
+\noindent {\tt name=srx protocols=chan, bidctl;}
+
+\subsection*{AUTHORS}
+
+\noindent Ed Menze.

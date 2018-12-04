@@ -1,0 +1,74 @@
+%
+% $RCSfile: xklance.tex,v $
+%
+% $Revision: 1.2 $
+% $Date: 1993/01/14 19:19:15 $
+%
+
+\subsection*{NAME}
+
+\noindent XKLANCE (Mach3 in-kernel lance ethernet driver)
+
+\subsection*{SPECIFICATION}
+
+\noindent
+
+XKLANCE is the Mach in-kernel ethernet driver, presenting both a
+mach kernel interface and an \xk{} interface.
+
+
+\subsection*{SYNOPSIS}
+
+\noindent 
+
+Each instantiation of XKLANCE is associated with a single ethernet
+device.  XKLANCE can be configured to either copy incoming packets
+to both the \xk{} and the standard Mach networking interface (thus
+both the in-kernel \xk{} and the Unix server will see packets) or to
+bypass the Mach interface and not allow the Unix server to see any
+packets. 
+
+If compiled with ALLOW\_NON\_XK\_USERS defined, XKLANCE will check the
+value of the global variable xklanceAllUsers to determine whether to
+allow non-\xk{} users to send and receive network packets through the
+standard Mach interfaces.
+
+
+\subsection*{REALM}
+
+XKLANCE is in the ASYNC realm, supporting the ethernet driver interface
+described in the ETH appendix.
+
+
+\subsection*{PARTICIPANTS}
+
+XKLANCE supports the ethernet driver interface rather than a standard
+xkernel UPI interface and thus makes no use of participant stacks.
+
+
+\subsection*{EXTERNAL INTERFACE}
+
+XKLANCE supports the ethernet driver interface
+described in the ETH appendix.
+
+
+\subsection*{CONFIGURATION}
+
+XKLANCE requires no lower protocol.  The last digit of the instance
+name must correspond to the unit device number for the particular
+instantiation.  E.g., 
+
+\medskip
+
+{\tt name=ethdrv/SE0;}
+
+\medskip
+
+\noindent for device 0.
+
+
+\subsection*{AUTHORS}
+
+\noindent Richard Schroeppel, Hilarie Orman (modifications to Mach
+kernel source distribution)
+

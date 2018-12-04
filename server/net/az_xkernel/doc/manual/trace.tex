@@ -1,0 +1,134 @@
+% 
+% trace.tex
+%
+% $Revision: 1.8 $
+% $Date: 1993/02/03 22:46:44 $
+%
+
+\section{Trace Library}\label{kdebug}
+
+The trace library provides a facility for tracing system events.  Most
+importantly, the library allows conditional printing in {\em printf}
+format of statements taking from zero to six variables.
+
+\subsection{Type Definitions}
+
+The current value of the tracing variable {\em tracevar} is used to
+control whether or not a particular trace operation takes place.  The
+trace variable values can be set at system build time; see section
+\ref{config}. The following defined constants are suggestive of how to 
+use trace levels:
+
+\begin{tabbing}
+xxxx \= xxxxxxxxxxxxxxxxxxxxxxxxxxx \= \kill
+\>TR\_NEVER \>          for debugging statements that are unused (noop)\\
+\>TR\_FULL\_TRACE\>     every subroutine entry and exit\\
+\>TR\_DETAILED\>        all functions plus dumps of data structures at strategic points\\
+\>TR\_FUNCTIONAL\_TRACE\>all the functions of the module and their parameters\\
+\>TR\_MORE\_EVENTS\>    even more detail on events\\
+\>TR\_EVENTS\>          more detail than major events\\
+\>TR\_SOFT\_ERROR\>     mild warnings\\
+\>TR\_MAJOR\_EVENTS\>   open, close, etc.\\
+\>TR\_GROSS\_EVENTS\>   the coarsest tracing level\\
+\>TR\_ERRORS\>          serious non-fatal errors; some residual event traces\\
+\>TR\_ALWAYS\>          normally only used during protocol development
+\end{tabbing}
+
+\subsection{Operations}
+
+\subsubsection{xTrace}
+
+The {\em xTrace{\tt n}} macro takes {\tt n} arguments in addition to
+the variables {\em tracevar}, {\em tracelevel}, and {\em
+formatstring}.  {\em tracevar} is a name associated with the variable
+being traced.  {\em tracelevel} is compared to the value of the trace
+variable to determine at runtime if the trace statement should be
+printed. {\em formatstring} is a {\em printf}-style formatting statement.
+
+Each protocol has a trace variable based on the protocol name with
+``p'' appended; e.g. udp has {\em traceudpp}.  In addition to protocol
+tracing, there are $x$-kernel trace variables for subsystems: init,
+processswitch, protocol, processcreation, cksum, event, system, msg,
+ptbl, and sessn.  Most of these are defined in file {\sanss
+xkernel/include/xk\_debug.h}.
+
+Note that the trace facility automatically supplies a newline at the
+end of the trace message; the supplied format string need not.  Also,
+note that there should be no whitespace preceding a trace variable
+name in any tracing statement.  Whitespace will cause errors in the
+macro expansion and result in compilation errors.
+\medskip
+
+{\bold xTrace}{\em n}({\sem int} {\caps tracevar}, {\sem int} {\caps
+tracelevel}, {\sem char} *{\caps formatstring}, {\caps args, ...} )
+\medskip
+
+\noindent For example:
+
+\begin{verbatim}
+	int traceudpp;
+
+   xTrace2(udpp, TR_ERRORS, "input port %d output port %d", inp, outp);
+\end{verbatim}
+
+\subsubsection{xIfTrace}
+
+If the {\em tracelevel} is less than or equal to the value of the {\em
+tracevar}, then execute the statement directly following.
+\medskip
+
+{\bold xIfTrace} ({\sem int} {\caps tracevar}, {\sem int} {\caps tracelevel})
+
+\medskip
+\noindent For example:
+
+\begin{verbatim}
+        int traceudpp;
+
+        xIfTrace(udpp, TR_ERRORS) 
+                dump_header();
+\end{verbatim}
+
+\subsubsection{xAssert}
+
+If the expression {\em exp} evaluates to FALSE, the $x$-kernel will
+print a message and halt.
+\medskip
+
+{\bold xAssert} ({\sem bool} {\caps exp})
+
+\subsubsection{xError}
+
+Non-fatal error conditions can print warnings even in nondebugging
+mode by using the {\em xError} call.
+\medskip
+
+{\bold xError} ({\sem char *} {\caps ErrorString})
+
+\subsection{Usage Rules}
+
+Trace and assert statements are macros which are only active in DEBUG
+mode (see section \ref{config}).  In OPTIMIZE mode, debugging and
+trace statements go away completely.  One should keep this in mind to
+avoid bugs that show up only in OPTIMIZE mode.  For example, the
+statment:
+
+\begin{verbatim}
+        xAssert( mapResolve(map, key, &p) == XK_SUCCESS );
+\end{verbatim}
+
+\noindent
+will have no effect in OPTIMIZE mode.  One should be careful to
+separate the operation and the check of the return code:
+
+\begin{verbatim}
+        res = mapResolve(map, key, &p);
+        xAssert( res == XK_SUCCESS );
+\end{verbatim}
+
+
+If you are writing a new protocol, you should insert trace
+statements. Even though there will never be bugs left after you
+release your protocol, it may help others in debugging their protocol
+which sits on top of, or below, yours. Don't delete these very helpful
+debugging libraries when you are done.

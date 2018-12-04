@@ -1,0 +1,79 @@
+\section{Introduction}
+
+%This draft document describes the $x$-kernel 3.2 interface, noting
+%important differences from 3.1.  It is an evolving document that is
+%intended to track the 3.2 interface closely during development.  The
+%last modification was made on \today.
+
+The $x$-kernel is an object-oriented multi-threaded architecture for
+protocol implementation.  Each protocol is represented as an object
+instance; sessions are specialized instances of protocol objects; each
+thread is a calling sequence of object invocations.  Generally
+speaking, each message in an $x$-kernel is processed by a thread of
+protocol/session layers.  The $x$-kernel provides the interface
+functions that allow one object to invoke another and subsystems for
+manipulating messages, associative memory tables, events, addresses,
+and debugging.
+
+Version 3.2 of the \xk{} has changed significantly from version 3.1.
+Unlike 3.1, which was a true {\it kernel} in the sense that it ran
+stand-alone on Sun3 workstations, 3.2 is really a {\it protocol
+implementation environment} that can be embedded in any platform,
+including both hardware and software platforms. By defining all the
+interfaces between the protocol and the host environment, the
+\xk{} completely isolates the protocol from the underlying operating
+system. As a result, protocol source code can be moved from one
+platform to another without modification.
+
+This manual covers the $x$-kernel functionality, the protocol library,
+and the tools for building and running $x$-kernels on various
+platforms. Sections 2--9 define the uniform protocol interface and the
+various libraries that make up the \xk{}. Sections 10 and 11 give
+additional guidelines about using these routines. Finally, Sections
+12--17 describe procedures for maintaining, configuring, running, and
+installing the \xk.
+
+\subsection{Acknowledgements}
+
+The $x$-kernel is the concept of Norman C. Hutchinson at the
+University of British Columbia and Larry L.  Peterson of the
+University of Arizona.  Sean W. O'Malley of the University of Arizona
+has made major contributions.  The message library has received
+attention from Peter Druschel.  Michael Pagels, Charles Turner, Mats
+Bjorkman, and Richard Schroeppel have contributed to thread control
+and device interfaces.  David Mosberger wrote the socket interface for
+Mach.  Hilarie Orman has been responsible for several issues related
+to Mach interfaces, and Ed Menze has remolded and improved almost
+every aspect of the system.  Many people have contributed protocols
+to the \xk{} as noted in appendix \ref{protman}.
+
+\subsection{Our Address}
+
+Please let us know of any problems you encounter so that we can
+continue to improve the distribution. Our mail address is:
+
+\begin{quote}
+The $x$-Kernel Project\\
+Department of Computer Science\\
+University of Arizona\\
+Tucson, AZ 85721
+\end{quote}
+
+\noindent We can be reached by electronic mail at:
+
+\begin{quote}
+xkernel-bugs@cs.arizona.edu\\
+uunet!arizona!xkernel-bugs
+\end{quote}
+
+\noindent Because of limited resources we can't promise to fix every 
+problem, but we appreciate all comments.
+
+Also, we typically post messages about the \xk{} (including notices of
+future releases) to xkernel-interest@cs.arizona.edu. Send mail to
+xkernel-interest-request@cs.arizona.edu to be added to to this mailing
+list.
+
+\subsection{Copyright Notice}
+
+\input copyright

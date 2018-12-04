@@ -1,0 +1,272 @@
+/*
+ * $RCSfile: xsi.defs,v $
+ *
+ * Copyright (c) 1993,1991,1990  Arizona Board of Regents
+ *
+ * $Revision: 1.6 $
+ * $Date: 1993/02/02 00:08:39 $
+ * $Author: menze $
+ *
+ * $Log: xsi.defs,v $
+ * Revision 1.6  1993/02/02  00:08:39  menze
+ * copyright change
+ *
+ * Revision 1.5  1993/01/21  21:09:00  menze
+ * Changed name of parameter from errno to errnum to avoid name conflicts
+ *
+ * Revision 1.4  1992/08/15  01:16:26  davidm
+ * OOB message transmission is now implemented *and* tested.
+ * Support for SIGURG was added.
+ *
+ * Revision 1.3  1992/07/22  00:14:07  davidm
+ * Various bug fixes and improvements.
+ *
+ * Revision 1.2  1992/07/03  08:50:25  davidm
+ * *** empty log message ***
+ *
+ * Revision 1.1  1992/06/30  22:01:23  davidm
+ * Initial revision
+ *
+ */
+subsystem xsi 102171;	/* x-kernel socket library */
+
+userprefix xsi_;
+serverprefix do_;
+
+#include <mach/std_types.defs>
+
+rcsid "$Header: /tmp_mnt/R/uni/uni/usr2/xkernel.v3.2/tmpdist/mach3/socket/RCS/xsi.defs,v 1.6 1993/02/02 00:08:39 menze Exp $";
+
+type xsi_clientid_t	= int;
+type xsi_sockaddr_t	= array [*:16] of char;
+type xsi_fdset_t	= array [8] of int;
+type xsi_timeval_t	= array [2] of int;
+type xsi_iovec_t	= array [2] of int;
+type xsi_msghdr_t	= array [6] of int;
+type xsi_varbuf_t	= array [] of char;
+type xsi_select_mask_t	= int;
+
+import "xsi_types.h";
+
+routine hello(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		signal_port : mach_port_make_send_t;
+	    out is_xsi_fd   : xsi_fdset_t;
+	    out errnum	    : int);
+
+routine clone(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		parent_id   : int;
+		port	    : mach_port_make_send_t;
+	    out errnum	    : int);
+
+routine await_clone_done(
+		server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+	    out errnum	    : int);
+
+routine accept( server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+	    out addr	    : xsi_sockaddr_t;
+		ns	    : int;
+	    out errnum	    : int);
+
+routine bind(   server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		addr	    : xsi_sockaddr_t;
+	    out errnum	    : int);
+
+routine close(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+	    out errnum	    : int);
+
+routine connect(server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		addr	    : xsi_sockaddr_t;
+	    out errnum	    : int);
+
+routine dup2(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		from	    : int;
+		to	    : int;
+	    out errnum	    : int);
+
+routine listen(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		backlog	    : int;
+	    out errnum	    : int);
+
+routine socket(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		domain	    : int;
+		conn_type   : int;
+		protocol    : int;
+		s	    : int;
+	    out errnum	    : int);
+
+#if 0
+routine socketpair(
+		server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		domain	    : int;
+		conn_type   : int;
+		protocol    : int;
+		sv0	    : int;
+		sv1	    : int;
+	    out errnum	    : int);
+#endif
+
+routine getpeername(
+		server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+	    out addr	    : xsi_sockaddr_t;
+	    out errnum	    : int);
+
+routine getsockname(
+		server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+	    out addr	    : xsi_sockaddr_t;
+	    out errnum	    : int);
+
+routine getsockopt(
+		server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		level	    : int;
+		optname	    : int;
+	    out optval	    : xsi_varbuf_t, dealloc;
+	    out errnum	    : int);
+
+routine setsockopt(
+		server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		level	    : int;
+		optname	    : int;
+		optval	    : xsi_varbuf_t;
+	    out errnum	    : int);
+
+routine select(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		seqno	    : int;
+	  inout	nfds	    : int;
+		specified   : xsi_select_mask_t;
+	  inout readfds	    : xsi_fdset_t;
+	  inout writefds    : xsi_fdset_t;
+	  inout exceptfds   : xsi_fdset_t;
+		timeout	    : xsi_timeval_t;
+	    out errnum	    : int);
+
+routine select_cancel(
+		server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		seqno	    : int;
+	    out errnum	    : int);
+
+routine ioctl(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		request	    : int;
+		inp	    : xsi_varbuf_t;
+	    out outp	    : xsi_varbuf_t, dealloc;
+	    out errnum	    : int);
+
+routine fcntl(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		cmd	    : int;
+	  inout arg	    : int;
+	    out errnum	    : int);
+
+routine read(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+	    out buf	    : xsi_varbuf_t, dealloc;
+	     in nbytes	    : int;
+	    out errnum	    : int);
+
+#if 0
+routine readv(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+	    out iov	    : xsi_iovec_t;
+	  inout iovcnt	    : int;
+	    out errnum	    : int);
+#endif
+
+routine write(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		buf	    : xsi_varbuf_t;
+	    out nwritten    : int;
+	    out errnum	    : int);
+
+#if 0
+routine writev(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		iov	    : xsi_iovec_t;
+	  inout iovcnt	    : int;
+	    out errnum	    : int);
+#endif
+
+routine recv(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+	    out	buf	    : xsi_varbuf_t, dealloc;
+	     in maxlen	    : int;
+		flags	    : int;
+	    out errnum	    : int);
+
+routine recvfrom(
+		server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+	    out buf	    : xsi_varbuf_t, dealloc;
+		maxlen	    : int;
+		flags	    : int;
+	    out from_addr   : xsi_sockaddr_t;
+	    out errnum	    : int);
+
+#if 0
+routine recvmsg(server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+	    out	msg	    : xsi_msghdr_t;
+		flags	    : int;
+	    out errnum	    : int);
+#endif
+
+routine send(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		msg	    : xsi_varbuf_t;
+	    out nsent	    : int;
+		flags	    : int;
+	    out errnum	    : int);
+
+routine sendto(	server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		msg	    : xsi_varbuf_t;
+	    out nsent       : int;
+		flags	    : int;
+		toaddr	    : xsi_sockaddr_t;
+	    out errnum	    : int);
+#if 0
+
+routine sendmsg(server_port : mach_port_t;
+		client_id   : xsi_clientid_t;
+		s	    : int;
+		msg	    : xsi_msghdr_t;
+		flags	    : int;
+	    out errnum	    : int);
+#endif
+
+			/*** end of xsi.defs ***/

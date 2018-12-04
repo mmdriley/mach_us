@@ -1,0 +1,51 @@
+# Mach Operating System
+# Copyright (c) 1993 Carnegie-Mellon University
+# All rights reserved.  The CMU software License Agreement specifies
+# the terms and conditions for use and redistribution.
+#
+# File:        README
+#
+# HISTORY:
+# $Log:	README,v $
+# Revision 2.2  94/01/11  18:08:49  jms
+# 	Initial Version.
+# 
+
+This "net_server" source area contains two directories:
+"az_xkernel" and "cmu_build".
+
+The "az_xkernel" area is a "pristine" copy of the "xkernel" from the
+University of Arizona used by the net_server.   The stuff in that area should
+never be edited!  When new "xkernel" releases are to be used, then that
+directory should be totally replaced.  These files are not "checked-in" under
+resource control.  The xkernel tar file was unpacked there.  None of the
+"Makefile"s in this area are actually used.
+
+The "cmu_build" area contains the CMU stuff this includes all "changed"
+copies of xkernel software as well as our own software.  All "Makefile"s
+used to build the net_server and xkernel reside in this area.  It's dirs
+parallel an xkernel release in order to support said said "changed" files.
+
+It is shaped as follows:
+	"etc","util",... parallel the same places in "az_kernel".
+		Make "VPATH"s into "az_xkernel" areas.  Changed copies
+		of files from az_xkernel areas belong in these areas.
+		New "parallel" directories  may be made if there is
+		a need to change something from an az_xkernel area
+		that has seen no changes so far (except "lib" stuff).
+
+	lib/{mach3,pi,protocols} parallel the same places in "az_kernel" sans
+		the "lib".  Make "VPATH"s into "az_xkernel" areas.
+		These areas are built as separate libraries, and
+		as more xkernel protocols are used, the associated
+		Makefiles and directory structures will need to be
+		expanded.  Again changed copies of az_xkernel files
+		belong in these "parallel" areas, and new (sub)dirs
+		may be created to accommodate said changed files.
+
+	"user" is where non-az xkernel "protocols" go, hence most of the
+	actual CMU source for the net_server resides here.
+
+	"STD" is where the "standard" release of the software is actually
+	compiled from.  It "VPATH"s to	the "user" area, and others.
+

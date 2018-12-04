@@ -1,0 +1,364 @@
+% 
+% message.tex
+%
+% $Revision: 1.15 $
+% $Date: 1993/02/05 19:11:21 $
+%
+
+\section{Message Library}
+
+The message library provides a set of efficient, high-level operations
+for manipulating messages.  The underlying data structure that
+implements messages is optimized for fragmentation/reassembly, and for
+adding/stripping headers. 
+Protocol
+programmers should manipulate messages only with the operations
+documented here.
+
+Future releases of the message library will accomodate
+the use of buffers that
+are owned and managed by different buffer pools, including device
+memory, user buffers, simple kernel buffers, and structured kernel
+buffers such as BSD {\em mbufs} and System V {\em mblocks}.  
+
+\subsection{Type Definitions}
+
+Loosely speaking, Version 3.2 messages include two main components: a
+{\it stack} that holds the message header, and pointer ({\it tree}) to
+a tree structure of buffers that hold the data. 
+
+
+\begin{tabbing}
+xxxx \= xxxxxxxx \= xxxxxxxxxxx \= xxxxxxxxxxxx \= \kill
+\>{\sem typedef struct} \{\\
+\>\>  {\sem char}       \>*headPtr;\\
+\>\>  {\sem char}       \>*tailPtr;\\
+\>\>  {\sem char}       \>*stackHeadPtr;\\
+\>\>  {\sem char}       \>*stackTailPtr;\\
+\>\>  {\sem struct} \{\\
+\>\>\>    {\sem unsigned short} \> numNodes;\\
+\>\>\>    {\sem unsigned int}   \> myStack;\\
+\>\>  \} state;\\
+\>\>  {\sem MNodeLeaf}* \>stack;\\
+\>\>  {\sem MNode}*     \>tree;\\
+\>\>  {\sem void}*	\>attr;\\
+\>\>  {\sem MNodeLeaf}* \>lastStack;\\
+\>\>  {\sem char}       \>*lastStackTailPtr;\\
+\>\>  {\sem struct} \{\\
+\>\>\>    {\sem unsigned int}   \> myLastStack;\\
+\>\>  \} tailstate;\\
+\>\} {\bold Msg} ;
+\end{tabbing}
+
+\subsection{Constructor/Destructor Operations}
+
+These operations are used to create and destroy messages. Many of
+them are, for example, used by device drivers and system call code
+that has to incorporate a data buffer into an \xk{} message.
+
+\subsubsection{msgConstructEmpty}
+
+A message structure is initialized with a data length set to zero.
+The user must provide a pointer to valid memory.
+\medskip
+
+{\sem void} {\bold msgConstructEmpty} ({\sem Msg*} {\caps this});
+
+\subsubsection{msgConstructBuffer}
+
+Copies data from a user buffer into an uninitialized message
+structure.  The message data area is allocated and a copy is
+performed.  This constructor is used when the data buffer already
+exists. Use {\em msgConstructAllocate} when you have the opportunity
+to fill the buffer after it has been created.
+\medskip
+
+{\sem void} {\bold msgConstructBuffer} ({\sem Msg*} {\caps this},
+{\sem char} *{\caps buf}, {\sem long} {\caps len});
+
+\subsubsection{msgConstructAllocate}
+
+A data area of size {\em len} is allocated and associated with the
+uninitialized message structure {\em this}.  A pointer to the data
+area is returned in {\em buf}.  A device driver might use this
+constructor, handing {\em buf} to the device as a place to put down an
+incoming packet.
+\medskip
+
+{\sem void} {\bold msgConstructAllocate} ({\sem Msg*} {\caps this}, {\sem long} {\caps len}, {\sem char} **{\caps buf});
+\medskip
+
+\subsubsection{msgConstructCopy}
+
+The uninitialized message {\em this} will refer to the same data as
+the message {\em another}.  No data is copied.  See also {\em
+msgAssign}.
+
+\medskip
+
+{\sem void} {\bold msgConstructCopy} ({\sem Msg*} {\caps this}, {\sem Msg} *{\caps another});
+
+\subsubsection{msgAssign}
+
+The assignment of one message {\em m} to message {\em this} means that
+message {\em this} will refer to the same data that as message {\em m}
+currently does.  No data copying is involved.  This is equivalent to
+doing a {\em msgDestroy} to {\em this}, followed by a {\em
+msgConstructCopy}.  Therefore, this function should be used only when
+both messages are valid.  Copying to an uninitialized structure should
+be done with msgConstructCopy.
+\medskip
+
+{\sem void} {\bold msgAssign} ({\sem Msg*} {\caps this}, {\sem Msg*} {\caps m});
+\medskip
+
+\subsubsection{msgConstructInplace}
+
+The uninitialized message {\em this} is constructed with a direct
+reference to the buffer specified.  A function appropriate for freeing
+the buffer when the message is destroyed must be provided.  The {\em
+msgConstructInplace} function is recommended only for limited use
+(e.g. within device drivers); it might not be compatible with later
+implementations of the message library that will provide highly
+efficient buffer management.
+
+\medskip
+
+{\sem void} {\bold msgConstructInplace} ({\sem Msg*} {\caps this},
+	{\sem char} **{\caps buffer},
+	{\sem long} {\caps length},
+	{\sem Pfv} {\caps freefunc});
+
+\subsubsection{msgConstructAppend}
+
+The uninitialized message {\em this} is initialized to prepare for
+appending data with {\em msgAppend}.  The message can be used in any
+message operation, but {\em msgPush} will cause additional space to be
+allocated.
+
+\medskip
+
+{\sem void} {\bold msgConstructAppend} ({\sem Msg*} {\caps this},
+	{\sem char} **{\caps buffer},
+	{\sem long} {\caps length})
+
+\subsubsection{msgDestroy}
+
+Logically frees message {\em this}. Data portions of the
+message deallocated are freed as a result of this function
+should there be no other outstanding references to them.
+\medskip
+
+{\sem void} {\bold msgDestroy} ({\sem Msg*} {\caps this});
+
+\subsection{Manipulation Operations}
+
+Protocols manipulate messages---e.g., add and strip headers, fragment
+and reassemble packets---using the following set of operations.
+
+\subsubsection{msgLen}
+
+Returns the number of bytes of data in message {\em this}.
+\medskip
+
+{\sem long} {\bold msgLen} ({\sem Msg} *{\caps this});
+\medskip
+
+\subsubsection{msgTruncate}
+
+Truncate the data in the message {\em this} to the given length.
+Attempts to to reduce the length to less than zero will result in no
+change to the message.  No storage is freed as a result of truncation.
+This operation is used to strip trailers from a message.
+\medskip
+
+{\sem void} {\bold msgTruncate} ({\sem Msg*} {\caps this}, {\sem long} {\caps newLength});
+\medskip
+
+\subsubsection{msgChopOff}
+
+Remove data from the message {\em this} and assign it to the message
+{\em head}.  No copying is done. This operation is used to fragment
+a message into smaller pieces.  Both messages must be valid at the
+time of the call.
+\medskip
+
+{\em 3.1 Compatibility notes}:
+The 3.1 version of this was {\em msg\_break}, but the arguments were reversed.
+\medskip
+
+{\sem void} {\bold msgChopOff} ({\sem Msg*} {\caps this}, {\sem Msg*} {\caps head}, {\sem long} {\caps len});
+\medskip
+
+\subsubsection{msgJoin}
+
+Assign (in the same sense as {\em msgAssign}) 
+to {\em this} message the concatenation of messages {\em m1}
+to the front of {\em m2}. This operation is used to reassemble fragments
+into a larger message.  The first argument must be a valid message.  The
+arguments need not refer to distinct messages.
+\medskip
+
+{\sem void} {\bold msgJoin} ({\sem Msg*} {\caps this}, {\sem Msg*} {\caps m1}, {\sem Msg*} {\caps m2});
+\medskip
+
+Example of using non-unique arguments:
+\medskip
+{\bold msgJoin} ({\caps this},  {\caps this}, {\caps MessageTail});
+\medskip
+
+\subsubsection{msgPush}
+
+Prepend data pointed to by {\em hdr} to the front of message {\em
+this}.  The supplied function {\em store} will be called with the {\em
+hdr} pointer, a pointer to the message data area where the header data
+can be copied, the {\em hdrLen} value indicating the length of the
+data, and the {\em arg} pointer.  The last argument is not interpreted
+by the {\em msgPush} function; its semantics are determined entirely
+by the user store function.
+\medskip
+
+{\sem void} {\bold msgPush} ({\sem Msg*} {\caps this}, {\sem MStoreFun} {\caps  store}, {\sem void} *{\caps hdr}, {\sem long} {\caps hdrLen}, {\sem void} *{\caps arg});
+\medskip
+
+Function {\em store} typically converts the header to network byte
+order and stores it in a potentially unaligned buffer; {\em len} is
+the number of bytes to be read and {\em arg} is an arbitrary argument
+passed through from {\em msgPush}.
+\medskip
+
+{\sem typedef void} ({\bold *MStoreFun} )({\sem void} *{\caps hdr}, {\sem char} *{\caps des}, {\sem long} {\caps len}, {\sem void} *{\caps arg});
+\medskip
+
+{\sanss Example Declaration: }{\sem void} {\bold copypush}({\sem void}
+*{\caps src}, {\sem char} *{\caps dst}, {\sem long} {\caps  count}, {\sem void} *{\caps type}))
+
+\subsubsection{msgPop}
+
+Removes data from the front of message {\em this}.  After making the
+requested data contiguous, {\em msgPop} calls the function {\em load}
+with the {\em hdr} argument, a pointer to the start of the contiguous
+data, {\em hdrLen}, and the {\em arg} pointer.  Function {\em load}
+should return an integer representing the amount data that should be
+popped off the message.  In optimized code, no validity check is done
+on this number. This function returns TRUE if successful, FALSE if the
+message is shorter than {\em hdrLen} bytes.
+\medskip
+
+{\sem bool}  {\bold msgPop} ({\sem Msg*} {\caps this}, {\sem MLoadFun} {\caps load}, {\sem void} *{\caps hdr}, {\sem long} {\caps hdrLen}, {\sem void} *{\caps arg});
+\medskip
+
+Function {\em load} loads the header from a potentially unaligned
+buffer and converts it to machine byte order.  The {\em len} is the
+number of bytes guaranteed contiguous and {\em arg} is an arbitrary
+argument passed through from {\em msgPop}.  This function should
+return the number of bytes to be actually popped from the message.
+This information is used by {\em msgPop} to update the internal
+message structure.
+\medskip
+
+{\sem typedef long} ({\bold *MLoadFun} )({\sem void} *{\caps hdr}, {\sem char} *{\caps src}, {\sem long} {\caps len}, {\sem void} *{\caps arg});
+\medskip
+
+{\sanss Example declaration: }{\sem long} {\bold copypop}(
+{\sem void} *{\caps dst}, 
+{\sem char} *{\caps src}, 
+{\sem long} {\caps  count}, 
+{\sem void} *{\caps type}))
+
+\subsubsection{msgPopDiscard}
+
+Discards {\em len} bytes from the front of message {\em this}.
+Returns {\em TRUE} if successful.
+\medskip
+
+{\sem bool}  {\bold msgPopDiscard} ({\sem Msg} *{\caps this}, {\sem
+long} {\caps len})
+\medskip
+
+\subsubsection{msgAppend}
+
+Append data pointed to by {\em tail} to the end of message {\em
+this}.  The supplied function {\em store} will be called with the {\em
+tail} pointer, a pointer to the message data area where the data
+can be copied, the {\em tailLen} value indicating the length in bytes
+fo the data, and the {\em arg} pointer.
+If it is necessary to allocate new space to hold the data, the
+{\em newlength} parameter designates the minimum amount of space 
+for the allocation.  See {\em msgConstructAppend}, also.
+\medskip
+
+{\sem void} {\bold msgAppend} ({\sem Msg*} {\caps this}, {\sem
+MStoreFun} {\caps  store}, {\sem void} *{\caps tail}, {\sem long}
+{\caps tailLen}, {\sem void} *{\caps arg}, {\sem long} {\caps newlength});
+\medskip
+
+\subsubsection{msgSetAttr}
+
+Associates an {\em attribute} of {\em len} bytes with {\em name}
+and attaches it to message {\em this}.  Setting an attribute overrides
+any previous attribute with the same name.  Message attributes are used
+to communicate ancillary properties of messages from a protocol to a session,
+or between protocols.
+
+The only name supported at this time is {\em 0}.  Attempting to set an
+attribute with another name will result in an {\em XK\_FAILURE} return
+value.  
+
+\medskip
+
+{\sem xkern\_return\_t} {\bold msgSetAttr} 
+({\sem Msg} *{\caps this}, {\sem int} {\caps name},
+{\sem void} *{\caps attribute}, {\sem int} {\caps len});
+\medskip
+
+\subsubsection{msgGetAttr}
+
+Retrieves an attribute previously attached to message {\em this} with
+{\em name}.  If no attribute has been associated with {\em name}, 
+{\em 0} will be returned.
+\medskip
+
+{\sem void *} {\bold msgGetAttr} 
+({\sem Msg} *{\caps this}, {\sem int} {\caps name} );
+
+\subsubsection{msgForEach}
+
+For each contiguous data area in the message, invoke the function {\em
+f} with three arguments: the address of the data, the length of the
+data, and a user supplied argument {\em arg}.  The iteration stops
+when {\em f} does not return {\em TRUE}.
+\medskip
+
+{\sem void} {\bold msgForEach} ({\sem Msg} *{\caps this}, {\sem MCharFun} {\caps f}, {\sem void} *{\caps arg});
+\medskip
+
+{\sem typedef} {\sem  bool}  ({\bold *MCharFun} )({\sem char} *{\caps ptr}, {\sem long} {\caps len}, {\sem void} *{\caps arg});\\
+
+\subsection{Usage Rules}
+
+The $x$-kernel coding conventions dictate that messages should be
+destroyed by the same entity that originally constructed them.  Thus,
+the ethernet driver is responsible for destroying messages after
+successfully delivering them upward, and the top-level protocols that
+interface to user functions should destroy messages that have been
+successfully delivered to their destination.
+
+When a protocol passes
+passes a message to an adjacent protocol (via {\em xPush}, {\em
+xDemux}, etc.) its view of the message becomes invalid.
+The contents of the message after such an operation depend on
+which lower headers were pushed onto it.  Should a protocol want to
+keep a reference to the message---e.g., so it can later retransmit
+it---it must explicitly save a copy using the {\em msgAssign} or {\em
+msgConstructCopy} operation before passing the message on to another
+protocol.
+
+Note that although a protocol which constructs a message invalidates
+its view of the message after performing a UPI operation involving
+that message, it is still responsible for destroying the message. 
+
+Message attributes passed between protocols should consist of
+exportable data, i.e. not pointers.  Adherence to this convention will
+ensure that the protocol can be in used in a multi-adress space
+environment.

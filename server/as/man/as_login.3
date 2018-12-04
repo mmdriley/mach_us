@@ -1,0 +1,67 @@
+.TH AS_LOGIN 3 8/2/88
+.CM 4
+.SH NAME
+as_login \- logs in a user with the authentication service
+.br
+as_logout \- logs out a user from the authentication service
+.SH SYNOPSIS
+.B #include <mach.h>
+.br
+.B #include <auth_defs.h>
+.PP
+.B kr = as_login(server_port, user_name, pass_word, private_port)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B group_name_t user_name;
+.br
+.B pass_word_t pass_word;
+.br
+.B port_t *private_port;
+.PP
+.B kr = as_logout(server_port, private_port)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B port_t private_port;
+.SH DESCRIPTION
+.I as_login
+logs in a user with the authentication service if the clear-text
+.I pass_word
+passed in the call is correct for the
+.I user_name
+also passed in the call.
+If the log in is successful, then the authentication service creates and returns
+a new
+.I private_port
+that represents the user within the authentication service.
+When making subsequent requests of the authentication service
+a user must include this
+.I private_port
+in the requests to verify his or her authenticity.
+.PP
+.I as_logout
+logs out a user from the authentication service.
+The
+.I private_port
+parameter should be the private port that was
+created for the user by the authentication service
+when the user logged in.
+.PP
+For both calls, the
+.I server_port
+parameter must be the authentication server's public service port.
+.SH "SEE ALSO"
+as_group(3),
+as_list(3),
+as_password(3),
+as_token(3),
+as_translate(3)
+.SH HISTORY
+.TP 
+01-Aug-88  Robert Sansom (rds) at Carnegie-Mellon University
+Created.

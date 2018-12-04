@@ -1,0 +1,4772 @@
+cheltenham% stty nl
+stty nl
+cheltenham% pwd
+pwd
+/usr5/rcs
+cheltenham% cd x32/merge/build/rcs
+cd x32/merge/build/rcs
+cheltenham% source addpathsparc
+source addpathsparc
+cheltenham% cd client
+cd client
+cheltenham% ../xkernel -p -s -c -t
+../xkernel -p -s -c -t
+   xCreateProtocol:[null]
+   xCreateProtocol:[eth]
+   xCreateProtocol:[arp]
+   xCreateProtocol:[rarp]
+   Calling control[eth] op getmyhost (0)
+   Control[eth] op getmyhost (0) returns 6
+   Calling openenable[eth] by (arp,arp)
+      openenable -- creating new enable obj
+   Calling openenable[eth] by (arp,rarp)
+      openenable -- creating new enable obj
+   Calling open[eth] by (arp,rarp)
+   xCreateSession:[eth] by [arp]
+   Open[eth] by (arp,rarp) returns 6c5798 (rcnt == 1)
+   Calling open[eth] by (arp,arp)
+   xCreateSession:[eth] by [arp]
+   Open[eth] by (arp,arp) returns 6c5860 (rcnt == 1)
+   Calling control[eth] op unknown (301)
+   Control[eth] op unknown (301) returns -1
+   xCreateProtocol:[vnet]
+  VNET init
+   Calling control[arp] op unknown (101)
+   Control[arp] op unknown (101) returns 10
+   xCreateProtocol:[ip]
+ IP init
+  IP has 1 protocols below
+
+   Calling openenable[vnet] by (ip,ip)
+   VNET open enable
+      openenable -- creating new enable obj
+   Calling openenable[eth] by (vnet,ip)
+      openenable -- creating new enable obj
+ IP rt_init()
+    IP default route changes.  New GW: 192.12.69.1
+   Calling control[vnet] op unknown (10300)
+      VNET looking up interface for host 192.12.69.1
+      VNET returning interface 0
+   Control[vnet] op unknown (10300) returns 20
+ IP rt_init() done
+ IP init done
+   xCreateProtocol:[icmp]
+   Calling openenable[ip] by (icmp,icmp)
+   IP open enable
+   ipOpenEnable binding protocol 1
+      openenable -- creating new enable obj
+   xCreateProtocol:[udp]
+  UDP init
+   Calling openenable[ip] by (udp,udp)
+   IP open enable
+   ipOpenEnable binding protocol 17
+      openenable -- creating new enable obj
+  UDP init done
+   xCreateProtocol:[sunrpc]
+ SUNRPC init
+   xCreateProtocol:[pmapcln]
+Parameters:  P=1 N=111 C=1 S=1 H=(null)=0
+   pmt_client init
+   pmt_client init returning
+   xCreateProtocol:[pmap]
+   pmap init
+   Calling control[sunrpc] op getmyhost (0)
+   Calling control[udp] op getmyhost (0)
+   Calling control[ip] op getmyhost (0)
+   Unrecognized opcode
+   Calling control[vnet] op getmyhost (0)
+   Control[vnet] op getmyhost (0) returns 4
+   Control[ip] op getmyhost (0) returns 4
+   Control[udp] op getmyhost (0) returns 4
+   Control[sunrpc] op getmyhost (0) returns 4
+   Calling openenable[sunrpc] by (pmap,pmap)
+   SUNRPC open enable
+openenable binding: vers=2 prog=100000 port=111
+0 0 0 2 0 1 86 a0 0 0 0 6f 
+       SUNRPC openenable bound 
+   Calling openenable[udp] by (sunrpc,sunrpc)
+   UDP open enable
+   Port number 111
+   pmap_set: entered
+
+pmap-prog = 100000, pmap-vers = 2, pmap-prot = 17, pmap-port = 111
+       pmap_set: args transferred
+
+       pmap_set: bind succeeds
+
+                         pmap init returns OK
+   xCreateProtocol:[pmapsrv]
+pmtserver_init
+   pmt_server init
+   Calling control[sunrpc] op getmyhost (0)
+   Calling control[udp] op getmyhost (0)
+   Calling control[ip] op getmyhost (0)
+   Unrecognized opcode
+   Calling control[vnet] op getmyhost (0)
+   Control[vnet] op getmyhost (0) returns 4
+   Control[ip] op getmyhost (0) returns 4
+   Control[udp] op getmyhost (0) returns 4
+   Control[sunrpc] op getmyhost (0) returns 4
+   Calling openenable[sunrpc] by (pmapsrv,pmapsrv)
+   SUNRPC open enable
+openenable binding: vers=1 prog=500 port=7000
+0 0 0 1 0 0 1 f4 0 0 1b 58 
+       SUNRPC openenable bound 
+   Calling openenable[udp] by (sunrpc,sunrpc)
+   UDP open enable
+   Port number 7000
+                         pmt server init openenable ok
+   Calling open[sunrpc] by (pmapsrv,pmapsrv)
+   SUNRPC open
+   Calling open[udp] by (sunrpc,sunrpc)
+   UDP open
+   UDP open: from port 256 to port 111
+   Calling open[ip] by (udp,udp)
+   IP open
+     IP sends to 192.12.69.60, 17
+   xCreateSession:[ip] by [udp]
+   Calling open[vnet] by (ip,ip)
+   VNET open
+   remote IP host is 192.12.69.60
+   Calling control[arp] op resolve (9)
+   Control[arp] op resolve (9) returns 10
+     vnetOpen - resolution succeeded, addr = c00c.453c.1538
+   Calling open[eth] by (vnet,ip)
+   xCreateSession:[eth] by [vnet]
+   Open[eth] by (vnet,ip) returns 11b400 (rcnt == 1)
+   xCreateSession:[vnet] by [ip]
+   Open[vnet] by (ip,ip) returns 11b4c8 (rcnt == 1)
+     Successfully opened lls
+   Calling control[vnet] op getmaxpacket (5)
+       vnetControlSessn
+   Calling control[eth] op getmaxpacket (5)
+   Control[eth] op getmaxpacket (5) returns 4
+   Control[vnet] op getmaxpacket (5) returns 4
+   Calling control[vnet] op getmyhost (0)
+       vnetControlSessn
+   Control[vnet] op getmyhost (0) returns 4
+    IP open: my ip address is 192.12.69.60
+   IP open returns 11b348
+   Open[ip] by (udp,udp) returns 11b348 (rcnt == 1)
+   udpOpen creates new session
+   xCreateSession:[udp] by [sunrpc]
+   Calling control[ip] op getmyhost (0)
+   Control[ip] op getmyhost (0) returns 4
+   Calling control[ip] op getpeerhost (2)
+   Control[ip] op getpeerhost (2) returns 4
+   UDP open returns 11b5d0
+   Open[udp] by (sunrpc,sunrpc) returns 11b5d0 (rcnt == 1)
+   xCreateSession:[sunrpc] by [pmapsrv]
+   SUNRPC open returns 11b6a8
+   Open[sunrpc] by (pmapsrv,pmapsrv) returns 11b6a8 (rcnt == 1)
+                         pmt server init returns OK
+                         pmtserver xdring test args 1 500 1 17 7000
+xkxdr_long:  name = 3423732, *name = 3423744, data = 1, htonl(data) = 1
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423732, *name = 3423748, data = 1, htonl(data) = 1
+  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423732, *name = 3423748, data = 1f4, htonl(data) = 1f4
+  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423732, *name = 3423752, data = 1f4, htonl(data) = 1f4
+  0  1  0  0  1 f4  0  0  0  0  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423732, *name = 3423752, data = 1, htonl(data) = 1
+  0  1  0  0  1 f4  0  0  0  0  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423732, *name = 3423756, data = 1, htonl(data) = 1
+  1 f4  0  0  0  1  0  0  0  0  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423732, *name = 3423756, data = 11, htonl(data) = 11
+  1 f4  0  0  0  1  0  0  0  0  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423732, *name = 3423760, data = 11, htonl(data) = 11
+  0  1  0  0  0 11  0  0  0  0  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423732, *name = 3423760, data = 1b58, htonl(data) = 1b58
+  0  1  0  0  0 11  0  0  0  0  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423732, *name = 3423764, data = 1b58, htonl(data) = 1b58
+  0 11  0  0 1b 58  0  0  0  0  0  0  0  0  0  0
+
+  0  0  0  1  0  0  1 f4  0  0  0  1  0  0  0 11
+  0  0 1b 58
+                         pmtserver built registration message
+                         pmtserver msg length = 20
+   Calling call[sunrpc] by pmapsrv, 20 bytes
+       Message:
+Msg: Stack=0x6c8328, stackHeadPtr=0x6c9314, stackTailPtr=0x6c9328, myStack=1, numNodes=1
+Leaf: 0x6c8338 refCnt 1 off 4060 len 20	data: 00 00 00 01 00 00 01 f4 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 1
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 1 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 1
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 1 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 56 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3040, stackTailPtr=0x6c3068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 56
+  Leaf: 0x6c2078 refCnt 1 off 4040 len 40	data: 00 00 00 01 00 00 00 00 
+  Leaf: 0x6c8338 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 01 
+     in udp push
+     sending msg len 56 from port 256
+       to port 111 @ 192.12.69.60
+   Calling push[ip] by udp, 64 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3038, stackTailPtr=0x6c3068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 64
+  Leaf: 0x6c2078 refCnt 1 off 4032 len 48	data: 01 00 00 6f 00 40 00 00 
+  Leaf: 0x6c8338 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 01 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=84,ident=1
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37383
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 84 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3024, stackTailPtr=0x6c3068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 84
+  Leaf: 0x6c2078 refCnt 1 off 4012 len 68	data: 45 00 00 54 00 01 00 00 
+  Leaf: 0x6c8338 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 01 
+     vnet push
+   Calling push[eth] by vnet, 84 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3024, stackTailPtr=0x6c3068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 84
+  Leaf: 0x6c2078 refCnt 1 off 4012 len 68	data: 45 00 00 54 00 01 00 00 
+  Leaf: 0x6c8338 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 01 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 84 bytes
+   Calling demux[vnet] by eth, 84 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3024, stackTailPtr=0x6c3068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 84
+  Leaf: 0x6c2078 refCnt 1 off 4012 len 68	data: 45 00 00 54 00 01 00 00 
+  Leaf: 0x6c8338 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 01 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 84 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 84 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3024, stackTailPtr=0x6c3068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 84
+  Leaf: 0x6c2078 refCnt 1 off 4012 len 68	data: 45 00 00 54 00 01 00 00 
+  Leaf: 0x6c8338 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 01 
+     IP demux called with datagram of len 84
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=84,ident=1
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=1,frag=0, len=64
+     xPop increased ref count of 11b348[ip] to 2
+   Calling pop[ip], 64 bytes
+     IP pop, length = 64
+   Calling demux[udp] by ip, 64 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3038, stackTailPtr=0x6c3068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 64
+  Leaf: 0x6c2078 refCnt 1 off 4032 len 48	data: 01 00 00 6f 00 40 00 00 
+  Leaf: 0x6c8338 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 01 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 256, dport = 111
+        h->ulen = 64, msg_len = 56
+   Found an open enable for prot 1185400
+   xCreateSession:[udp] by [sunrpc]
+   Calling control[ip] op getmyhost (0)
+   Control[ip] op getmyhost (0) returns 4
+   Calling control[ip] op getpeerhost (2)
+   Control[ip] op getpeerhost (2) returns 4
+   calling duplicate[ip]
+   Calling opendone[sunrpc] by udp
+     xPop increased ref count of 11bdd8[udp] to 1
+   Calling pop[udp], 56 bytes
+     UDP pop, length = 56
+   Calling demux[sunrpc] by udp, 56 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3040, stackTailPtr=0x6c3068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 56
+  Leaf: 0x6c2078 refCnt 1 off 4040 len 40	data: 00 00 00 01 00 00 00 00 
+  Leaf: 0x6c8338 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 01 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 1
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 1 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+     sunrpcServerDemux, no active sessn, looking for openenable
+   Calling control[udp] op getmyproto (7)
+   Control[udp] op getmyproto (7) returns 4
+demux lookup passive key: vers=2 prog=100000 port=111
+0 0 0 2 0 1 86 a0 0 0 0 6f 
+     SUNRPC found server 
+   xCreateSession:[sunrpc] by [pmap]
+   calling duplicate[udp]
+   Calling opendone[pmap] by sunrpc
+       --->pmap_opendone
+binding new server session: vers=2 prog=100000 lls=11bdd8
+0 0 0 2 0 1 86 a0 0 11 bd d8 
+     xPop increased ref count of 11bed8[sunrpc] to 1
+   Calling pop[sunrpc], 16 bytes
+   SUNRPC_pop
+   Calling calldemux[pmap] by sunrpc, 16 bytes
+       Message:
+Msg: Stack=0x6c9330, stackHeadPtr=0x6ca320, stackTailPtr=0x6ca330, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 4064 len = 16
+  Leaf: 0x6c9340 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 01 
+                         pmap_calldemux: entered
+   pmap_calldemux: msg = 1531436 msgLen = 16  msgr = 1527984
+                         pmap_calldemux: starting msgPop
+       pmap_calldemux: msg externalized
+s = 1162968  s->state = 1163120pmap call header:
+rm_xid = 1
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+                         pmap_calldemux: procedure = 1
+   Calling control[sunrpc] op getpeerhost (2)
+   in rpc_control with session=11bed8
+
+   Calling control[udp] op getpeerhost (2)
+   Calling control[ip] op getpeerhost (2)
+   Control[ip] op getpeerhost (2) returns 4
+   Control[udp] op getpeerhost (2) returns 4
+   Control[sunrpc] op getpeerhost (2) returns 4
+       pmap_calldemux: args decoded 
+pmap-prog = 500, pmap-vers = 1, pmap-prot = 17, pmap-port = 7000
+   pmap_set: entered
+
+pmap-prog = 500, pmap-vers = 1, pmap-prot = 17, pmap-port = 7000
+       pmap_set: args transferred
+
+       pmap_set: bind succeeds
+
+       pmap_calldemux: procedure called
+xkxdr_long:  name = 1527500, *name = 1527576, data = 1, htonl(data) = 1
+  0 83  0 17 4f 18  0  0  0  6  0  0  0  0  0  0
+
+xkxdr_long:  name = 1527500, *name = 1527580, data = 1, htonl(data) = 1
+ 4f 18  0  0  0  1  0  0  0  0  0  0  0 40  0  0
+
+       pmap_calldemux: results xdred
+pmap_calldemux: len2 = 4 buf2 = 1527576 bufout = 1527576
+  0  0  0  1
+       pmap_calldemux: msg internalized
+   calldemux[pmap] returns 4 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 1
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 1
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 28 bytes
+       Message:
+Msg: Stack=0x6ca338, stackHeadPtr=0x6cb31c, stackTailPtr=0x6cb338, myStack=1, numNodes=1
+Leaf: 0x6ca348 refCnt 1 off 4052 len 28	data: 00 00 00 01 00 00 00 01 
+     in udp push
+     sending msg len 28 from port 111
+       to port 256 @ 192.12.69.60
+   Calling push[ip] by udp, 36 bytes
+       Message:
+Msg: Stack=0x6ca338, stackHeadPtr=0x6cb314, stackTailPtr=0x6cb338, myStack=1, numNodes=1
+Leaf: 0x6ca348 refCnt 1 off 4044 len 36	data: 00 6f 01 00 00 24 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=56,ident=2
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37410
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 56 bytes
+       Message:
+Msg: Stack=0x6ca338, stackHeadPtr=0x6cb300, stackTailPtr=0x6cb338, myStack=1, numNodes=1
+Leaf: 0x6ca348 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 02 00 00 
+     vnet push
+   Calling push[eth] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6ca338, stackHeadPtr=0x6cb300, stackTailPtr=0x6cb338, myStack=1, numNodes=1
+Leaf: 0x6ca348 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 02 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 11bed8[sunrpc] is 0, calling close
+   SUNRPC close of server session 11bed8 (does nothing)
+     xPop -- decreased ref count of 11bdd8[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 2
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 56 bytes
+   Calling demux[vnet] by eth, 56 bytes
+       Message:
+Msg: Stack=0x6ca338, stackHeadPtr=0x6cb300, stackTailPtr=0x6cb338, myStack=0, numNodes=1
+Leaf: 0x6ca348 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 02 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 56 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6ca338, stackHeadPtr=0x6cb300, stackTailPtr=0x6cb338, myStack=0, numNodes=1
+Leaf: 0x6ca348 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 02 00 00 
+     IP demux called with datagram of len 56
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=56,ident=2
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=2,frag=0, len=36
+     xPop increased ref count of 11b348[ip] to 3
+   Calling pop[ip], 36 bytes
+     IP pop, length = 36
+   Calling demux[udp] by ip, 36 bytes
+       Message:
+Msg: Stack=0x6ca338, stackHeadPtr=0x6cb314, stackTailPtr=0x6cb338, myStack=0, numNodes=1
+Leaf: 0x6ca348 refCnt 1 off 4044 len 36	data: 00 6f 01 00 00 24 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 111, dport = 256
+        h->ulen = 36, msg_len = 28
+     Popping to existing session 11b5d0
+     xPop increased ref count of 11b5d0[udp] to 2
+   Calling pop[udp], 28 bytes
+     UDP pop, length = 28
+   Calling demux[sunrpc] by udp, 28 bytes
+       Message:
+Msg: Stack=0x6ca338, stackHeadPtr=0x6cb31c, stackTailPtr=0x6cb338, myStack=0, numNodes=1
+Leaf: 0x6ca348 refCnt 1 off 4052 len 28	data: 00 00 00 01 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 1
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 11b6a8
+       rpc_demux after decode: msg_len= 4
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 11b6a8 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 11b6a8[sunrpc] to 1
+                         xClose returning
+       sunrpc session 11b6a8 after close rcnt == 1
+     xPop -- decreased ref count of 11b5d0[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 2
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 4 bytes in reply to pmapsrv
+                         pmtserver sent registration message; val = 0
+                         pmtserver: portmapper reply = 1
+                         pmtserver registered with portmapper
+   pmt_client init (part2)
+   Calling control[sunrpc] op getmyhost (0)
+   Calling control[udp] op getmyhost (0)
+   Calling control[ip] op getmyhost (0)
+   Unrecognized opcode
+   Calling control[vnet] op getmyhost (0)
+   Control[vnet] op getmyhost (0) returns 4
+   Control[ip] op getmyhost (0) returns 4
+   Control[udp] op getmyhost (0) returns 4
+   Control[sunrpc] op getmyhost (0) returns 4
+   Calling open[sunrpc] by (pmapcln,pmapcln)
+   SUNRPC open
+   Calling open[udp] by (sunrpc,sunrpc)
+   UDP open
+   UDP open: from port 257 to port 111
+   Calling open[ip] by (udp,udp)
+   IP open
+     IP sends to 192.12.69.60, 17
+   xCreateSession:[ip] by [udp]
+   Calling open[vnet] by (ip,ip)
+   VNET open
+   remote IP host is 192.12.69.60
+   Calling control[arp] op resolve (9)
+   Control[arp] op resolve (9) returns 10
+     vnetOpen - resolution succeeded, addr = c00c.453c.1538
+   Calling open[eth] by (vnet,ip)
+   Open[eth] by (vnet,ip) returns 11b400 (rcnt == 2)
+   vnetOpen -- session already exists
+   xClose: entered
+     xClose -- decreased ref count of 11b400[eth] to 1
+                         xClose returning
+   Open[vnet] by (ip,ip) returns 11b4c8 (rcnt == 2)
+     Successfully opened lls
+   Calling control[vnet] op getmaxpacket (5)
+       vnetControlSessn
+   Calling control[eth] op getmaxpacket (5)
+   Control[eth] op getmaxpacket (5) returns 4
+   Control[vnet] op getmaxpacket (5) returns 4
+   Calling control[vnet] op getmyhost (0)
+       vnetControlSessn
+   Control[vnet] op getmyhost (0) returns 4
+   IP open -- session already existed
+   IP DestroyNormalSessn 115398
+   xClose: entered
+     xClose -- decreased ref count of 11b4c8[vnet] to 1
+                         xClose returning
+   IP open returns 11b348
+   Open[ip] by (udp,udp) returns 11b348 (rcnt == 3)
+   udpOpen creates new session
+   xCreateSession:[udp] by [sunrpc]
+   Calling control[ip] op getmyhost (0)
+   Control[ip] op getmyhost (0) returns 4
+   Calling control[ip] op getpeerhost (2)
+   Control[ip] op getpeerhost (2) returns 4
+   UDP open returns 115398
+   Open[udp] by (sunrpc,sunrpc) returns 115398 (rcnt == 1)
+   xCreateSession:[sunrpc] by [pmapcln]
+   SUNRPC open returns 115430
+   Open[sunrpc] by (pmapcln,pmapcln) returns 115430 (rcnt == 1)
+                         pmt client startup test scheduled
+                         pmt client init (part2) returns OK
+                         pmtclient entered
+                         pmtclient sending message 3422752 of length 0 to pmap with reply 3423808
+   Calling call[sunrpc] by pmapcln, 0 bytes
+       Message:
+Msg: Stack=0xf6080, stackHeadPtr=0, stackTailPtr=0, myStack=0, numNodes=0
+   in sunrpcCall
+                         sunrpcCall: treating 0 length message as ping, procedure 0
+sunrpcCall:
+rm_xid = 2
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 0 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 2
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 0 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 40 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb040, stackTailPtr=0x6cb068, myStack=1, numNodes=2
+Pair: refCnt = 2 off = 4040 len = 40
+  Leaf: 0x6ca078 refCnt 1 off 4040 len 40	data: 00 00 00 02 00 00 00 00 
+     in udp push
+     sending msg len 40 from port 257
+       to port 111 @ 192.12.69.60
+   Calling push[ip] by udp, 48 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb038, stackTailPtr=0x6cb068, myStack=1, numNodes=2
+Pair: refCnt = 2 off = 4032 len = 48
+  Leaf: 0x6ca078 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 30 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=68,ident=3
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37397
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 68 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=1, numNodes=2
+Pair: refCnt = 2 off = 4012 len = 68
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 03 00 00 
+     vnet push
+   Calling push[eth] by vnet, 68 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=1, numNodes=2
+Pair: refCnt = 2 off = 4012 len = 68
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 03 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 68 bytes
+   Calling demux[vnet] by eth, 68 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=0, numNodes=2
+Pair: refCnt = 3 off = 4012 len = 68
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 03 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 68 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 68 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=0, numNodes=2
+Pair: refCnt = 3 off = 4012 len = 68
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 03 00 00 
+     IP demux called with datagram of len 68
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=68,ident=3
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=3,frag=0, len=48
+     xPop increased ref count of 11b348[ip] to 4
+   Calling pop[ip], 48 bytes
+     IP pop, length = 48
+   Calling demux[udp] by ip, 48 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb038, stackTailPtr=0x6cb068, myStack=0, numNodes=2
+Pair: refCnt = 3 off = 4032 len = 48
+  Leaf: 0x6ca078 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 30 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 257, dport = 111
+        h->ulen = 48, msg_len = 40
+   Found an open enable for prot 1185400
+   xCreateSession:[udp] by [sunrpc]
+   Calling control[ip] op getmyhost (0)
+   Control[ip] op getmyhost (0) returns 4
+   Calling control[ip] op getpeerhost (2)
+   Control[ip] op getpeerhost (2) returns 4
+   calling duplicate[ip]
+   Calling opendone[sunrpc] by udp
+     xPop increased ref count of 1155f8[udp] to 1
+   Calling pop[udp], 40 bytes
+     UDP pop, length = 40
+   Calling demux[sunrpc] by udp, 40 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb040, stackTailPtr=0x6cb068, myStack=0, numNodes=2
+Pair: refCnt = 3 off = 4040 len = 40
+  Leaf: 0x6ca078 refCnt 1 off 4040 len 40	data: 00 00 00 02 00 00 00 00 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 2
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 0 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+     sunrpcServerDemux, no active sessn, looking for openenable
+   Calling control[udp] op getmyproto (7)
+   Control[udp] op getmyproto (7) returns 4
+demux lookup passive key: vers=2 prog=100000 port=111
+0 0 0 2 0 1 86 a0 0 0 0 6f 
+     SUNRPC found server 
+   xCreateSession:[sunrpc] by [pmap]
+   calling duplicate[udp]
+   Calling opendone[pmap] by sunrpc
+       --->pmap_opendone
+binding new server session: vers=2 prog=100000 lls=1155f8
+0 0 0 2 0 1 86 a0 0 11 55 f8 
+     xPop increased ref count of 1156d0[sunrpc] to 1
+   Calling pop[sunrpc], 0 bytes
+   SUNRPC_pop
+   Calling calldemux[pmap] by sunrpc, 0 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb068, stackTailPtr=0x6cb068, myStack=0, numNodes=2
+                         pmap_calldemux: entered
+   pmap_calldemux: msg = 3481132 msgLen = 0  msgr = 3477680
+                         pmap_calldemux: starting msgPop
+       pmap_calldemux: msg externalized
+s = 1136336  s->state = 1136488pmap call header:
+rm_xid = 2
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+                         pmap_calldemux: procedure = 0
+       pmap_calldemux: procedure called
+       pmap_calldemux: results xdred
+pmap_calldemux: len2 = 0 buf2 = 3477272 bufout = 3477272
+
+       pmap_calldemux: msg internalized
+   calldemux[pmap] returns 0 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 2
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 2
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 24 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6cd010, stackTailPtr=0x6cd028, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4056 len = 24
+  Leaf: 0x6cc038 refCnt 1 off 4056 len 24	data: 00 00 00 02 00 00 00 01 
+     in udp push
+     sending msg len 24 from port 111
+       to port 257 @ 192.12.69.60
+   Calling push[ip] by udp, 32 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6cd008, stackTailPtr=0x6cd028, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4048 len = 32
+  Leaf: 0x6cc038 refCnt 1 off 4048 len 32	data: 00 6f 01 01 00 20 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=52,ident=4
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37412
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 52 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccff4, stackTailPtr=0x6cd028, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6cc038 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 04 00 00 
+     vnet push
+   Calling push[eth] by vnet, 52 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccff4, stackTailPtr=0x6cd028, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6cc038 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 04 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 1156d0[sunrpc] is 0, calling close
+   SUNRPC close of server session 1156d0 (does nothing)
+     xPop -- decreased ref count of 1155f8[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 52 bytes
+   Calling demux[vnet] by eth, 52 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccff4, stackTailPtr=0x6cd028, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6cc038 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 04 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 52 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 52 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccff4, stackTailPtr=0x6cd028, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6cc038 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 04 00 00 
+     IP demux called with datagram of len 52
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=52,ident=4
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=4,frag=0, len=32
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 32 bytes
+     IP pop, length = 32
+   Calling demux[udp] by ip, 32 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6cd008, stackTailPtr=0x6cd028, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4048 len = 32
+  Leaf: 0x6cc038 refCnt 1 off 4048 len 32	data: 00 6f 01 01 00 20 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 111, dport = 257
+        h->ulen = 32, msg_len = 24
+     Popping to existing session 115398
+     xPop increased ref count of 115398[udp] to 2
+   Calling pop[udp], 24 bytes
+     UDP pop, length = 24
+   Calling demux[sunrpc] by udp, 24 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6cd010, stackTailPtr=0x6cd028, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4056 len = 24
+  Leaf: 0x6cc038 refCnt 1 off 4056 len 24	data: 00 00 00 02 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 2
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 115430
+       rpc_demux after decode: msg_len= 0
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 115430 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 115430[sunrpc] to 1
+                         xClose returning
+       sunrpc session 115430 after close rcnt == 1
+     xPop -- decreased ref count of 115398[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 0 bytes in reply to pmapcln
+                         pmtclient sent message to pmap
+                         pmtclient sending message 3422752 of length 4 to pmap with reply 3423808
+   Calling call[sunrpc] by pmapcln, 4 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6cd024, stackTailPtr=0x6cd028, myStack=1, numNodes=1
+Leaf: 0x6cc038 refCnt 1 off 4076 len 4	data: 00 00 00 00 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 3
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 0 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 3
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 0 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 40 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 40
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 03 00 00 00 00 
+     in udp push
+     sending msg len 40 from port 257
+       to port 111 @ 192.12.69.60
+   Calling push[ip] by udp, 48 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 48
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 30 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=68,ident=5
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37395
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 68
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 05 00 00 
+     vnet push
+   Calling push[eth] by vnet, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 68
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 05 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 68 bytes
+   Calling demux[vnet] by eth, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 68
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 05 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 68 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 68
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 05 00 00 
+     IP demux called with datagram of len 68
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=68,ident=5
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=5,frag=0, len=48
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 48 bytes
+     IP pop, length = 48
+   Calling demux[udp] by ip, 48 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 48
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 30 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 257, dport = 111
+        h->ulen = 48, msg_len = 40
+     Popping to existing session 1155f8
+     xPop increased ref count of 1155f8[udp] to 2
+   Calling pop[udp], 40 bytes
+     UDP pop, length = 40
+   Calling demux[sunrpc] by udp, 40 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 40
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 03 00 00 00 00 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 3
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 0 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 1156d0[sunrpc] to 1
+   Calling pop[sunrpc], 0 bytes
+   SUNRPC_pop
+   Calling calldemux[pmap] by sunrpc, 0 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce030, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+                         pmap_calldemux: entered
+   pmap_calldemux: msg = 1531436 msgLen = 0  msgr = 1527984
+                         pmap_calldemux: starting msgPop
+       pmap_calldemux: msg externalized
+s = 1136336  s->state = 1136488pmap call header:
+rm_xid = 3
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+                         pmap_calldemux: procedure = 0
+       pmap_calldemux: procedure called
+       pmap_calldemux: results xdred
+pmap_calldemux: len2 = 0 buf2 = 1527576 bufout = 1527576
+
+       pmap_calldemux: msg internalized
+   calldemux[pmap] returns 0 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 3
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 3
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 24 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf020, stackTailPtr=0x6cf038, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4056 len = 24
+  Leaf: 0x6ce048 refCnt 1 off 4056 len 24	data: 00 00 00 03 00 00 00 01 
+     in udp push
+     sending msg len 24 from port 111
+       to port 257 @ 192.12.69.60
+   Calling push[ip] by udp, 32 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf018, stackTailPtr=0x6cf038, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4048 len = 32
+  Leaf: 0x6ce048 refCnt 1 off 4048 len 32	data: 00 6f 01 01 00 20 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=52,ident=6
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37410
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 52 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf004, stackTailPtr=0x6cf038, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6ce048 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 06 00 00 
+     vnet push
+   Calling push[eth] by vnet, 52 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf004, stackTailPtr=0x6cf038, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6ce048 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 06 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 1156d0[sunrpc] is 0, calling close
+   SUNRPC close of server session 1156d0 (does nothing)
+     xPop -- decreased ref count of 1155f8[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 52 bytes
+   Calling demux[vnet] by eth, 52 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf004, stackTailPtr=0x6cf038, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6ce048 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 06 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 52 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 52 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf004, stackTailPtr=0x6cf038, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6ce048 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 06 00 00 
+     IP demux called with datagram of len 52
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=52,ident=6
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=6,frag=0, len=32
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 32 bytes
+     IP pop, length = 32
+   Calling demux[udp] by ip, 32 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf018, stackTailPtr=0x6cf038, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4048 len = 32
+  Leaf: 0x6ce048 refCnt 1 off 4048 len 32	data: 00 6f 01 01 00 20 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 111, dport = 257
+        h->ulen = 32, msg_len = 24
+     Popping to existing session 115398
+     xPop increased ref count of 115398[udp] to 2
+   Calling pop[udp], 24 bytes
+     UDP pop, length = 24
+   Calling demux[sunrpc] by udp, 24 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf020, stackTailPtr=0x6cf038, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4056 len = 24
+  Leaf: 0x6ce048 refCnt 1 off 4056 len 24	data: 00 00 00 03 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 3
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 115430
+       rpc_demux after decode: msg_len= 0
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 115430 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 115430[sunrpc] to 1
+                         xClose returning
+       sunrpc session 115430 after close rcnt == 1
+     xPop -- decreased ref count of 115398[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 0 bytes in reply to pmapcln
+                         pmtclient sent message to pmap
+                         pmtclient sending message 3422752 of length 100 to pmap with reply 3423808
+   Calling call[sunrpc] by pmapcln, 100 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cefd4, stackTailPtr=0x6cf038, myStack=1, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 3980 len 100	data: 32 33 36 3b 42 4b 56 63 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 4
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 842217019 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 4
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 842217019 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 136 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb040, stackTailPtr=0x6cb068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 136
+  Leaf: 0x6ca078 refCnt 1 off 4040 len 40	data: 00 00 00 04 00 00 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 42 4b 56 63 72 83 96 ab 
+     in udp push
+     sending msg len 136 from port 257
+       to port 111 @ 192.12.69.60
+   Calling push[ip] by udp, 144 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb038, stackTailPtr=0x6cb068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 144
+  Leaf: 0x6ca078 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 90 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 42 4b 56 63 72 83 96 ab 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=164,ident=7
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37297
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 164 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 07 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 42 4b 56 63 72 83 96 ab 
+     vnet push
+   Calling push[eth] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 07 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 42 4b 56 63 72 83 96 ab 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 164 bytes
+   Calling demux[vnet] by eth, 164 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 07 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 42 4b 56 63 72 83 96 ab 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 164 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 07 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 42 4b 56 63 72 83 96 ab 
+     IP demux called with datagram of len 164
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=164,ident=7
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=7,frag=0, len=144
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 144 bytes
+     IP pop, length = 144
+   Calling demux[udp] by ip, 144 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb038, stackTailPtr=0x6cb068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 144
+  Leaf: 0x6ca078 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 90 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 42 4b 56 63 72 83 96 ab 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 257, dport = 111
+        h->ulen = 144, msg_len = 136
+     Popping to existing session 1155f8
+     xPop increased ref count of 1155f8[udp] to 2
+   Calling pop[udp], 136 bytes
+     UDP pop, length = 136
+   Calling demux[sunrpc] by udp, 136 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb040, stackTailPtr=0x6cb068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 136
+  Leaf: 0x6ca078 refCnt 1 off 4040 len 40	data: 00 00 00 04 00 00 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 42 4b 56 63 72 83 96 ab 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 4
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 842217019 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 1156d0[sunrpc] to 1
+   Calling pop[sunrpc], 96 bytes
+   SUNRPC_pop
+   Calling calldemux[pmap] by sunrpc, 96 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccfc8, stackTailPtr=0x6cd028, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 3984 len = 96
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 42 4b 56 63 72 83 96 ab 
+                         pmap_calldemux: entered
+   pmap_calldemux: msg = 3481132 msgLen = 96  msgr = 3477680
+                         pmap_calldemux: starting msgPop
+       pmap_calldemux: msg externalized
+s = 1136336  s->state = 1136488pmap call header:
+rm_xid = 4
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+                         pmap_calldemux: procedure = 842217019
+ pmap_calldemux: PM procedure out of range: 842217019
+   Calling control[sunrpc] op unknown (913)
+   in rpc_control with session=1156d0
+
+    sunrpc send error
+     sunrpc error: GARBAGE_ARGS
+encode_hdr:
+rm_xid = 4
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = GARBAGE_ARGS
+   Calling push[udp] by sunrpc, 24 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce018, stackTailPtr=0x6ce030, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4056 len = 24
+  Leaf: 0x6cd040 refCnt 1 off 4056 len 24	data: 00 00 00 04 00 00 00 01 
+     in udp push
+     sending msg len 24 from port 111
+       to port 257 @ 192.12.69.60
+   Calling push[ip] by udp, 32 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce010, stackTailPtr=0x6ce030, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4048 len = 32
+  Leaf: 0x6cd040 refCnt 1 off 4048 len 32	data: 00 6f 01 01 00 20 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=52,ident=8
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37408
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 52 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdffc, stackTailPtr=0x6ce030, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6cd040 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 08 00 00 
+     vnet push
+   Calling push[eth] by vnet, 52 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdffc, stackTailPtr=0x6ce030, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6cd040 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 08 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+   Control[sunrpc] op unknown (913) returns 0
+   calldemux[pmap] returns 0 bytes
+                         SUNRPC pop -- xCallDemux returned failure, not sending reply
+     xPop -- ref count of 1156d0[sunrpc] is 0, calling close
+   SUNRPC close of server session 1156d0 (does nothing)
+     xPop -- decreased ref count of 1155f8[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 52 bytes
+   Calling demux[vnet] by eth, 52 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdffc, stackTailPtr=0x6ce030, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6cd040 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 08 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 52 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 52 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdffc, stackTailPtr=0x6ce030, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6cd040 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 08 00 00 
+     IP demux called with datagram of len 52
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=52,ident=8
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=8,frag=0, len=32
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 32 bytes
+     IP pop, length = 32
+   Calling demux[udp] by ip, 32 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce010, stackTailPtr=0x6ce030, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4048 len = 32
+  Leaf: 0x6cd040 refCnt 1 off 4048 len 32	data: 00 6f 01 01 00 20 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 111, dport = 257
+        h->ulen = 32, msg_len = 24
+     Popping to existing session 115398
+     xPop increased ref count of 115398[udp] to 2
+   Calling pop[udp], 24 bytes
+     UDP pop, length = 24
+   Calling demux[sunrpc] by udp, 24 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce018, stackTailPtr=0x6ce030, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4056 len = 24
+  Leaf: 0x6cd040 refCnt 1 off 4056 len 24	data: 00 00 00 04 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 4
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = GARBAGE_ARGS
+   SUNRPC found client session 115430
+       rpc_demux after decode: msg_len= 0
+
+SUNRPC CALL FAILED
+       sunrpc client demux successfully removed timeout
+       sunrpc session 115430 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 115430[sunrpc] to 1
+                         xClose returning
+       sunrpc session 115430 after close rcnt == 1
+     xPop -- decreased ref count of 115398[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC ERROR
+   call[sunrpc] returns 0 bytes in reply to pmapcln
+ pmtclient: error sending message to pmap
+                         pmtclient xdring test arg 2141365156
+xkxdr_long:  name = 3423156, *name = 3423704, data = 7fa2a3a4, htonl(data) = 7fa2a3a4
+  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0
+
+xkxdr_long:  name = 3423156, *name = 3423708, data = 7fa2a3a4, htonl(data) = 7fa2a3a4
+  0  0 7f a2 a3 a4  0  0  0  1  0  0  0  0  0  0
+
+                         pmtclient sending message 3422752 of length 100 to pmap with reply 3423808
+   Calling call[sunrpc] by pmapcln, 100 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccfc4, stackTailPtr=0x6cd028, myStack=1, numNodes=1
+Leaf: 0x6cc038 refCnt 1 off 3980 len 100	data: 7f a2 a3 a4 00 00 00 01 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 5
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 2141365156 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 5
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 2141365156 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 136 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 136
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 05 00 00 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 00 01 00 00 00 00 
+     in udp push
+     sending msg len 136 from port 257
+       to port 111 @ 192.12.69.60
+   Calling push[ip] by udp, 144 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 144
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 90 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 00 01 00 00 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=164,ident=9
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37295
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 09 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 00 01 00 00 00 00 
+     vnet push
+   Calling push[eth] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 09 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 00 01 00 00 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 164 bytes
+   Calling demux[vnet] by eth, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 09 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 00 01 00 00 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 164 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 09 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 00 01 00 00 00 00 
+     IP demux called with datagram of len 164
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=164,ident=9
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=9,frag=0, len=144
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 144 bytes
+     IP pop, length = 144
+   Calling demux[udp] by ip, 144 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 144
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 90 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 00 01 00 00 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 257, dport = 111
+        h->ulen = 144, msg_len = 136
+     Popping to existing session 1155f8
+     xPop increased ref count of 1155f8[udp] to 2
+   Calling pop[udp], 136 bytes
+     UDP pop, length = 136
+   Calling demux[sunrpc] by udp, 136 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 136
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 05 00 00 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 00 01 00 00 00 00 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 5
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 2141365156 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 1156d0[sunrpc] to 1
+   Calling pop[sunrpc], 96 bytes
+   SUNRPC_pop
+   Calling calldemux[pmap] by sunrpc, 96 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb008, stackTailPtr=0x6cb068, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 3984 len = 96
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 00 01 00 00 00 00 
+                         pmap_calldemux: entered
+   pmap_calldemux: msg = 1531436 msgLen = 96  msgr = 1527984
+                         pmap_calldemux: starting msgPop
+       pmap_calldemux: msg externalized
+s = 1136336  s->state = 1136488pmap call header:
+rm_xid = 5
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+                         pmap_calldemux: procedure = 2141365156
+ pmap_calldemux: PM procedure out of range: 2141365156
+   Calling control[sunrpc] op unknown (913)
+   in rpc_control with session=1156d0
+
+    sunrpc send error
+     sunrpc error: GARBAGE_ARGS
+encode_hdr:
+rm_xid = 5
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = GARBAGE_ARGS
+   Calling push[udp] by sunrpc, 24 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf020, stackTailPtr=0x6cf038, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4056 len = 24
+  Leaf: 0x6ce048 refCnt 1 off 4056 len 24	data: 00 00 00 05 00 00 00 01 
+     in udp push
+     sending msg len 24 from port 111
+       to port 257 @ 192.12.69.60
+   Calling push[ip] by udp, 32 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf018, stackTailPtr=0x6cf038, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4048 len = 32
+  Leaf: 0x6ce048 refCnt 1 off 4048 len 32	data: 00 6f 01 01 00 20 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=52,ident=10
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37406
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 52 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf004, stackTailPtr=0x6cf038, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6ce048 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 0a 00 00 
+     vnet push
+   Calling push[eth] by vnet, 52 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf004, stackTailPtr=0x6cf038, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6ce048 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 0a 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+   Control[sunrpc] op unknown (913) returns 0
+   calldemux[pmap] returns 0 bytes
+                         SUNRPC pop -- xCallDemux returned failure, not sending reply
+     xPop -- ref count of 1156d0[sunrpc] is 0, calling close
+   SUNRPC close of server session 1156d0 (does nothing)
+     xPop -- decreased ref count of 1155f8[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 52 bytes
+   Calling demux[vnet] by eth, 52 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf004, stackTailPtr=0x6cf038, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6ce048 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 0a 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 52 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 52 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf004, stackTailPtr=0x6cf038, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6ce048 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 0a 00 00 
+     IP demux called with datagram of len 52
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=52,ident=10
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=10,frag=0, len=32
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 32 bytes
+     IP pop, length = 32
+   Calling demux[udp] by ip, 32 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf018, stackTailPtr=0x6cf038, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4048 len = 32
+  Leaf: 0x6ce048 refCnt 1 off 4048 len 32	data: 00 6f 01 01 00 20 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 111, dport = 257
+        h->ulen = 32, msg_len = 24
+     Popping to existing session 115398
+     xPop increased ref count of 115398[udp] to 2
+   Calling pop[udp], 24 bytes
+     UDP pop, length = 24
+   Calling demux[sunrpc] by udp, 24 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf020, stackTailPtr=0x6cf038, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4056 len = 24
+  Leaf: 0x6ce048 refCnt 1 off 4056 len 24	data: 00 00 00 05 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 5
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = GARBAGE_ARGS
+   SUNRPC found client session 115430
+       rpc_demux after decode: msg_len= 0
+
+SUNRPC CALL FAILED
+       sunrpc client demux successfully removed timeout
+       sunrpc session 115430 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 115430[sunrpc] to 1
+                         xClose returning
+       sunrpc session 115430 after close rcnt == 1
+     xPop -- decreased ref count of 115398[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC ERROR
+   call[sunrpc] returns 0 bytes in reply to pmapcln
+ pmtclient: error sending message to pmap
+                         pmtclient xdring test args 3 999 3 17 0
+xkxdr_long:  name = 3423156, *name = 3423704, data = 3, htonl(data) = 3
+  0  0  0  0  0  0 7f a2 a3 a4  0  0  0  1  0  0
+
+xkxdr_long:  name = 3423156, *name = 3423708, data = 3, htonl(data) = 3
+  0  0  0  0  0  3  0  0  0  1  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423156, *name = 3423708, data = 3e7, htonl(data) = 3e7
+  0  0  0  0  0  3  0  0  0  1  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423156, *name = 3423712, data = 3e7, htonl(data) = 3e7
+  0  3  0  0  3 e7  0  0  0  0  0  0  0  4  0  0
+
+xkxdr_long:  name = 3423156, *name = 3423712, data = 3, htonl(data) = 3
+  0  3  0  0  3 e7  0  0  0  0  0  0  0  4  0  0
+
+xkxdr_long:  name = 3423156, *name = 3423716, data = 3, htonl(data) = 3
+  3 e7  0  0  0  3  0  0  0  4  0  0  0  0  0 34
+
+xkxdr_long:  name = 3423156, *name = 3423716, data = 11, htonl(data) = 11
+  3 e7  0  0  0  3  0  0  0  4  0  0  0  0  0 34
+
+xkxdr_long:  name = 3423156, *name = 3423720, data = 11, htonl(data) = 11
+  0  3  0  0  0 11  0  0  0  0  0 34 3d d4  0  0
+
+xkxdr_long:  name = 3423156, *name = 3423720, data = 0, htonl(data) = 0
+  0  3  0  0  0 11  0  0  0  0  0 34 3d d4  0  0
+
+xkxdr_long:  name = 3423156, *name = 3423724, data = 0, htonl(data) = 0
+  0 11  0  0  0  0  0 34 3d d4  0  0  0  0  0 34
+
+                         pmtclient sending message 3422752 of length 100 to pmap with reply 3423808
+   Calling call[sunrpc] by pmapcln, 100 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb004, stackTailPtr=0x6cb068, myStack=1, numNodes=1
+Leaf: 0x6ca078 refCnt 1 off 3980 len 100	data: 00 00 00 03 00 00 03 e7 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 6
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 6
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 136 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf010, stackTailPtr=0x6cf038, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 136
+  Leaf: 0x6ce048 refCnt 1 off 4040 len 40	data: 00 00 00 06 00 00 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 03 e7 00 00 00 03 
+     in udp push
+     sending msg len 136 from port 257
+       to port 111 @ 192.12.69.60
+   Calling push[ip] by udp, 144 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf008, stackTailPtr=0x6cf038, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 144
+  Leaf: 0x6ce048 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 90 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 03 e7 00 00 00 03 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=164,ident=11
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37293
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 164 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6ceff4, stackTailPtr=0x6cf038, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6ce048 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0b 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 03 e7 00 00 00 03 
+     vnet push
+   Calling push[eth] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6ceff4, stackTailPtr=0x6cf038, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6ce048 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0b 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 03 e7 00 00 00 03 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 164 bytes
+   Calling demux[vnet] by eth, 164 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6ceff4, stackTailPtr=0x6cf038, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6ce048 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0b 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 03 e7 00 00 00 03 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 164 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6ceff4, stackTailPtr=0x6cf038, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6ce048 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0b 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 03 e7 00 00 00 03 
+     IP demux called with datagram of len 164
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=164,ident=11
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=11,frag=0, len=144
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 144 bytes
+     IP pop, length = 144
+   Calling demux[udp] by ip, 144 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf008, stackTailPtr=0x6cf038, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 144
+  Leaf: 0x6ce048 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 90 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 03 e7 00 00 00 03 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 257, dport = 111
+        h->ulen = 144, msg_len = 136
+     Popping to existing session 1155f8
+     xPop increased ref count of 1155f8[udp] to 2
+   Calling pop[udp], 136 bytes
+     UDP pop, length = 136
+   Calling demux[sunrpc] by udp, 136 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf010, stackTailPtr=0x6cf038, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 136
+  Leaf: 0x6ce048 refCnt 1 off 4040 len 40	data: 00 00 00 06 00 00 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 03 e7 00 00 00 03 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 6
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 1156d0[sunrpc] to 1
+   Calling pop[sunrpc], 96 bytes
+   SUNRPC_pop
+   Calling calldemux[pmap] by sunrpc, 96 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccfc8, stackTailPtr=0x6cd028, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 3984 len = 96
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 03 e7 00 00 00 03 
+                         pmap_calldemux: entered
+   pmap_calldemux: msg = 3481132 msgLen = 96  msgr = 3477680
+                         pmap_calldemux: starting msgPop
+       pmap_calldemux: msg externalized
+s = 1136336  s->state = 1136488pmap call header:
+rm_xid = 6
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+                         pmap_calldemux: procedure = 3
+       pmap_calldemux: args decoded 
+pmap-prog = 999, pmap-vers = 3, pmap-prot = 17, pmap-port = 0
+   pmap_getport: entered
+
+pmap-prog = 999, pmap-vers = 3, pmap-prot = 17, pmap-port = 0
+ pmap_getport: can't find exact program 999 version 3 protocol 17
+
+                         pmap_getport_filter: entered
+
+                         pmap_getport_filter: entered
+
+ pmap_getport: can't find any version of program
+
+   pmap_getport: port = -1
+
+       pmap_calldemux: procedure called
+xkxdr_long:  name = 3477196, *name = 3477272, data = ffffffff, htonl(data) = ffffffff
+  0 81  0 35  f 18  0  0  0  6  0  0  0  0  0  0
+
+xkxdr_long:  name = 3477196, *name = 3477276, data = ffffffff, htonl(data) = ffffffff
+  f 18 ff ff ff ff  0  0  0  0  0  0  0 10  0  0
+
+       pmap_calldemux: results xdred
+pmap_calldemux: len2 = 4 buf2 = 3477272 bufout = 3477272
+ ff ff ff ff
+       pmap_calldemux: msg internalized
+   calldemux[pmap] returns 4 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 6
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 6
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 28 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce014, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4052 len 28	data: 00 00 00 06 00 00 00 01 
+     in udp push
+     sending msg len 28 from port 111
+       to port 257 @ 192.12.69.60
+   Calling push[ip] by udp, 36 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce00c, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4044 len 36	data: 00 6f 01 01 00 24 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=56,ident=12
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37400
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 0c 00 00 
+     vnet push
+   Calling push[eth] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 0c 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 1156d0[sunrpc] is 0, calling close
+   SUNRPC close of server session 1156d0 (does nothing)
+     xPop -- decreased ref count of 1155f8[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 56 bytes
+   Calling demux[vnet] by eth, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 0c 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 56 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 0c 00 00 
+     IP demux called with datagram of len 56
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=56,ident=12
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=12,frag=0, len=36
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 36 bytes
+     IP pop, length = 36
+   Calling demux[udp] by ip, 36 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce00c, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4044 len 36	data: 00 6f 01 01 00 24 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 111, dport = 257
+        h->ulen = 36, msg_len = 28
+     Popping to existing session 115398
+     xPop increased ref count of 115398[udp] to 2
+   Calling pop[udp], 28 bytes
+     UDP pop, length = 28
+   Calling demux[sunrpc] by udp, 28 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce014, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4052 len 28	data: 00 00 00 06 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 6
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 115430
+       rpc_demux after decode: msg_len= 4
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 115430 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 115430[sunrpc] to 1
+                         xClose returning
+       sunrpc session 115430 after close rcnt == 1
+     xPop -- decreased ref count of 115398[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 4 bytes in reply to pmapcln
+                         pmtclient sent message to pmap
+                         pmtclient unwinding reply
+                         pmtclient reply = -1
+                         pmtclient xdring test args 3 100024 1 17 0
+xkxdr_long:  name = 3423140, *name = 3423376, data = 3, htonl(data) = 3
+ 3c b0  0  7 91 b4  0  0  0  1  0  b bf  a  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423380, data = 3, htonl(data) = 3
+ 91 b4  0  0  0  3  0  b bf  a  0  0  0  3  0  9
+
+xkxdr_long:  name = 3423140, *name = 3423380, data = 186b8, htonl(data) = 186b8
+ 91 b4  0  0  0  3  0  b bf  a  0  0  0  3  0  9
+
+xkxdr_long:  name = 3423140, *name = 3423384, data = 186b8, htonl(data) = 186b8
+  0  3  0  1 86 b8  0  0  0  3  0  9 6e a0  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423384, data = 1, htonl(data) = 1
+  0  3  0  1 86 b8  0  0  0  3  0  9 6e a0  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423388, data = 1, htonl(data) = 1
+ 86 b8  0  0  0  1  0  9 6e a0  0  0  0  6  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423388, data = 11, htonl(data) = 11
+ 86 b8  0  0  0  1  0  9 6e a0  0  0  0  6  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423392, data = 11, htonl(data) = 11
+  0  1  0  0  0 11  0  0  0  6  0  0  0  0  0 34
+
+xkxdr_long:  name = 3423140, *name = 3423392, data = 0, htonl(data) = 0
+  0  1  0  0  0 11  0  0  0  6  0  0  0  0  0 34
+
+xkxdr_long:  name = 3423140, *name = 3423396, data = 0, htonl(data) = 0
+  0 11  0  0  0  0  0  0  0  0  0 34 3d 68  0 34
+
+                         pmtclient sending message 3422752 of length 100 to pmap with reply 3423808
+   Calling call[sunrpc] by pmapcln, 100 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccfc4, stackTailPtr=0x6cd028, myStack=1, numNodes=1
+Leaf: 0x6cc038 refCnt 1 off 3980 len 100	data: 00 00 00 03 00 01 86 b8 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 7
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 7
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 136 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 136
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 07 00 00 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 01 86 b8 00 00 00 01 
+     in udp push
+     sending msg len 136 from port 257
+       to port 111 @ 192.12.69.60
+   Calling push[ip] by udp, 144 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 144
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 90 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 01 86 b8 00 00 00 01 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=164,ident=13
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37291
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0d 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 01 86 b8 00 00 00 01 
+     vnet push
+   Calling push[eth] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0d 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 01 86 b8 00 00 00 01 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 164 bytes
+   Calling demux[vnet] by eth, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0d 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 01 86 b8 00 00 00 01 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 164 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0d 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 01 86 b8 00 00 00 01 
+     IP demux called with datagram of len 164
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=164,ident=13
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=13,frag=0, len=144
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 144 bytes
+     IP pop, length = 144
+   Calling demux[udp] by ip, 144 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 144
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 90 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 01 86 b8 00 00 00 01 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 257, dport = 111
+        h->ulen = 144, msg_len = 136
+     Popping to existing session 1155f8
+     xPop increased ref count of 1155f8[udp] to 2
+   Calling pop[udp], 136 bytes
+     UDP pop, length = 136
+   Calling demux[sunrpc] by udp, 136 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 136
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 07 00 00 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 01 86 b8 00 00 00 01 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 7
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 1156d0[sunrpc] to 1
+   Calling pop[sunrpc], 96 bytes
+   SUNRPC_pop
+   Calling calldemux[pmap] by sunrpc, 96 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb008, stackTailPtr=0x6cb068, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 3984 len = 96
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 01 86 b8 00 00 00 01 
+                         pmap_calldemux: entered
+   pmap_calldemux: msg = 1531436 msgLen = 96  msgr = 1527984
+                         pmap_calldemux: starting msgPop
+       pmap_calldemux: msg externalized
+s = 1136336  s->state = 1136488pmap call header:
+rm_xid = 7
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+                         pmap_calldemux: procedure = 3
+       pmap_calldemux: args decoded 
+pmap-prog = 100024, pmap-vers = 1, pmap-prot = 17, pmap-port = 0
+   pmap_getport: entered
+
+pmap-prog = 100024, pmap-vers = 1, pmap-prot = 17, pmap-port = 0
+ pmap_getport: can't find exact program 100024 version 1 protocol 17
+
+                         pmap_getport_filter: entered
+
+                         pmap_getport_filter: entered
+
+ pmap_getport: can't find any version of program
+
+   pmap_getport: port = -1
+
+       pmap_calldemux: procedure called
+xkxdr_long:  name = 1527500, *name = 1527576, data = ffffffff, htonl(data) = ffffffff
+  0 80  0 17 4f 18  0  0  0  6  0  0  0  0  0  0
+
+xkxdr_long:  name = 1527500, *name = 1527580, data = ffffffff, htonl(data) = ffffffff
+ 4f 18 ff ff ff ff  0  0  0  0  0  0  0  8  0  0
+
+       pmap_calldemux: results xdred
+pmap_calldemux: len2 = 4 buf2 = 1527576 bufout = 1527576
+ ff ff ff ff
+       pmap_calldemux: msg internalized
+   calldemux[pmap] returns 4 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 7
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 7
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 28 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf01c, stackTailPtr=0x6cf038, myStack=1, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4052 len 28	data: 00 00 00 07 00 00 00 01 
+     in udp push
+     sending msg len 28 from port 111
+       to port 257 @ 192.12.69.60
+   Calling push[ip] by udp, 36 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf014, stackTailPtr=0x6cf038, myStack=1, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4044 len 36	data: 00 6f 01 01 00 24 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=56,ident=14
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37398
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 56 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf000, stackTailPtr=0x6cf038, myStack=1, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 0e 00 00 
+     vnet push
+   Calling push[eth] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf000, stackTailPtr=0x6cf038, myStack=1, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 0e 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 1156d0[sunrpc] is 0, calling close
+   SUNRPC close of server session 1156d0 (does nothing)
+     xPop -- decreased ref count of 1155f8[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 56 bytes
+   Calling demux[vnet] by eth, 56 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf000, stackTailPtr=0x6cf038, myStack=0, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 0e 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 56 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf000, stackTailPtr=0x6cf038, myStack=0, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 0e 00 00 
+     IP demux called with datagram of len 56
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=56,ident=14
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=14,frag=0, len=36
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 36 bytes
+     IP pop, length = 36
+   Calling demux[udp] by ip, 36 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf014, stackTailPtr=0x6cf038, myStack=0, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4044 len 36	data: 00 6f 01 01 00 24 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 111, dport = 257
+        h->ulen = 36, msg_len = 28
+     Popping to existing session 115398
+     xPop increased ref count of 115398[udp] to 2
+   Calling pop[udp], 28 bytes
+     UDP pop, length = 28
+   Calling demux[sunrpc] by udp, 28 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf01c, stackTailPtr=0x6cf038, myStack=0, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4052 len 28	data: 00 00 00 07 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 7
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 115430
+       rpc_demux after decode: msg_len= 4
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 115430 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 115430[sunrpc] to 1
+                         xClose returning
+       sunrpc session 115430 after close rcnt == 1
+     xPop -- decreased ref count of 115398[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 4 bytes in reply to pmapcln
+                         pmtclient sent message to pmap
+                         pmtclient unwinding reply
+                         pmtclient reply = -1
+                         pmtclient xdring test args 3 500 1 17 0
+xkxdr_long:  name = 3423140, *name = 3423376, data = 3, htonl(data) = 3
+ 3c b0  0  7 91 b4  0  0  0  3  0  1 86 b8  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423380, data = 3, htonl(data) = 3
+ 91 b4  0  0  0  3  0  1 86 b8  0  0  0  1  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423380, data = 1f4, htonl(data) = 1f4
+ 91 b4  0  0  0  3  0  1 86 b8  0  0  0  1  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423384, data = 1f4, htonl(data) = 1f4
+  0  3  0  0  1 f4  0  0  0  1  0  0  0 11  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423384, data = 1, htonl(data) = 1
+  0  3  0  0  1 f4  0  0  0  1  0  0  0 11  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423388, data = 1, htonl(data) = 1
+  1 f4  0  0  0  1  0  0  0 11  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423388, data = 11, htonl(data) = 11
+  1 f4  0  0  0  1  0  0  0 11  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423140, *name = 3423392, data = 11, htonl(data) = 11
+  0  1  0  0  0 11  0  0  0  0  0  0  0  0  0 34
+
+xkxdr_long:  name = 3423140, *name = 3423392, data = 0, htonl(data) = 0
+  0  1  0  0  0 11  0  0  0  0  0  0  0  0  0 34
+
+xkxdr_long:  name = 3423140, *name = 3423396, data = 0, htonl(data) = 0
+  0 11  0  0  0  0  0  0  0  0  0 34 3d 68  0 34
+
+                         pmtclient sending message 3422752 of length 100 to pmap with reply 3423808
+   Calling call[sunrpc] by pmapcln, 100 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb004, stackTailPtr=0x6cb068, myStack=1, numNodes=1
+Leaf: 0x6ca078 refCnt 1 off 3980 len 100	data: 00 00 00 03 00 00 01 f4 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 8
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 8
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 136 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf010, stackTailPtr=0x6cf038, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 136
+  Leaf: 0x6ce048 refCnt 1 off 4040 len 40	data: 00 00 00 08 00 00 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 01 f4 00 00 00 01 
+     in udp push
+     sending msg len 136 from port 257
+       to port 111 @ 192.12.69.60
+   Calling push[ip] by udp, 144 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf008, stackTailPtr=0x6cf038, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 144
+  Leaf: 0x6ce048 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 90 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 01 f4 00 00 00 01 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=164,ident=15
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37289
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 164 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6ceff4, stackTailPtr=0x6cf038, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6ce048 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0f 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 01 f4 00 00 00 01 
+     vnet push
+   Calling push[eth] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6ceff4, stackTailPtr=0x6cf038, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6ce048 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0f 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 01 f4 00 00 00 01 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 164 bytes
+   Calling demux[vnet] by eth, 164 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6ceff4, stackTailPtr=0x6cf038, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6ce048 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0f 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 01 f4 00 00 00 01 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 164 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6ceff4, stackTailPtr=0x6cf038, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6ce048 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 0f 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 01 f4 00 00 00 01 
+     IP demux called with datagram of len 164
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=164,ident=15
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=15,frag=0, len=144
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 144 bytes
+     IP pop, length = 144
+   Calling demux[udp] by ip, 144 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf008, stackTailPtr=0x6cf038, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 144
+  Leaf: 0x6ce048 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 90 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 01 f4 00 00 00 01 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 257, dport = 111
+        h->ulen = 144, msg_len = 136
+     Popping to existing session 1155f8
+     xPop increased ref count of 1155f8[udp] to 2
+   Calling pop[udp], 136 bytes
+     UDP pop, length = 136
+   Calling demux[sunrpc] by udp, 136 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf010, stackTailPtr=0x6cf038, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 136
+  Leaf: 0x6ce048 refCnt 1 off 4040 len 40	data: 00 00 00 08 00 00 00 00 
+  Leaf: 0x6ca078 refCnt 1 off 3984 len 96	data: 00 00 01 f4 00 00 00 01 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 8
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 1156d0[sunrpc] to 1
+   Calling pop[sunrpc], 96 bytes
+   SUNRPC_pop
+   Calling calldemux[pmap] by sunrpc, 96 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccfc8, stackTailPtr=0x6cd028, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 3984 len = 96
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 01 f4 00 00 00 01 
+                         pmap_calldemux: entered
+   pmap_calldemux: msg = 3481132 msgLen = 96  msgr = 3477680
+                         pmap_calldemux: starting msgPop
+       pmap_calldemux: msg externalized
+s = 1136336  s->state = 1136488pmap call header:
+rm_xid = 8
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+                         pmap_calldemux: procedure = 3
+       pmap_calldemux: args decoded 
+pmap-prog = 500, pmap-vers = 1, pmap-prot = 17, pmap-port = 0
+   pmap_getport: entered
+
+pmap-prog = 500, pmap-vers = 1, pmap-prot = 17, pmap-port = 0
+   pmap_getport: port = 7000
+
+       pmap_calldemux: procedure called
+xkxdr_long:  name = 3477196, *name = 3477272, data = 1b58, htonl(data) = 1b58
+  0 85  0 35  f 18  0  0  0  6  0  0  0  0  0  0
+
+xkxdr_long:  name = 3477196, *name = 3477276, data = 1b58, htonl(data) = 1b58
+  f 18  0  0 1b 58  0  0  0  0  0  0  1  0  0  0
+
+       pmap_calldemux: results xdred
+pmap_calldemux: len2 = 4 buf2 = 3477272 bufout = 3477272
+  0  0 1b 58
+       pmap_calldemux: msg internalized
+   calldemux[pmap] returns 4 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 8
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 8
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 28 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce014, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4052 len 28	data: 00 00 00 08 00 00 00 01 
+     in udp push
+     sending msg len 28 from port 111
+       to port 257 @ 192.12.69.60
+   Calling push[ip] by udp, 36 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce00c, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4044 len 36	data: 00 6f 01 01 00 24 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=56,ident=16
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37396
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 10 00 00 
+     vnet push
+   Calling push[eth] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 10 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 1156d0[sunrpc] is 0, calling close
+   SUNRPC close of server session 1156d0 (does nothing)
+     xPop -- decreased ref count of 1155f8[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 56 bytes
+   Calling demux[vnet] by eth, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 10 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 56 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 10 00 00 
+     IP demux called with datagram of len 56
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=56,ident=16
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=16,frag=0, len=36
+     xPop increased ref count of 11b348[ip] to 5
+   Calling pop[ip], 36 bytes
+     IP pop, length = 36
+   Calling demux[udp] by ip, 36 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce00c, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4044 len 36	data: 00 6f 01 01 00 24 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 111, dport = 257
+        h->ulen = 36, msg_len = 28
+     Popping to existing session 115398
+     xPop increased ref count of 115398[udp] to 2
+   Calling pop[udp], 28 bytes
+     UDP pop, length = 28
+   Calling demux[sunrpc] by udp, 28 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce014, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4052 len 28	data: 00 00 00 08 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 8
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 115430
+       rpc_demux after decode: msg_len= 4
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 115430 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 115430[sunrpc] to 1
+                         xClose returning
+       sunrpc session 115430 after close rcnt == 1
+     xPop -- decreased ref count of 115398[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 4
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 4 bytes in reply to pmapcln
+                         pmtclient sent message to pmap
+                         pmtclient unwinding reply
+                         pmtclient reply = 7000
+   Calling open[sunrpc] by (pmapcln,pmapcln)
+   SUNRPC open
+   Calling open[udp] by (sunrpc,sunrpc)
+   UDP open
+   UDP open: from port 258 to port 7000
+   Calling open[ip] by (udp,udp)
+   IP open
+     IP sends to 192.12.69.60, 17
+   xCreateSession:[ip] by [udp]
+   Calling open[vnet] by (ip,ip)
+   VNET open
+   remote IP host is 192.12.69.60
+   Calling control[arp] op resolve (9)
+   Control[arp] op resolve (9) returns 10
+     vnetOpen - resolution succeeded, addr = c00c.453c.1538
+   Calling open[eth] by (vnet,ip)
+   Open[eth] by (vnet,ip) returns 11b400 (rcnt == 2)
+   vnetOpen -- session already exists
+   xClose: entered
+     xClose -- decreased ref count of 11b400[eth] to 1
+                         xClose returning
+   Open[vnet] by (ip,ip) returns 11b4c8 (rcnt == 2)
+     Successfully opened lls
+   Calling control[vnet] op getmaxpacket (5)
+       vnetControlSessn
+   Calling control[eth] op getmaxpacket (5)
+   Control[eth] op getmaxpacket (5) returns 4
+   Control[vnet] op getmaxpacket (5) returns 4
+   Calling control[vnet] op getmyhost (0)
+       vnetControlSessn
+   Control[vnet] op getmyhost (0) returns 4
+   IP open -- session already existed
+   IP DestroyNormalSessn 115818
+   xClose: entered
+     xClose -- decreased ref count of 11b4c8[vnet] to 1
+                         xClose returning
+   IP open returns 11b348
+   Open[ip] by (udp,udp) returns 11b348 (rcnt == 5)
+   udpOpen creates new session
+   xCreateSession:[udp] by [sunrpc]
+   Calling control[ip] op getmyhost (0)
+   Control[ip] op getmyhost (0) returns 4
+   Calling control[ip] op getpeerhost (2)
+   Control[ip] op getpeerhost (2) returns 4
+   UDP open returns 115818
+   Open[udp] by (sunrpc,sunrpc) returns 115818 (rcnt == 1)
+   xCreateSession:[sunrpc] by [pmapcln]
+   SUNRPC open returns 1158b0
+   Open[sunrpc] by (pmapcln,pmapcln) returns 1158b0 (rcnt == 1)
+                         pmtclient pinging the DET server
+xkxdr_long:  name = 3422524, *name = 3422408, data = 0, htonl(data) = 0
+  0  8  0  0  0  0  0  0  0  7 f8 42  f 58  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422412, data = 0, htonl(data) = 0
+  0  0  0  0  0  0 f8 42  f 58  0  0  0  a  0  b
+
+                         pmtclient sending message 3422024 of length 100 to detsrv with reply 3422264
+   Calling call[sunrpc] by pmapcln, 100 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccfc4, stackTailPtr=0x6cd028, myStack=1, numNodes=1
+Leaf: 0x6cc038 refCnt 1 off 3980 len 100	data: 00 00 00 00 f8 42 0f 58 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 9
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 0 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 9
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 0 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 136 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 136
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 09 00 00 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: f8 42 0f 58 00 00 00 0a 
+     in udp push
+     sending msg len 136 from port 258
+       to port 7000 @ 192.12.69.60
+   Calling push[ip] by udp, 144 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 144
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 02 1b 58 00 90 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: f8 42 0f 58 00 00 00 0a 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=164,ident=17
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37287
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 11 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: f8 42 0f 58 00 00 00 0a 
+     vnet push
+   Calling push[eth] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 11 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: f8 42 0f 58 00 00 00 0a 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 164 bytes
+   Calling demux[vnet] by eth, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 11 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: f8 42 0f 58 00 00 00 0a 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 164 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 11 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: f8 42 0f 58 00 00 00 0a 
+     IP demux called with datagram of len 164
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=164,ident=17
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=17,frag=0, len=144
+     xPop increased ref count of 11b348[ip] to 6
+   Calling pop[ip], 144 bytes
+     IP pop, length = 144
+   Calling demux[udp] by ip, 144 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 144
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 02 1b 58 00 90 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: f8 42 0f 58 00 00 00 0a 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 258, dport = 7000
+        h->ulen = 144, msg_len = 136
+   Found an open enable for prot 1185400
+   xCreateSession:[udp] by [sunrpc]
+   Calling control[ip] op getmyhost (0)
+   Control[ip] op getmyhost (0) returns 4
+   Calling control[ip] op getpeerhost (2)
+   Control[ip] op getpeerhost (2) returns 4
+   calling duplicate[ip]
+   Calling opendone[sunrpc] by udp
+     xPop increased ref count of 115a78[udp] to 1
+   Calling pop[udp], 136 bytes
+     UDP pop, length = 136
+   Calling demux[sunrpc] by udp, 136 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 136
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 09 00 00 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: f8 42 0f 58 00 00 00 0a 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 9
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 0 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+     sunrpcServerDemux, no active sessn, looking for openenable
+   Calling control[udp] op getmyproto (7)
+   Control[udp] op getmyproto (7) returns 4
+demux lookup passive key: vers=1 prog=500 port=7000
+0 0 0 1 0 0 1 f4 0 0 1b 58 
+     SUNRPC found server 
+   xCreateSession:[sunrpc] by [pmapsrv]
+   calling duplicate[udp]
+   Calling opendone[pmapsrv] by sunrpc
+       --->det_opendone
+binding new server session: vers=1 prog=500 lls=115a78
+0 0 0 1 0 0 1 f4 0 11 5a 78 
+     xPop increased ref count of 115b78[sunrpc] to 1
+   Calling pop[sunrpc], 96 bytes
+   SUNRPC_pop
+   Calling calldemux[pmapsrv] by sunrpc, 96 bytes
+       Message:
+Msg: Stack=0x6cf040, stackHeadPtr=0x6cffe0, stackTailPtr=0x6d0040, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 3984 len = 96
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: f8 42 0f 58 00 00 00 0a 
+   det_calldemux: msg = 1531436 msgLen = 96  msgr = 1527984
+                         det_calldemux: checked session(s)
+                         det_calldemux: starting msgPop
+       det_calldemux: msg externalized
+                         det_calldemux: extracted procedure.   proc: 0
+       det_calldemux: procedure called
+result = 0
+       det_calldemux: results xdred  
+server_demux: len2 = 0 buf2 = 1527576
+
+       det_calldemux: msg internalized
+   calldemux[pmapsrv] returns 0 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 9
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 9
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 24 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1030, stackTailPtr=0x6d1048, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4056 len = 24
+  Leaf: 0x6d0058 refCnt 1 off 4056 len 24	data: 00 00 00 09 00 00 00 01 
+     in udp push
+     sending msg len 24 from port 7000
+       to port 258 @ 192.12.69.60
+   Calling push[ip] by udp, 32 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1028, stackTailPtr=0x6d1048, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4048 len = 32
+  Leaf: 0x6d0058 refCnt 1 off 4048 len 32	data: 1b 58 01 02 00 20 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=52,ident=18
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37398
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 52 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1014, stackTailPtr=0x6d1048, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6d0058 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 12 00 00 
+     vnet push
+   Calling push[eth] by vnet, 52 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1014, stackTailPtr=0x6d1048, myStack=1, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6d0058 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 12 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 115b78[sunrpc] is 0, calling close
+   SUNRPC close of server session 115b78 (does nothing)
+     xPop -- decreased ref count of 115a78[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 52 bytes
+   Calling demux[vnet] by eth, 52 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1014, stackTailPtr=0x6d1048, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6d0058 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 12 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 52 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 52 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1014, stackTailPtr=0x6d1048, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4028 len = 52
+  Leaf: 0x6d0058 refCnt 1 off 4028 len 52	data: 45 00 00 34 00 12 00 00 
+     IP demux called with datagram of len 52
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=52,ident=18
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=18,frag=0, len=32
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 32 bytes
+     IP pop, length = 32
+   Calling demux[udp] by ip, 32 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1028, stackTailPtr=0x6d1048, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4048 len = 32
+  Leaf: 0x6d0058 refCnt 1 off 4048 len 32	data: 1b 58 01 02 00 20 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 7000, dport = 258
+        h->ulen = 32, msg_len = 24
+     Popping to existing session 115818
+     xPop increased ref count of 115818[udp] to 2
+   Calling pop[udp], 24 bytes
+     UDP pop, length = 24
+   Calling demux[sunrpc] by udp, 24 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1030, stackTailPtr=0x6d1048, myStack=0, numNodes=2
+Pair: refCnt = 1 off = 4056 len = 24
+  Leaf: 0x6d0058 refCnt 1 off 4056 len 24	data: 00 00 00 09 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 9
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 1158b0
+       rpc_demux after decode: msg_len= 0
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 1158b0 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 1158b0[sunrpc] to 1
+                         xClose returning
+       sunrpc session 1158b0 after close rcnt == 1
+     xPop -- decreased ref count of 115818[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 0 bytes in reply to pmapcln
+                         pmtclient sent message to detsrv
+                         pmtclient reply length 0
+                         pmtclient xdring test args 1 50 31 32 20
+xkxdr_long:  name = 3422524, *name = 3422408, data = 1, htonl(data) = 1
+  0  8  0  0  0  0  0  0  0  0 f8 42  f 58  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422412, data = 1, htonl(data) = 1
+  0  0  0  0  0  1 f8 42  f 58  0  0  0  a  0  b
+
+xkxdr_long:  name = 3422524, *name = 3422412, data = 32, htonl(data) = 32
+  0  0  0  0  0  1 f8 42  f 58  0  0  0  a  0  b
+
+xkxdr_long:  name = 3422524, *name = 3422416, data = 32, htonl(data) = 32
+  0  1  0  0  0 32  0  0  0  a  0  b d9 e4  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422416, data = 1f, htonl(data) = 1f
+  0  1  0  0  0 32  0  0  0  a  0  b d9 e4  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422420, data = 1f, htonl(data) = 1f
+  0 32  0  0  0 1f  0  b d9 e4  0  0  0  4  0  b
+
+xkxdr_long:  name = 3422524, *name = 3422420, data = 20, htonl(data) = 20
+  0 32  0  0  0 1f  0  b d9 e4  0  0  0  4  0  b
+
+xkxdr_long:  name = 3422524, *name = 3422424, data = 20, htonl(data) = 20
+  0 1f  0  0  0 20  0  0  0  4  0  b 67 3d  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422424, data = 14, htonl(data) = 14
+  0 1f  0  0  0 20  0  0  0  4  0  b 67 3d  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422428, data = 14, htonl(data) = 14
+  0 20  0  0  0 14  0  b 67 3d  0  0  0  3  0  0
+
+                         pmtclient sending message 3422024 of length 100 to detsrv with reply 3422264
+   Calling call[sunrpc] by pmapcln, 100 bytes
+       Message:
+Msg: Stack=0x6cf040, stackHeadPtr=0x6cffdc, stackTailPtr=0x6d0040, myStack=1, numNodes=1
+Leaf: 0x6cf050 refCnt 1 off 3980 len 100	data: 00 00 00 01 00 00 00 32 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 10
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 1 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 10
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 1 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 136 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1020, stackTailPtr=0x6d1048, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 136
+  Leaf: 0x6d0058 refCnt 1 off 4040 len 40	data: 00 00 00 0a 00 00 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 00 00 00 32 00 00 00 1f 
+     in udp push
+     sending msg len 136 from port 258
+       to port 7000 @ 192.12.69.60
+   Calling push[ip] by udp, 144 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1018, stackTailPtr=0x6d1048, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 144
+  Leaf: 0x6d0058 refCnt 1 off 4032 len 48	data: 01 02 1b 58 00 90 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 00 00 00 32 00 00 00 1f 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=164,ident=19
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37285
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 164 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1004, stackTailPtr=0x6d1048, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6d0058 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 13 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 00 00 00 32 00 00 00 1f 
+     vnet push
+   Calling push[eth] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1004, stackTailPtr=0x6d1048, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6d0058 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 13 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 00 00 00 32 00 00 00 1f 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 164 bytes
+   Calling demux[vnet] by eth, 164 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1004, stackTailPtr=0x6d1048, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6d0058 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 13 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 00 00 00 32 00 00 00 1f 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 164 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1004, stackTailPtr=0x6d1048, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6d0058 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 13 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 00 00 00 32 00 00 00 1f 
+     IP demux called with datagram of len 164
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=164,ident=19
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=19,frag=0, len=144
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 144 bytes
+     IP pop, length = 144
+   Calling demux[udp] by ip, 144 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1018, stackTailPtr=0x6d1048, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 144
+  Leaf: 0x6d0058 refCnt 1 off 4032 len 48	data: 01 02 1b 58 00 90 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 00 00 00 32 00 00 00 1f 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 258, dport = 7000
+        h->ulen = 144, msg_len = 136
+     Popping to existing session 115a78
+     xPop increased ref count of 115a78[udp] to 2
+   Calling pop[udp], 136 bytes
+     UDP pop, length = 136
+   Calling demux[sunrpc] by udp, 136 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1020, stackTailPtr=0x6d1048, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 136
+  Leaf: 0x6d0058 refCnt 1 off 4040 len 40	data: 00 00 00 0a 00 00 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 00 00 00 32 00 00 00 1f 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 10
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 1 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 115b78[sunrpc] to 1
+   Calling pop[sunrpc], 96 bytes
+   SUNRPC_pop
+   Calling calldemux[pmapsrv] by sunrpc, 96 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccfc8, stackTailPtr=0x6cd028, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 3984 len = 96
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 00 00 00 32 00 00 00 1f 
+   det_calldemux: msg = 3481132 msgLen = 96  msgr = 3477680
+                         det_calldemux: checked session(s)
+                         det_calldemux: starting msgPop
+       det_calldemux: msg externalized
+                         det_calldemux: extracted procedure.   proc: 1
+       det_calldemux: decoding args
+       det_calldemux: args decoded 
+det args = 50 31 32 20
+       det_calldemux: procedure called
+result = 8
+xkxdr_long:  name = 3477108, *name = 3477272, data = 8, htonl(data) = 8
+  0 85  0  0  0  1  0  0  0  6  0  0  0  0  0  0
+
+xkxdr_long:  name = 3477108, *name = 3477276, data = 8, htonl(data) = 8
+  0  1  0  0  0  8  0  0  0  0  0  0  1  0  0  0
+
+       det_calldemux: results xdred  
+server_demux: len2 = 4 buf2 = 3477272
+  0  0  0  8
+       det_calldemux: msg internalized
+   calldemux[pmapsrv] returns 4 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 10
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 10
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 28 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce014, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4052 len 28	data: 00 00 00 0a 00 00 00 01 
+     in udp push
+     sending msg len 28 from port 7000
+       to port 258 @ 192.12.69.60
+   Calling push[ip] by udp, 36 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce00c, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4044 len 36	data: 1b 58 01 02 00 24 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=56,ident=20
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37392
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 14 00 00 
+     vnet push
+   Calling push[eth] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 14 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 115b78[sunrpc] is 0, calling close
+   SUNRPC close of server session 115b78 (does nothing)
+     xPop -- decreased ref count of 115a78[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 56 bytes
+   Calling demux[vnet] by eth, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 14 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 56 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdff8, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 14 00 00 
+     IP demux called with datagram of len 56
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=56,ident=20
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=20,frag=0, len=36
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 36 bytes
+     IP pop, length = 36
+   Calling demux[udp] by ip, 36 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce00c, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4044 len 36	data: 1b 58 01 02 00 24 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 7000, dport = 258
+        h->ulen = 36, msg_len = 28
+     Popping to existing session 115818
+     xPop increased ref count of 115818[udp] to 2
+   Calling pop[udp], 28 bytes
+     UDP pop, length = 28
+   Calling demux[sunrpc] by udp, 28 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce014, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4052 len 28	data: 00 00 00 0a 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 10
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 1158b0
+       rpc_demux after decode: msg_len= 4
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 1158b0 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 1158b0[sunrpc] to 1
+                         xClose returning
+       sunrpc session 1158b0 after close rcnt == 1
+     xPop -- decreased ref count of 115818[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 4 bytes in reply to pmapcln
+                         pmtclient sent message to detsrv
+                         pmtclient unwinding reply
+                         pmtclient reply = 8
+                         pmtclient xdring test args 2 50.000000 31.000000 32.000000 20.000000
+xkxdr_long:  name = 3422524, *name = 3422408, data = 2, htonl(data) = 2
+  0  8  0  0  0  0  0  0  0  1  0  0  0 32  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422412, data = 2, htonl(data) = 2
+  0  0  0  0  0  2  0  0  0 32  0  0  0 1f  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422412, data = 40490000, htonl(data) = 40490000
+  0  0  0  0  0  2  0  0  0 32  0  0  0 1f  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422416, data = 40490000, htonl(data) = 40490000
+  0  2 40 49  0  0  0  0  0 1f  0  0  0 20  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422416, data = 0, htonl(data) = 0
+  0  2 40 49  0  0  0  0  0 1f  0  0  0 20  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422420, data = 0, htonl(data) = 0
+  0  0  0  0  0  0  0  0  0 20  0  0  0 14  0  b
+
+xkxdr_long:  name = 3422524, *name = 3422420, data = 403f0000, htonl(data) = 403f0000
+  0  0  0  0  0  0  0  0  0 20  0  0  0 14  0  b
+
+xkxdr_long:  name = 3422524, *name = 3422424, data = 403f0000, htonl(data) = 403f0000
+  0  0 40 3f  0  0  0  0  0 14  0  b 67 3d  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422424, data = 0, htonl(data) = 0
+  0  0 40 3f  0  0  0  0  0 14  0  b 67 3d  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422428, data = 0, htonl(data) = 0
+  0  0  0  0  0  0  0  b 67 3d  0  0  0  3  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422428, data = 40400000, htonl(data) = 40400000
+  0  0  0  0  0  0  0  b 67 3d  0  0  0  3  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422432, data = 40400000, htonl(data) = 40400000
+  0  0 40 40  0  0  0  0  0  3  0  0  0 30  0 34
+
+xkxdr_long:  name = 3422524, *name = 3422432, data = 0, htonl(data) = 0
+  0  0 40 40  0  0  0  0  0  3  0  0  0 30  0 34
+
+xkxdr_long:  name = 3422524, *name = 3422436, data = 0, htonl(data) = 0
+  0  0  0  0  0  0  0  0  0 30  0 34 39 18  0  7
+
+xkxdr_long:  name = 3422524, *name = 3422436, data = 40340000, htonl(data) = 40340000
+  0  0  0  0  0  0  0  0  0 30  0 34 39 18  0  7
+
+xkxdr_long:  name = 3422524, *name = 3422440, data = 40340000, htonl(data) = 40340000
+  0  0 40 34  0  0  0 34 39 18  0  7 92 c0  0 34
+
+xkxdr_long:  name = 3422524, *name = 3422440, data = 0, htonl(data) = 0
+  0  0 40 34  0  0  0 34 39 18  0  7 92 c0  0 34
+
+xkxdr_long:  name = 3422524, *name = 3422444, data = 0, htonl(data) = 0
+  0  0  0  0  0  0  0  7 92 c0  0 34 39 18  0  7
+
+                         pmtclient sending message 3422024 of length 100 to detsrv with reply 3422264
+   Calling call[sunrpc] by pmapcln, 100 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccfc4, stackTailPtr=0x6cd028, myStack=1, numNodes=1
+Leaf: 0x6cc038 refCnt 1 off 3980 len 100	data: 00 00 00 02 40 49 00 00 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 11
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 2 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 11
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 2 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 136 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 136
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 0b 00 00 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     in udp push
+     sending msg len 136 from port 258
+       to port 7000 @ 192.12.69.60
+   Calling push[ip] by udp, 144 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 144
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 02 1b 58 00 90 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=164,ident=21
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37283
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 15 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     vnet push
+   Calling push[eth] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 15 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 164 bytes
+   Calling demux[vnet] by eth, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 15 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 164 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 15 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     IP demux called with datagram of len 164
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=164,ident=21
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=21,frag=0, len=144
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 144 bytes
+     IP pop, length = 144
+   Calling demux[udp] by ip, 144 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 144
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 02 1b 58 00 90 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 258, dport = 7000
+        h->ulen = 144, msg_len = 136
+     Popping to existing session 115a78
+     xPop increased ref count of 115a78[udp] to 2
+   Calling pop[udp], 136 bytes
+     UDP pop, length = 136
+   Calling demux[sunrpc] by udp, 136 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 136
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 0b 00 00 00 00 
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 11
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 2 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 115b78[sunrpc] to 1
+   Calling pop[sunrpc], 96 bytes
+   SUNRPC_pop
+   Calling calldemux[pmapsrv] by sunrpc, 96 bytes
+       Message:
+Msg: Stack=0x6cf040, stackHeadPtr=0x6cffe0, stackTailPtr=0x6d0040, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 3984 len = 96
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+   det_calldemux: msg = 1531436 msgLen = 96  msgr = 1527984
+                         det_calldemux: checked session(s)
+                         det_calldemux: starting msgPop
+       det_calldemux: msg externalized
+                         det_calldemux: extracted procedure.   proc: 2
+       det_calldemux: decoding args
+       det_calldemux: args decoded 
+det args = 50.000000 31.000000 32.000000 20.000000
+       det_calldemux: procedure called
+result = 8.000000
+xkxdr_long:  name = 1527412, *name = 1527576, data = 40200000, htonl(data) = 40200000
+  0 82  0  0  0  1  0  0  0  6  0  0  0  0  0  0
+
+xkxdr_long:  name = 1527412, *name = 1527580, data = 40200000, htonl(data) = 40200000
+  0  1 40 20  0  0  0  0  0  0  0  0  0 20  0  0
+
+xkxdr_long:  name = 1527412, *name = 1527580, data = 0, htonl(data) = 0
+  0  1 40 20  0  0  0  0  0  0  0  0  0 20  0  0
+
+xkxdr_long:  name = 1527412, *name = 1527584, data = 0, htonl(data) = 0
+  0  0  0  0  0  0  0  0  0 20  0  0  0  0  0  0
+
+       det_calldemux: results xdred  
+server_demux: len2 = 8 buf2 = 1527576
+ 40 20  0  0  0  0  0  0
+       det_calldemux: msg internalized
+   calldemux[pmapsrv] returns 8 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 11
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 11
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 32 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1028, stackTailPtr=0x6d1048, myStack=1, numNodes=1
+Leaf: 0x6d0058 refCnt 1 off 4048 len 32	data: 00 00 00 0b 00 00 00 01 
+     in udp push
+     sending msg len 32 from port 7000
+       to port 258 @ 192.12.69.60
+   Calling push[ip] by udp, 40 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1020, stackTailPtr=0x6d1048, myStack=1, numNodes=1
+Leaf: 0x6d0058 refCnt 1 off 4040 len 40	data: 1b 58 01 02 00 28 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=60,ident=22
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37386
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 60 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d100c, stackTailPtr=0x6d1048, myStack=1, numNodes=1
+Leaf: 0x6d0058 refCnt 1 off 4020 len 60	data: 45 00 00 3c 00 16 00 00 
+     vnet push
+   Calling push[eth] by vnet, 60 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d100c, stackTailPtr=0x6d1048, myStack=1, numNodes=1
+Leaf: 0x6d0058 refCnt 1 off 4020 len 60	data: 45 00 00 3c 00 16 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 115b78[sunrpc] is 0, calling close
+   SUNRPC close of server session 115b78 (does nothing)
+     xPop -- decreased ref count of 115a78[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 60 bytes
+   Calling demux[vnet] by eth, 60 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d100c, stackTailPtr=0x6d1048, myStack=0, numNodes=1
+Leaf: 0x6d0058 refCnt 1 off 4020 len 60	data: 45 00 00 3c 00 16 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 60 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 60 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d100c, stackTailPtr=0x6d1048, myStack=0, numNodes=1
+Leaf: 0x6d0058 refCnt 1 off 4020 len 60	data: 45 00 00 3c 00 16 00 00 
+     IP demux called with datagram of len 60
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=60,ident=22
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=22,frag=0, len=40
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 40 bytes
+     IP pop, length = 40
+   Calling demux[udp] by ip, 40 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1020, stackTailPtr=0x6d1048, myStack=0, numNodes=1
+Leaf: 0x6d0058 refCnt 1 off 4040 len 40	data: 1b 58 01 02 00 28 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 7000, dport = 258
+        h->ulen = 40, msg_len = 32
+     Popping to existing session 115818
+     xPop increased ref count of 115818[udp] to 2
+   Calling pop[udp], 32 bytes
+     UDP pop, length = 32
+   Calling demux[sunrpc] by udp, 32 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1028, stackTailPtr=0x6d1048, myStack=0, numNodes=1
+Leaf: 0x6d0058 refCnt 1 off 4048 len 32	data: 00 00 00 0b 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 11
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 1158b0
+       rpc_demux after decode: msg_len= 8
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 1158b0 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 1158b0[sunrpc] to 1
+                         xClose returning
+       sunrpc session 1158b0 after close rcnt == 1
+     xPop -- decreased ref count of 115818[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 8 bytes in reply to pmapcln
+                         pmtclient sent message to detsrv
+                         pmtclient unwinding reply
+                         pmtclient reply = 8.000000
+pmtclient xdring test args 3  50.000000 -5.000000i  31.000000 +0.312500i  32.000000 -27.500000i  20.000000 +20.500000ixkxdr_long:  name = 3422524, *name = 3422408, data = 3, htonl(data) = 3
+  0  8  0  0  0  0  0  0  0  2 40 49  0  0  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422412, data = 3, htonl(data) = 3
+  0  0  0  0  0  3 40 49  0  0  0  0  0  0 40 3f
+
+xkxdr_long:  name = 3422524, *name = 3422412, data = 40490000, htonl(data) = 40490000
+  0  0  0  0  0  3 40 49  0  0  0  0  0  0 40 3f
+
+xkxdr_long:  name = 3422524, *name = 3422416, data = 40490000, htonl(data) = 40490000
+  0  3 40 49  0  0  0  0  0  0 40 3f  0  0  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422416, data = 0, htonl(data) = 0
+  0  3 40 49  0  0  0  0  0  0 40 3f  0  0  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422420, data = 0, htonl(data) = 0
+  0  0  0  0  0  0 40 3f  0  0  0  0  0  0 40 40
+
+xkxdr_long:  name = 3422524, *name = 3422420, data = c0140000, htonl(data) = c0140000
+  0  0  0  0  0  0 40 3f  0  0  0  0  0  0 40 40
+
+xkxdr_long:  name = 3422524, *name = 3422424, data = c0140000, htonl(data) = c0140000
+  0  0 c0 14  0  0  0  0  0  0 40 40  0  0  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422424, data = 0, htonl(data) = 0
+  0  0 c0 14  0  0  0  0  0  0 40 40  0  0  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422428, data = 0, htonl(data) = 0
+  0  0  0  0  0  0 40 40  0  0  0  0  0  0 40 34
+
+xkxdr_long:  name = 3422524, *name = 3422428, data = 403f0000, htonl(data) = 403f0000
+  0  0  0  0  0  0 40 40  0  0  0  0  0  0 40 34
+
+xkxdr_long:  name = 3422524, *name = 3422432, data = 403f0000, htonl(data) = 403f0000
+  0  0 40 3f  0  0  0  0  0  0 40 34  0  0  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422432, data = 0, htonl(data) = 0
+  0  0 40 3f  0  0  0  0  0  0 40 34  0  0  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422436, data = 0, htonl(data) = 0
+  0  0  0  0  0  0 40 34  0  0  0  0  0  0  0  7
+
+xkxdr_long:  name = 3422524, *name = 3422436, data = 3fd40000, htonl(data) = 3fd40000
+  0  0  0  0  0  0 40 34  0  0  0  0  0  0  0  7
+
+xkxdr_long:  name = 3422524, *name = 3422440, data = 3fd40000, htonl(data) = 3fd40000
+  0  0 3f d4  0  0  0  0  0  0  0  7 92 c0  0 34
+
+xkxdr_long:  name = 3422524, *name = 3422440, data = 0, htonl(data) = 0
+  0  0 3f d4  0  0  0  0  0  0  0  7 92 c0  0 34
+
+xkxdr_long:  name = 3422524, *name = 3422444, data = 0, htonl(data) = 0
+  0  0  0  0  0  0  0  7 92 c0  0 34 39 18  0  7
+
+xkxdr_long:  name = 3422524, *name = 3422444, data = 40400000, htonl(data) = 40400000
+  0  0  0  0  0  0  0  7 92 c0  0 34 39 18  0  7
+
+xkxdr_long:  name = 3422524, *name = 3422448, data = 40400000, htonl(data) = 40400000
+  0  0 40 40  0  0  0 34 39 18  0  7 91 b4 11 40
+
+xkxdr_long:  name = 3422524, *name = 3422448, data = 0, htonl(data) = 0
+  0  0 40 40  0  0  0 34 39 18  0  7 91 b4 11 40
+
+xkxdr_long:  name = 3422524, *name = 3422452, data = 0, htonl(data) = 0
+  0  0  0  0  0  0  0  7 91 b4 11 40  0 80  0  b
+
+xkxdr_long:  name = 3422524, *name = 3422452, data = c03b8000, htonl(data) = c03b8000
+  0  0  0  0  0  0  0  7 91 b4 11 40  0 80  0  b
+
+xkxdr_long:  name = 3422524, *name = 3422456, data = c03b8000, htonl(data) = c03b8000
+  0  0 c0 3b 80  0 11 40  0 80  0  b bf f2  0 34
+
+xkxdr_long:  name = 3422524, *name = 3422456, data = 0, htonl(data) = 0
+  0  0 c0 3b 80  0 11 40  0 80  0  b bf f2  0 34
+
+xkxdr_long:  name = 3422524, *name = 3422460, data = 0, htonl(data) = 0
+ 80  0  0  0  0  0  0  b bf f2  0 34 39 60  0 11
+
+xkxdr_long:  name = 3422524, *name = 3422460, data = 40340000, htonl(data) = 40340000
+ 80  0  0  0  0  0  0  b bf f2  0 34 39 60  0 11
+
+xkxdr_long:  name = 3422524, *name = 3422464, data = 40340000, htonl(data) = 40340000
+  0  0 40 34  0  0  0 34 39 60  0 11 54 c8  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422464, data = 0, htonl(data) = 0
+  0  0 40 34  0  0  0 34 39 60  0 11 54 c8  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422468, data = 0, htonl(data) = 0
+  0  0  0  0  0  0  0 11 54 c8  0  0  0  8  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422468, data = 40348000, htonl(data) = 40348000
+  0  0  0  0  0  0  0 11 54 c8  0  0  0  8  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422472, data = 40348000, htonl(data) = 40348000
+  0  0 40 34 80  0  0  0  0  8  0  0  0  0  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422472, data = 0, htonl(data) = 0
+  0  0 40 34 80  0  0  0  0  8  0  0  0  0  0  0
+
+xkxdr_long:  name = 3422524, *name = 3422476, data = 0, htonl(data) = 0
+ 80  0  0  0  0  0  0  0  0  0  0  0  0  7  0 6c
+
+                         pmtclient sending message 3422024 of length 100 to detsrv with reply 3422264
+   Calling call[sunrpc] by pmapcln, 100 bytes
+       Message:
+Msg: Stack=0x6cf040, stackHeadPtr=0x6cffdc, stackTailPtr=0x6d0040, myStack=1, numNodes=1
+Leaf: 0x6cf050 refCnt 1 off 3980 len 100	data: 00 00 00 03 40 49 00 00 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 12
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 12
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 136 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1020, stackTailPtr=0x6d1048, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 136
+  Leaf: 0x6d0058 refCnt 1 off 4040 len 40	data: 00 00 00 0c 00 00 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     in udp push
+     sending msg len 136 from port 258
+       to port 7000 @ 192.12.69.60
+   Calling push[ip] by udp, 144 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1018, stackTailPtr=0x6d1048, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 144
+  Leaf: 0x6d0058 refCnt 1 off 4032 len 48	data: 01 02 1b 58 00 90 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=164,ident=23
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37281
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 164 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1004, stackTailPtr=0x6d1048, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6d0058 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 17 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     vnet push
+   Calling push[eth] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1004, stackTailPtr=0x6d1048, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 164
+  Leaf: 0x6d0058 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 17 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 164 bytes
+   Calling demux[vnet] by eth, 164 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1004, stackTailPtr=0x6d1048, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6d0058 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 17 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 164 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 164 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1004, stackTailPtr=0x6d1048, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 164
+  Leaf: 0x6d0058 refCnt 1 off 4012 len 68	data: 45 00 00 a4 00 17 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     IP demux called with datagram of len 164
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=164,ident=23
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=23,frag=0, len=144
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 144 bytes
+     IP pop, length = 144
+   Calling demux[udp] by ip, 144 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1018, stackTailPtr=0x6d1048, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 144
+  Leaf: 0x6d0058 refCnt 1 off 4032 len 48	data: 01 02 1b 58 00 90 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 258, dport = 7000
+        h->ulen = 144, msg_len = 136
+     Popping to existing session 115a78
+     xPop increased ref count of 115a78[udp] to 2
+   Calling pop[udp], 136 bytes
+     UDP pop, length = 136
+   Calling demux[sunrpc] by udp, 136 bytes
+       Message:
+Msg: Stack=0x6d0048, stackHeadPtr=0x6d1020, stackTailPtr=0x6d1048, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 136
+  Leaf: 0x6d0058 refCnt 1 off 4040 len 40	data: 00 00 00 0c 00 00 00 00 
+  Leaf: 0x6cf050 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 12
+direction = CALL
+rpcvers = 2 
+prog = 500 
+vers = 1 
+proc = 3 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 115b78[sunrpc] to 1
+   Calling pop[sunrpc], 96 bytes
+   SUNRPC_pop
+   Calling calldemux[pmapsrv] by sunrpc, 96 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6ccfc8, stackTailPtr=0x6cd028, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 3984 len = 96
+  Leaf: 0x6cc038 refCnt 1 off 3984 len 96	data: 40 49 00 00 00 00 00 00 
+   det_calldemux: msg = 3481132 msgLen = 96  msgr = 3477680
+                         det_calldemux: checked session(s)
+                         det_calldemux: starting msgPop
+       det_calldemux: msg externalized
+                         det_calldemux: extracted procedure.   proc: 3
+       det_calldemux: decoding args
+       det_calldemux: args decoded 
+det args =  50.000000 -5.000000 i  31.000000 +0.312500 i  32.000000 -27.500000 i  20.000000 +20.500000 i
+       det_calldemux: procedure called
+result =   101.906250 +1767.500000 i
+xkxdr_long:  name = 3477108, *name = 3477272, data = 40597a00, htonl(data) = 40597a00
+ 10 87  0  0  0  1  0  0  0  6  0  0  0  0  0  0
+
+xkxdr_long:  name = 3477108, *name = 3477276, data = 40597a00, htonl(data) = 40597a00
+  0  1 40 59 7a  0  0  0  0  0  0  0  0  4  0  0
+
+xkxdr_long:  name = 3477108, *name = 3477276, data = 0, htonl(data) = 0
+  0  1 40 59 7a  0  0  0  0  0  0  0  0  4  0  0
+
+xkxdr_long:  name = 3477108, *name = 3477280, data = 0, htonl(data) = 0
+ 7a  0  0  0  0  0  0  0  0  4  0  0  0  0  0  0
+
+xkxdr_long:  name = 3477108, *name = 3477280, data = 409b9e00, htonl(data) = 409b9e00
+ 7a  0  0  0  0  0  0  0  0  4  0  0  0  0  0  0
+
+xkxdr_long:  name = 3477108, *name = 3477284, data = 409b9e00, htonl(data) = 409b9e00
+  0  0 40 9b 9e  0  0  0  0  0  0  0  0  7 f8 42
+
+xkxdr_long:  name = 3477108, *name = 3477284, data = 0, htonl(data) = 0
+  0  0 40 9b 9e  0  0  0  0  0  0  0  0  7 f8 42
+
+xkxdr_long:  name = 3477108, *name = 3477288, data = 0, htonl(data) = 0
+ 9e  0  0  0  0  0  0  0  0  7 f8 42  f 58  0 35
+
+       det_calldemux: results xdred  
+server_demux: len2 = 16 buf2 = 3477272
+ 40 59 7a  0  0  0  0  0 40 9b 9e  0  0  0  0  0
+
+       det_calldemux: msg internalized
+   calldemux[pmapsrv] returns 16 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 12
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 12
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 40 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 0c 00 00 00 01 
+     in udp push
+     sending msg len 40 from port 7000
+       to port 258 @ 192.12.69.60
+   Calling push[ip] by udp, 48 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 1b 58 01 02 00 30 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=68,ident=24
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37376
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 18 00 00 
+     vnet push
+   Calling push[eth] by vnet, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 18 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 115b78[sunrpc] is 0, calling close
+   SUNRPC close of server session 115b78 (does nothing)
+     xPop -- decreased ref count of 115a78[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 68 bytes
+   Calling demux[vnet] by eth, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 18 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 68 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 18 00 00 
+     IP demux called with datagram of len 68
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=68,ident=24
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=24,frag=0, len=48
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 48 bytes
+     IP pop, length = 48
+   Calling demux[udp] by ip, 48 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 1b 58 01 02 00 30 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 7000, dport = 258
+        h->ulen = 48, msg_len = 40
+     Popping to existing session 115818
+     xPop increased ref count of 115818[udp] to 2
+   Calling pop[udp], 40 bytes
+     UDP pop, length = 40
+   Calling demux[sunrpc] by udp, 40 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=0, numNodes=1
+Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 0c 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 12
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 1158b0
+       rpc_demux after decode: msg_len= 16
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 1158b0 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 1158b0[sunrpc] to 1
+                         xClose returning
+       sunrpc session 1158b0 after close rcnt == 1
+     xPop -- decreased ref count of 115818[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 16 bytes in reply to pmapcln
+                         pmtclient sent message to detsrv
+                         pmtclient unwinding reply
+ 40 59 7a  0  0  0  0  0 40 9b 9e  0  0  0  0  0
+testvalr = 101.906250
+testvali = 1767.500000
+pmtclient reply = 101.906250 +1767.500000i
+                         pmtclient: end of server tests
+                         pmtclient dump test: xdring test arg 4
+xkxdr_long:  name = 3423124, *name = 3423696, data = 4, htonl(data) = 4
+ b6 7b ff ff ff ff  0  0  0  0  0  0  0  0  0  0
+
+xkxdr_long:  name = 3423124, *name = 3423700, data = 4, htonl(data) = 4
+ ff ff  0  0  0  4  0  0  0  0  0  0  0  3  0  0
+
+                         pmtclient sending message 3422752 of length 4 to pmap with reply 3423808
+   Calling call[sunrpc] by pmapcln, 4 bytes
+       Message:
+Msg: Stack=0x6cc028, stackHeadPtr=0x6cd024, stackTailPtr=0x6cd028, myStack=1, numNodes=1
+Leaf: 0x6cc038 refCnt 1 off 4076 len 4	data: 00 00 00 04 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 13
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 4 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 13
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 4 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 40 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 40
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 0d 00 00 00 00 
+     in udp push
+     sending msg len 40 from port 257
+       to port 111 @ 192.12.69.60
+   Calling push[ip] by udp, 48 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 48
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 30 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=68,ident=25
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37375
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 68
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 19 00 00 
+     vnet push
+   Calling push[eth] by vnet, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 68
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 19 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 68 bytes
+   Calling demux[vnet] by eth, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 68
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 19 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 68 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 68 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6cdfec, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 68
+  Leaf: 0x6cd040 refCnt 1 off 4012 len 68	data: 45 00 00 44 00 19 00 00 
+     IP demux called with datagram of len 68
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=68,ident=25
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=25,frag=0, len=48
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 48 bytes
+     IP pop, length = 48
+   Calling demux[udp] by ip, 48 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce000, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 48
+  Leaf: 0x6cd040 refCnt 1 off 4032 len 48	data: 01 01 00 6f 00 30 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 257, dport = 111
+        h->ulen = 48, msg_len = 40
+     Popping to existing session 1155f8
+     xPop increased ref count of 1155f8[udp] to 2
+   Calling pop[udp], 40 bytes
+     UDP pop, length = 40
+   Calling demux[sunrpc] by udp, 40 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce008, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 40
+  Leaf: 0x6cd040 refCnt 1 off 4040 len 40	data: 00 00 00 0d 00 00 00 00 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 13
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 4 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 1156d0[sunrpc] to 1
+   Calling pop[sunrpc], 0 bytes
+   SUNRPC_pop
+   Calling calldemux[pmap] by sunrpc, 0 bytes
+       Message:
+Msg: Stack=0x6cd030, stackHeadPtr=0x6ce030, stackTailPtr=0x6ce030, myStack=0, numNodes=3
+                         pmap_calldemux: entered
+   pmap_calldemux: msg = 1531436 msgLen = 0  msgr = 1527984
+                         pmap_calldemux: starting msgPop
+       pmap_calldemux: msg externalized
+s = 1136336  s->state = 1136488pmap call header:
+rm_xid = 13
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+                         pmap_calldemux: procedure = 4
+   pmapproc_dump: entered
+
+xkxdr_long:  name = 1527268, *name = 7147600, data = 1, htonl(data) = 1
+ 3a a0  0  0  0  0  0 6d  0 58  0 6d 10 a8  0 6d
+
+xkxdr_long:  name = 1527268, *name = 7147604, data = 1, htonl(data) = 1
+  0  0  0  0  0  1  0 6d 10 a8  0 6d 10  4  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147604, data = 1f4, htonl(data) = 1f4
+  0  0  0  0  0  1  0 6d 10 a8  0 6d 10  4  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147608, data = 1f4, htonl(data) = 1f4
+  0  1  0  0  1 f4  0 6d 10  4  0  0  0  0  0  3
+
+xkxdr_long:  name = 1527268, *name = 7147608, data = 1, htonl(data) = 1
+  0  1  0  0  1 f4  0 6d 10  4  0  0  0  0  0  3
+
+xkxdr_long:  name = 1527268, *name = 7147612, data = 1, htonl(data) = 1
+  1 f4  0  0  0  1  0  0  0  0  0  3  0 10  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147612, data = 11, htonl(data) = 11
+  1 f4  0  0  0  1  0  0  0  0  0  3  0 10  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147616, data = 11, htonl(data) = 11
+  0  1  0  0  0 11  0  3  0 10  0  0  0  0  0 10
+
+xkxdr_long:  name = 1527268, *name = 7147616, data = 1b58, htonl(data) = 1b58
+  0  1  0  0  0 11  0  3  0 10  0  0  0  0  0 10
+
+xkxdr_long:  name = 1527268, *name = 7147620, data = 1b58, htonl(data) = 1b58
+  0 11  0  0 1b 58  0  0  0  0  0 10 25 40  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147620, data = 1, htonl(data) = 1
+  0 11  0  0 1b 58  0  0  0  0  0 10 25 40  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147624, data = 1, htonl(data) = 1
+ 1b 58  0  0  0  1  0 10 25 40  0  0  0 69  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147624, data = 186a0, htonl(data) = 186a0
+ 1b 58  0  0  0  1  0 10 25 40  0  0  0 69  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147628, data = 186a0, htonl(data) = 186a0
+  0  1  0  1 86 a0  0  0  0 69  0  0 2d 90 39  0
+
+xkxdr_long:  name = 1527268, *name = 7147628, data = 2, htonl(data) = 2
+  0  1  0  1 86 a0  0  0  0 69  0  0 2d 90 39  0
+
+xkxdr_long:  name = 1527268, *name = 7147632, data = 2, htonl(data) = 2
+ 86 a0  0  0  0  2  0  0 2d 90 39  0 c0  c 45 3c
+
+xkxdr_long:  name = 1527268, *name = 7147632, data = 11, htonl(data) = 11
+ 86 a0  0  0  0  2  0  0 2d 90 39  0 c0  c 45 3c
+
+xkxdr_long:  name = 1527268, *name = 7147636, data = 11, htonl(data) = 11
+  0  2  0  0  0 11 39  0 c0  c 45 3c 15 38  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147636, data = 6f, htonl(data) = 6f
+  0  2  0  0  0 11 39  0 c0  c 45 3c 15 38  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147640, data = 6f, htonl(data) = 6f
+  0 11  0  0  0 6f 45 3c 15 38  0  0  0  0  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147640, data = 0, htonl(data) = 0
+  0 11  0  0  0 6f 45 3c 15 38  0  0  0  0  0  0
+
+xkxdr_long:  name = 1527268, *name = 7147644, data = 0, htonl(data) = 0
+  0 6f  0  0  0  0  0  0  0  0  0  0  0 20  0  0
+
+       pmap_calldemux: procedure called
+       pmap_calldemux: results xdred
+pmap_calldemux: len2 = 44 buf2 = 1527576 bufout = 7147600
+  0  0  0  1  0  0  1 f4  0  0  0  1  0  0  0 11
+  0  0 1b 58  0  0  0  1  0  1 86 a0  0  0  0  2
+  0  0  0 11  0  0  0 6f  0  0  0  0
+       pmap_calldemux: msg internalized
+   calldemux[pmap] returns 44 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 13
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 13
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 68 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6ceff4, stackTailPtr=0x6cf038, myStack=1, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4012 len 68	data: 00 00 00 0d 00 00 00 01 
+     in udp push
+     sending msg len 68 from port 111
+       to port 257 @ 192.12.69.60
+   Calling push[ip] by udp, 76 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cefec, stackTailPtr=0x6cf038, myStack=1, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4004 len 76	data: 00 6f 01 01 00 4c 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=96,ident=26
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37346
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 96 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cefd8, stackTailPtr=0x6cf038, myStack=1, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 45 00 00 60 00 1a 00 00 
+     vnet push
+   Calling push[eth] by vnet, 96 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cefd8, stackTailPtr=0x6cf038, myStack=1, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 45 00 00 60 00 1a 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 1156d0[sunrpc] is 0, calling close
+   SUNRPC close of server session 1156d0 (does nothing)
+     xPop -- decreased ref count of 1155f8[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 96 bytes
+   Calling demux[vnet] by eth, 96 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cefd8, stackTailPtr=0x6cf038, myStack=0, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 45 00 00 60 00 1a 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 96 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 96 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cefd8, stackTailPtr=0x6cf038, myStack=0, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 3984 len 96	data: 45 00 00 60 00 1a 00 00 
+     IP demux called with datagram of len 96
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=96,ident=26
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=26,frag=0, len=76
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 76 bytes
+     IP pop, length = 76
+   Calling demux[udp] by ip, 76 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cefec, stackTailPtr=0x6cf038, myStack=0, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4004 len 76	data: 00 6f 01 01 00 4c 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 111, dport = 257
+        h->ulen = 76, msg_len = 68
+     Popping to existing session 115398
+     xPop increased ref count of 115398[udp] to 2
+   Calling pop[udp], 68 bytes
+     UDP pop, length = 68
+   Calling demux[sunrpc] by udp, 68 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6ceff4, stackTailPtr=0x6cf038, myStack=0, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4012 len 68	data: 00 00 00 0d 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 13
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 115430
+       rpc_demux after decode: msg_len= 44
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 115430 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 115430[sunrpc] to 1
+                         xClose returning
+       sunrpc session 115430 after close rcnt == 1
+     xPop -- decreased ref count of 115398[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 44 bytes in reply to pmapcln
+                         pmtclient sent message to pmap
+                         pmtclient unwinding reply of length 44
+Pmap Dump results:
+more = 1  prog = 500  vers = 1  prot = 17  port = 7000
+more = 1  prog = 100000  vers = 2  prot = 17  port = 111
+more = 0
+                         pmtserver xdring test args 2 500 2 17 7000
+xkxdr_long:  name = 3481076, *name = 3481088, data = 2, htonl(data) = 2
+ ff f0  0  0  0  0  0  0  0 28  0  0  0 28  0 11
+
+xkxdr_long:  name = 3481076, *name = 3481092, data = 2, htonl(data) = 2
+  0  0  0  0  0  2  0  0  0 28  0 11 5c c0  0  3
+
+xkxdr_long:  name = 3481076, *name = 3481092, data = 1f4, htonl(data) = 1f4
+  0  0  0  0  0  2  0  0  0 28  0 11 5c c0  0  3
+
+xkxdr_long:  name = 3481076, *name = 3481096, data = 1f4, htonl(data) = 1f4
+  0  2  0  0  1 f4  0 11 5c c0  0  3 11 84  0  0
+
+xkxdr_long:  name = 3481076, *name = 3481096, data = 2, htonl(data) = 2
+  0  2  0  0  1 f4  0 11 5c c0  0  3 11 84  0  0
+
+xkxdr_long:  name = 3481076, *name = 3481100, data = 2, htonl(data) = 2
+  1 f4  0  0  0  2  0  3 11 84  0  0  0  0  0 10
+
+xkxdr_long:  name = 3481076, *name = 3481100, data = 11, htonl(data) = 11
+  1 f4  0  0  0  2  0  3 11 84  0  0  0  0  0 10
+
+xkxdr_long:  name = 3481076, *name = 3481104, data = 11, htonl(data) = 11
+  0  2  0  0  0 11  0  0  0  0  0 10 3e  0  0 10
+
+xkxdr_long:  name = 3481076, *name = 3481104, data = 1b58, htonl(data) = 1b58
+  0  2  0  0  0 11  0  0  0  0  0 10 3e  0  0 10
+
+xkxdr_long:  name = 3481076, *name = 3481108, data = 1b58, htonl(data) = 1b58
+  0 11  0  0 1b 58  0 10 3e  0  0 10 3e  0  0 10
+
+                         pmtserver built deregistration message
+                         pmtserver msg length = 20
+   Calling call[sunrpc] by pmapsrv, 20 bytes
+       Message:
+Msg: Stack=0x6ce038, stackHeadPtr=0x6cf024, stackTailPtr=0x6cf038, myStack=1, numNodes=1
+Leaf: 0x6ce048 refCnt 1 off 4060 len 20	data: 00 00 00 02 00 00 01 f4 
+   in sunrpcCall
+sunrpcCall:
+rm_xid = 14
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 2 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall going to encode header 
+encode_hdr:
+rm_xid = 14
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 2 
+cred = opaque 
+verf = opaque 
+   in sunrpcCall after encoding header 
+   Calling push[udp] by sunrpc, 56 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb040, stackTailPtr=0x6cb068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4040 len = 56
+  Leaf: 0x6ca078 refCnt 1 off 4040 len 40	data: 00 00 00 0e 00 00 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 02 
+     in udp push
+     sending msg len 56 from port 256
+       to port 111 @ 192.12.69.60
+   Calling push[ip] by udp, 64 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb038, stackTailPtr=0x6cb068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4032 len = 64
+  Leaf: 0x6ca078 refCnt 1 off 4032 len 48	data: 01 00 00 6f 00 40 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 02 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=84,ident=27
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37357
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 84 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 84
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 54 00 1b 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 02 
+     vnet push
+   Calling push[eth] by vnet, 84 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=1, numNodes=3
+Pair: refCnt = 2 off = 4012 len = 84
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 54 00 1b 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 02 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     rpc_push waiting 1000 msecs 6 times for reply
+   calling duplicate[sunrpc]
+     sunrpcCall blocking for reply
+ IP fragment garbage collector
+ IP GC exits
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 84 bytes
+   Calling demux[vnet] by eth, 84 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 84
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 54 00 1b 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 02 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 84 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 84 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb024, stackTailPtr=0x6cb068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4012 len = 84
+  Leaf: 0x6ca078 refCnt 1 off 4012 len 68	data: 45 00 00 54 00 1b 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 02 
+     IP demux called with datagram of len 84
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=84,ident=27
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=27,frag=0, len=64
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 64 bytes
+     IP pop, length = 64
+   Calling demux[udp] by ip, 64 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb038, stackTailPtr=0x6cb068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4032 len = 64
+  Leaf: 0x6ca078 refCnt 1 off 4032 len 48	data: 01 00 00 6f 00 40 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 02 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 256, dport = 111
+        h->ulen = 64, msg_len = 56
+     Popping to existing session 11bdd8
+     xPop increased ref count of 11bdd8[udp] to 2
+   Calling pop[udp], 56 bytes
+     UDP pop, length = 56
+   Calling demux[sunrpc] by udp, 56 bytes
+       Message:
+Msg: Stack=0x6ca068, stackHeadPtr=0x6cb040, stackTailPtr=0x6cb068, myStack=0, numNodes=3
+Pair: refCnt = 3 off = 4040 len = 56
+  Leaf: 0x6ca078 refCnt 1 off 4040 len 40	data: 00 00 00 0e 00 00 00 00 
+  Leaf: 0x6ce048 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 02 
+       decode hdr: popping=40 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 14
+direction = CALL
+rpcvers = 2 
+prog = 100000 
+vers = 2 
+proc = 2 
+cred = opaque 
+verf = opaque 
+   sunrpcServerDemux
+   sunrpcServerDemux found existing session
+     xPop increased ref count of 11bed8[sunrpc] to 1
+   Calling pop[sunrpc], 16 bytes
+   SUNRPC_pop
+   Calling calldemux[pmap] by sunrpc, 16 bytes
+       Message:
+Msg: Stack=0x6c8328, stackHeadPtr=0x6c9318, stackTailPtr=0x6c9328, myStack=0, numNodes=5
+Pair: refCnt = 1 off = 4064 len = 16
+  Leaf: 0x6c8338 refCnt 1 off 4064 len 16	data: 00 00 01 f4 00 00 00 02 
+                         pmap_calldemux: entered
+   pmap_calldemux: msg = 3538476 msgLen = 16  msgr = 3535024
+                         pmap_calldemux: starting msgPop
+       pmap_calldemux: msg externalized
+s = 1162968  s->state = 1163120pmap call header:
+rm_xid = 14
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+                         pmap_calldemux: procedure = 2
+   Calling control[sunrpc] op getpeerhost (2)
+   in rpc_control with session=11bed8
+
+   Calling control[udp] op getpeerhost (2)
+   Calling control[ip] op getpeerhost (2)
+   Control[ip] op getpeerhost (2) returns 4
+   Control[udp] op getpeerhost (2) returns 4
+   Control[sunrpc] op getpeerhost (2) returns 4
+       pmap_calldemux: args decoded 
+pmap-prog = 500, pmap-vers = 2, pmap-prot = 17, pmap-port = 0
+   pmap_unset: entered
+     pmap_unset: cycling throught port map
+                         pmap_unset_filter: entered
+     pmap_unset_filter: unbinding program 500 version 1 protocol 17
+                         pmap_unset_filter: entered
+     pmap_unset: cycling throught port map
+                         pmap_unset_filter: entered
+       pmap_calldemux: procedure called
+xkxdr_long:  name = 3534540, *name = 3534616, data = 1, htonl(data) = 1
+ 10 86  0 35 ef 18  0  0  0  6  0  0  0  0  0  0
+
+xkxdr_long:  name = 3534540, *name = 3534620, data = 1, htonl(data) = 1
+ ef 18  0  0  0  1  0  0  0  0  0  0  0  2  0  0
+
+       pmap_calldemux: results xdred
+pmap_calldemux: len2 = 4 buf2 = 3534616 bufout = 3534616
+  0  0  0  1
+       pmap_calldemux: msg internalized
+   calldemux[pmap] returns 4 bytes
+   in sunrpc pushReply
+sunrpc pushReply:
+rm_xid = 14
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply going to encode header 
+encode_hdr:
+rm_xid = 14
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   in sunrpc pushReply after encoding header 
+   Calling push[udp] by sunrpc, 28 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c304c, stackTailPtr=0x6c3068, myStack=1, numNodes=1
+Leaf: 0x6c2078 refCnt 1 off 4052 len 28	data: 00 00 00 0e 00 00 00 01 
+     in udp push
+     sending msg len 28 from port 111
+       to port 256 @ 192.12.69.60
+   Calling push[ip] by udp, 36 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3044, stackTailPtr=0x6c3068, myStack=1, numNodes=1
+Leaf: 0x6c2078 refCnt 1 off 4044 len 36	data: 00 6f 01 00 00 24 00 00 
+     IP send : message requires no fragmentation
+     IP send unfragmented datagram header: 
+
+    version=4,hlen=5,type=0,dlen=56,ident=28
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=37384
+    source address = 192.12.69.60  dest address 192.12.69.60
+   Calling push[vnet] by ip, 56 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3030, stackTailPtr=0x6c3068, myStack=1, numNodes=1
+Leaf: 0x6c2078 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 1c 00 00 
+     vnet push
+   Calling push[eth] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3030, stackTailPtr=0x6c3068, myStack=1, numNodes=1
+Leaf: 0x6c2078 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 1c 00 00 
+   push[eth] by vnet returns 0
+   push[vnet] by ip returns 0
+   push[ip] by udp returns 0
+   push[udp] by sunrpc returns 0
+     xPop -- ref count of 11bed8[sunrpc] is 0, calling close
+   SUNRPC close of server session 11bed8 (does nothing)
+     xPop -- decreased ref count of 11bdd8[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+     xPop increased ref count of 11b400[eth] to 2
+   Calling pop[eth], 56 bytes
+   Calling demux[vnet] by eth, 56 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3030, stackTailPtr=0x6c3068, myStack=0, numNodes=1
+Leaf: 0x6c2078 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 1c 00 00 
+     vnet Session Demux
+     xPop increased ref count of 11b4c8[vnet] to 2
+   Calling pop[vnet], 56 bytes
+     vnet Pop
+   Calling demux[ip] by vnet, 56 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3030, stackTailPtr=0x6c3068, myStack=0, numNodes=1
+Leaf: 0x6c2078 refCnt 1 off 4024 len 56	data: 45 00 00 38 00 1c 00 00 
+     IP demux called with datagram of len 56
+       ip getHdr: received header:
+    version=4,hlen=5,type=0,dlen=56,ident=28
+    flags:  DF: 0  MF: 0
+    fragoffset=0,time=30,prot=17,checksum=0
+    source address = 192.12.69.60  dest address 192.12.69.60
+      ipdemux: seq=28,frag=0, len=36
+     xPop increased ref count of 11b348[ip] to 7
+   Calling pop[ip], 36 bytes
+     IP pop, length = 36
+   Calling demux[udp] by ip, 36 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c3044, stackTailPtr=0x6c3068, myStack=0, numNodes=1
+Leaf: 0x6c2078 refCnt 1 off 4044 len 36	data: 00 6f 01 00 00 24 00 00 
+     UDP Demux
+       No UDP header checksum was used
+       Sending host: 192.12.69.60
+       Destination host: 192.12.69.60
+     sport = 111, dport = 256
+        h->ulen = 36, msg_len = 28
+     Popping to existing session 11b5d0
+     xPop increased ref count of 11b5d0[udp] to 2
+   Calling pop[udp], 28 bytes
+     UDP pop, length = 28
+   Calling demux[sunrpc] by udp, 28 bytes
+       Message:
+Msg: Stack=0x6c2068, stackHeadPtr=0x6c304c, stackTailPtr=0x6c3068, myStack=0, numNodes=1
+Leaf: 0x6c2078 refCnt 1 off 4052 len 28	data: 00 00 00 0e 00 00 00 01 
+       decode hdr: popping=24 bytes 
+
+sunrpcDemux hdr:
+rm_xid = 14
+direction = REPLY
+rejected_stat  =MSG_ACCEPTED
+ar_verf = opaque 
+accept_stat = SUCCESS
+   SUNRPC found client session 11b6a8
+       rpc_demux after decode: msg_len= 4
+
+       sunrpc client demux successfully removed timeout
+       sunrpc session 11b6a8 before close rcnt == 2
+   xClose: entered
+     xClose -- decreased ref count of 11b6a8[sunrpc] to 1
+                         xClose returning
+       sunrpc session 11b6a8 after close rcnt == 1
+     xPop -- decreased ref count of 11b5d0[udp] to 1
+     xPop -- decreased ref count of 11b348[ip] to 6
+     xPop -- decreased ref count of 11b4c8[vnet] to 1
+     xPop -- decreased ref count of 11b400[eth] to 1
+   SUNRPC SUCCESS
+   call[sunrpc] returns 4 bytes in reply to pmapsrv
+                         pmtserver sent deregistration message; val = 0
+                         pmtserver: portmapper reply = 1
+                         pmtserver unregistered with portmapper
+
+^C
+
+^Z
+
+Stopped
+cheltenham% cheltenham% kill %1
+kill %1
+[1]    Terminated           ../xkernel -p -s -c -t
+cheltenham% 

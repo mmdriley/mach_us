@@ -1,0 +1,23 @@
+astest commands:
+
+	allocate		/* a port */
+	deallocate <port>
+	check_in <port_name> <port>
+	lookup <port_name> <host_name>
+	connect			/* to local authentication server */
+	login <user_name> <pass_word>
+	logout
+	create_token <group_id_list>
+	delete_token <token>
+	verify_token <token>
+	create_group <group_name> <group_type> <full_name>
+			<pass_word> <owner_name> <group_id>
+	delete_group <group_name>
+	change_password <group_name> <old_pass_word> <new_pass_word>
+	add_to_group <add_group_name> <group_name>
+	remove_from_group <remove_group_name> <group_name>
+	translate_group_id
+	translate_group_name
+	list_members
+	list_memberships
+	list_all_groups

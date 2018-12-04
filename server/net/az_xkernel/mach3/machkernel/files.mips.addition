@@ -1,0 +1,4 @@
+#
+# x-kernel modified Lance device driver
+#
+chips/xklance.c		optional ln device-driver

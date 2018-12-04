@@ -1,0 +1,156 @@
+%
+% $Revision: 1.8 $
+% $Date: 1993/02/04 03:43:42 $
+%
+
+\section{ Control Operations }
+\label{control}
+
+Control operations are used to perform arbitrary operations on
+protocols and sessions.  Control operations return an integer that
+indicates the length in bytes of the information which was written
+into the buffer, or -1 to indicate an error.
+
+All implementations of control operations should check the length
+field before reading or writing the buffer, returning -1 if the buffer
+is too small.  The {\sanss checkLen(actualLength, expectedLength)}
+macro can be used for this.
+
+There are two ``classes'' of operations: standard ones that may be
+implemented by more than one protocol, and protocol-specific ones.
+
+\subsection{ Standard Control Operations }
+\subsubsection{ Protocol and Session Operations }
+
+These operations can be performed on both sessions and protocols.
+
+\begin{quote}
+	GETMYHOST, GETMYHOSTCOUNT
+\begin{quote}
+When used on a protocol, GETMYHOST asks for all possible host
+addresses for the local host.  When used on a session, GETMYHOST asks
+for the local host addresses actually being used on the connection.
+If the buffer is too small for all of the hosts, GETMYHOST will write
+as many hosts as the buffer allows (GETMYHOST with a buffer large
+enough to hold one host will return the most common or default host.)
+GETMYHOSTCOUNT asks for the number of hosts which will be returned by
+GETMYHOST.
+
+\end{quote}
+
+	GETMAXPACKET, GETOPTPACKET
+\begin{quote}
+
+Treats the buffer as a pointer to an integer and sets it to the length
+of the longest message that the {\em XObj} can deliver (GETMAXPACKET) or
+the length of the longest message that can be delivered without
+fragmentation (GETOPTPACKET.)  A protocol typically implements this
+operation by querying the lower {\em XObj}s and then subtracting its
+header length.  
+
+\smallskip
+Although GETMAXPACKET and GETOPTPACKET can be performed on protocols,
+it is preferable to use them on sessions, since different sessions of
+the same protocol may return different values.
+
+\end{quote}
+
+	RESOLVE, RRESOLVE
+\begin{quote}
+
+These operations map high-level addresses into low-level
+addresses (RESOLVE) and vice versa (RRESOLVE.) 
+
+\end{quote}
+\end{quote}
+
+\subsubsection{ Session Operations }
+\begin{quote}
+	GETPEERHOST, GETPEERHOSTCOUNT
+\begin{quote}
+GETPEERHOST returns the host addresses of all peers of a session.  It
+is an error to submit a buffer that is too small for all of the peer
+hosts, and -1 will be returned.  GETPEERHOSTCOUNT asks for the number
+of hosts which will be returned by GETPEERHOST.
+
+\end{quote}
+	GETMYPROTO, GETPEERPROTO
+\begin{quote}
+Treats the buffer as a pointer to a long and sets it to the local or
+remote ``protocol number'' of the session.  For example, UDP returns
+the local UDP port from a GETMYPROTO operation.
+
+\end{quote}
+	GETPARTICIPANTS
+\begin{quote}
+Treats the buffer as a simple array of bytes.  The lower session
+creates a participant list with data that was used to open the
+session.  This participant list is then written into the control
+buffer using {\em partExternalize} (see section \ref{part}.)  The
+caller will have to run {\em partInternalize} on the buffer before it
+can be used as a participant list.
+
+Sessions typically implement this control op by first executing it on their
+lower session.  If their protocol uses information on participant
+stacks, they then run {\em partInternalize} on the buffer, push their
+protocol-specific information on the participant stacks, and then
+re-externalize the participant list into the buffer.
+
+\end{quote}
+	FREERESOURCES
+\begin{quote}
+Treats the buffer as a pointer to an {\em xmsg\_handle\_t}.  This
+value is interpreted as the result of a previous {\em xPush} and frees
+the resources associated with that message.
+
+\end{quote}
+
+	SETNONBLOCKINGIO
+\begin{quote}
+Treats the buffer as a pointer to an {\em int} (non-zero == TRUE.)  
+This operation is interpreted by sessions which do output buffering.
+Such sessions may block threads executing an xPush until sufficient
+buffer space is available to hold the outgoing message.  If
+SETNONBLOCKINGIO(true) is performed on such a session, a thread which
+would normally block in such a situation returns with an XMSG\_ERR\_WOULDBLOCK message
+handle instead.
+
+\end{quote}
+
+
+\end{quote}
+
+\subsection{ Protocol-Specific Control Operations }
+
+Protocol-specific opcodes are defined relative to an identifier that
+has been assigned to each protocol. For example, the protocol ARP
+has been assigned the id {\sanss ARP\_CTL}. Individual opcodes are
+then defined (in {\sanss arp.h}) as
+
+\begin{tt}\begin{tabbing}
+xxxx \= xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \= \kill
+\> \#define ARP\_INSTALL \> (ARP\_CTL*MAXOPS + 0)\\
+\> \#define ARP\_IPINTERFACES \> (ARP\_CTL*MAXOPS + 1)\\
+\> \#define ARP\_IPADDRS \> (ARP\_CTL*MAXOPS + 2)
+\end{tabbing}\end{tt}
+
+\noindent This scheme is used to ensure that all control opcodes
+are unique. By convention, protocol-specific opcodes defined by
+protocol XYZ are prefixed with {\sanss XYZ\_}. Also, until an identifier
+has been assigned to a protocol you are writing (i.e., {\sanss upi.h} has
+been edited), you can use a set of temporary ids: {\sanss TMP0\_CTL},
+{\sanss TMP1\_CTL}, etc.
+
+Protocol-specific control operations are described in the manual page
+for each protocol in appendix \ref{protman}.
+
+\subsection { Forwarding Control Operations }
+
+There are several situations where an {\em XObj} may not be prepared to
+handle a control operation.  For example, a protocol-specific control
+operation may be sent through several intermediate {\em XObj}s in a graph
+before it reaches an {\em XObj} that understands the operation.  Because
+of this, {\em XObj}s should be prepared to forward control operations
+which they don't understand or can't satisfy to their lower {\em XObj}s.
+
+

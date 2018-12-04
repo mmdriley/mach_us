@@ -1,0 +1,161 @@
+%
+% installing_mach_kernel.tex
+%
+% $Revision: 1.2 $
+% $Date: 1993/02/05 20:58:55 $
+%
+
+\section{Installing within a Mach3 Kernel}
+\label{installingmachk}
+
+The \xk{} can be compiled as an integral part of the Mach3 kernel.
+This facility is provided for researchers developing highly efficient
+protocols and for obtaining timing results that are exclusive of
+Mach IPC and Unix server overhead.  At the present time, there is no
+user interface for accessing the \xk{} services -- the Mach3 kernel
+can boot, run an \xk{} timing test and print the results.  A more
+usable interface will be provided in the future.
+
+These are instructions for building a version of the \xk{} that resides
+in the Mach3 kernel.  You should be familiar with the build instructions
+for the ``out of kernel'' version before starting.
+
+In the mach3 src directory, go to the kernel directory and
+create a subdirectory ``xkern''; the \xk{} source tree should go here.
+
+Set your path to include the /usr/xkernel/bin and /usr/xkernel/bin/ARCH
+directories.
+
+The files distributed (and these directions) have been used with the
+MK74 Mach kernel for a DecStation 5000.
+
+\begin{enumerate}
+\item cd xkern/include
+
+\item Link all .h files symbolically to the xkern/include directory:
+
+\begin{verbatim}
+   ln -s ../etc/site.h
+   ln -s prot/*.h .
+   ln -s ../pi/include/*.h .
+   ln -s ../mach3/include/*.h .
+   ln -s ../protocols/*/*.h .
+   ln -s ../protocols/util/port_mgr.c
+   ln -s ../pi/msg_internal.h
+   ln -s ../gen/initRom.c
+\end{verbatim}
+
+\item Append the xkern/mach3/machkernel/files.addition file to the
+   kernel/conf/files file.
+
+   Append the xkern/mach3/machkernel/files.mips.addition file to the
+   kernel/conf/files.mips file.  Comment out the chips/lance.c line from
+   the original files.mips.
+
+\item Add the lines from xkern/mach3/machkernel/MASTER.local, MASTER.mips
+   and Makefile.mips to the corresponding files in the mach kernel conf
+   directory.  The variable XKRT in MASTER.local may have to be edited
+   to reflect the path to the \xk{} source directory in your local
+   environment.
+
+   Append the variable \${XLIB} to the definition of CC\_FLAGS\_NORMAL in
+   mk/kernel/conf/Makefile.template.  The definition should read:
+\begin{verbatim}
+	CC_FLAGS_NORMAL = -c ${CDEBUGFLAGS} ${CPP_ENV} ${VOLATILE} ${XLIB}
+\end{verbatim}
+
+
+\item Two files must be copied to mach3 kernel area:
+\begin{verbatim}
+	xkern/mach3/machkernel/device_init.c   replaces   device/device_init.c
+	xkern/mach3/drivers/xklance/xklance.c  copied as  chips/xklance.c
+\end{verbatim}
+
+\item Create a graph.comp in a build directory as for an out-of-kernel
+   version, but with the in-kernel driver (xklance) instead of the
+   out-of-kernel driver (ethdrv.)  See the xklance man page for
+   configuration options.
+
+   run {\tt compose -f < graph.comp}. Copy the following files to the 
+   xkern/gen directory:
+\begin{verbatim}
+	traceLevels.c
+	protocols.c
+	protocols.h
+	protTbl.c
+\end{verbatim}
+
+   (default versions of these files are provided, derived from a graph.comp
+    file that includes most of our transport protocols, but you must
+    regenerate these files each time you change graph.comp)
+
+\item In the xkern/gen directory, run the following command:
+\begin{verbatim}
+	ptbldump ../etc/prottbl > ptblData.c
+\end{verbatim}
+   This creates a compilable version of the protocol table.
+
+\item You must also create a ROM file in the gen directory.
+    Give the command 
+\begin{verbatim}
+	awk -f ../bin/genrom.awk < rom > initRom.c
+\end{verbatim}
+    The rom file may be empty (but the awk command must still be run.)
+
+\item Change your path to *exclude* the \xk{} bin directories.
+
+
+\item If you need command line arguments, like those used by udptest and tcptest,
+   edit the file xkern/mach3/pxk/init.c to simulate command line strings.
+   The file has example strings for running the udp test, both for
+   the server and client machines.
+
+
+\item Edit mk/Makefile-config to adjust the PMAX\_CONFIG configuration to
+    be 
+\begin{verbatim}
+	STD+ANY-mips_code+fixpri+xk
+\end{verbatim}
+
+    to have x-kernel compiled in ``debug'' mode or 
+\begin{verbatim}
+	STD+ANY-mips_code+fixpri+xko
+\end{verbatim}
+    to have the x-kernel compiled in optimized mode.
+
+
+\item In the mach3 kernel directory (src/mk/kernel), run 'make'.
+This will create the Makefile and dependencies in the obj directory and
+will compile the Mach kernel with \xk{} additions.
+
+
+\item If you have problems with kernels crashing because of storage exhaustion,
+   you might want to adjust the zone block table in the Mach kernel file
+   kalloc.c.  See the \xk{} file xkernel/pi/msg\_internal.h for the
+   size of a message block; these account for most of the \xk{} storage use.
+
+
+\item The machkernel will come up by default with both the Unix server
+and the \xk{} receiving and sending network packets (incoming
+packets are copied to both the \xk{} and the Unix server.)  For
+accurate kernel-kernel timings of \xk{} protocols, boot the
+mach\_kernel image (which doesn't start the user task) instead of the
+mach.boot image and configure the in-kernel driver (xklance) to not
+deliver incoming packets to the user task as described in Appendix A.
+
+\item If you get a load-time error of the form:
+\begin{verbatim}
+	gp relocation out-of-range errors have occured and bad object file
+	produced (corrective action must be taken)
+	Best -G num value to compile all -count'ed objects creating 
+	mach_kernel.MK74.STD+ANY-mips_code+fixpri+xk.out with is 30
+\end{verbatim}
+
+consider changing the value of the GPSIZE flag in
+kernel/conf/MASTER.mips from 32 to 0 and rebuilding from scratch.
+This seems to allow the kernel to build, although the user process
+doesn't seem to come up properly under this modification.  This
+error can also be avoided by not linking in as many \xk{}
+protocols.
+
+\end{enumerate}

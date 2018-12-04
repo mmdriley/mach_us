@@ -1,0 +1,92 @@
+In all cases here, 'register interest in reboot' refers to the SRXfer
+protocol's interest
+
+
+			       RR code
+
+receive SEND_LOCK_REQ
+
+	lookup netport structure
+	if ( no structure ) return FAILURE message
+	block on netport->rcvSem
+	if ( netport->status != GHOSTING ) return FAILURE
+	mark OSR as the locking host	
+	confirm BID of NSR
+	ask machIPC to increase make_send count of NSR
+	keep track of the locking host	
+	return SRX_SUCCESS 
+
+    reboot handler:
+	find receive rights locked by the rebooted host.  If they are
+	found, take the same action as with an UNLOCK_NO_TRANSFER msg
+
+
+receive UNLOCK_NO_TRANSFER message
+	if ( port does not exist || port is not locked ) return FAILURE
+	unregister interest in OSR reboot
+	ask machIPC to reduce make_send count of NSR
+	signal netport->rcvSem
+
+
+receive UNLOCK_WITH_TRANSFER message
+	if ( port does not exist || port is not locked ) return FAILURE
+	unregister interest in OSR reboot
+	signal netport->rcvSem
+
+------------------------------------------------------------
+
+			       OSR code
+
+
+move send right
+
+	open channel to NSR
+	for each send right {
+		do {
+			lookup host of receive right in netport structure
+			send SEND_LOCK_REQ
+		} while we determine that the port moved
+		if lock fails
+			mark this port as not transferred (netport_null?)
+			continue
+
+		send NEW_SEND_RIGHT message to NSR
+		if send succeeds
+			send UNLOCK_WITH_TRANSFER message to RR
+
+		else if send fails /* NSR rebooted */
+			send UNLOCK_NO_TRANSFER message to RR
+			mark remaining ports as not-transferred
+			abort the entire request
+
+		else /* NSR refused the transfer */
+			send UNLOCK_NO_TRANSFER message to RR
+	}
+	
+
+------------------------------------------------------------
+
+			       NSR code
+
+
+receive NEW_SEND_RIGHT message
+
+	Confirm the boot ID of RR
+		If different, return 
+
+	register our interest in (and verify) BID of OSR
+	keep track of this transfer in case of OSR reboot
+
+	create the network port structure (if needed)
+	tell machIPC to add a send right to this port
+
+	return TRANSFER_SUCCEEDS
+
+    reboot handler:
+	find the send rights expecting confirmation messages from the
+	rebooted host and ask machIPC remove the send right
+
+
+receive TRANSFER_COMPLETE message (from netIPC with msg ID)
+	remove reboot interest in OSR
+

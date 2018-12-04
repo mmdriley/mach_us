@@ -1,0 +1,14 @@
+@;
+
+name=ethdrv/SE0;
+name=eth protocols=ethdrv/SE0;
+name=arp protocols=eth;
+name=vnet protocols=eth,arp;
+name=ip protocols=vnet;
+name=icmp protocols=ip;
+name=udp protocols=ip;
+name=udptest protocols=udp;
+
+@;
+
+name=prottest	trace=TR_EVENTS;

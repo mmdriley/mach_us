@@ -1,0 +1,68 @@
+/* 
+ * Mach Operating System
+ * Copyright (c) 1994,1993,1992,1991,1990,1989,1988,1987 Carnegie Mellon University
+ * All Rights Reserved.
+ * 
+ * Permission to use, copy, modify and distribute this software and its
+ * documentation is hereby granted, provided that both the copyright
+ * notice and this permission notice appear in all copies of the
+ * software, derivative works or modified versions, and any portions
+ * thereof, and that both notices appear in supporting documentation.
+ * 
+ * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS"
+ * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND FOR
+ * ANY DAMAGES WHATSOEVER RESULTING FROM THE USE OF THIS SOFTWARE.
+ * 
+ * Carnegie Mellon requests users of this software to return to
+ * 
+ *  Software Distribution Coordinator   or   Software.Distribution@CS.CMU.EDU
+ *  School of Computer Science
+ *  Carnegie Mellon University
+ *  Pittsburgh PA 15213-3890
+ * 
+ * any improvements or extensions that they made and grant Carnegie Mellon the
+ * rights to redistribute these changes.
+ */
+/*
+ * HISTORY
+ * $Log:	err_us.sub,v $
+ * Revision 2.3  94/07/08  17:54:47  mrt
+ * 	Updated copyrights
+ * 
+ * Revision 2.2  90/07/26  12:37:05  dpj
+ * 	First version
+ * 	[90/07/24  14:28:02  dpj]
+ * 
+ * Revision 1.6  89/07/09  14:17:59  dpj
+ * 	Removed all error subsystems from this file, and moved
+ * 	them to err_server.sub.
+ * 	[89/07/08  12:44:51  dpj]
+ * 
+ * Revision 1.5  89/06/30  18:32:19  dpj
+ * 	20-Jul-88	Douglas Orr (dorr) at Carnegie-Mellon University
+ * 	[89/05/31  17:42:47  dpj]
+ * 
+ *	add oops codes
+ *
+ * 09-Apr-88	Douglas Orr (dorr) at Carnegie-Mellon University
+ *	add mig codes
+ * 
+ * 09-Mar-88	Douglas Orr (dorr) at Carnegie-Mellon University
+ *	created.
+ */
+/*
+ * File:	err_us.sub
+ * Purpose:
+ *	Generic error code interface
+ */
+
+
+
+/*	err_us subsystems      	*/
+static struct error_subsystem err_us_sub[] = {
+	0,
+};
+
+
+
+

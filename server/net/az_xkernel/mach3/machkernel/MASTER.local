@@ -1,0 +1,7 @@
+makeoptions     XKRT="/usr/mach3.74/src/mk/kernel/xkern"# # <xk,xko>
+makeoptions     XLIB="-I$(XKRT)/include" # # <xk,xko>
+makeoptions     XLIB=""						     # # <!xk,xko>
+options		CMUCS_DISK	# use cmu cs dept. disk partitions # <!std_disk>
+options		XKMACHKERNEL	# include xkernel #   <xk,xko>
+options		XK_DEBUG	# xkernel, no debug # <xk>
+options		ALLOW_NON_XK_USERS	# # <xk,xko>

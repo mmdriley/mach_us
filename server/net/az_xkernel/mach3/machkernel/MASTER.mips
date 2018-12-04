@@ -1,0 +1,4 @@
+
+pseudo-device	ln			2			# <!xk>
+# AMD7990 ethernet controller
+pseudo-device	xl			2			# <xk>

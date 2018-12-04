@@ -1,0 +1,72 @@
+/* 
+ * Mach Operating System
+ * Copyright (c) 1994,1993,1992,1991,1990,1989,1988 Carnegie Mellon University
+ * All Rights Reserved.
+ * 
+ * Permission to use, copy, modify and distribute this software and its
+ * documentation is hereby granted, provided that both the copyright
+ * notice and this permission notice appear in all copies of the
+ * software, derivative works or modified versions, and any portions
+ * thereof, and that both notices appear in supporting documentation.
+ * 
+ * CARNEGIE MELLON ALLOWS FREE USE OF THIS SOFTWARE IN ITS "AS IS"
+ * CONDITION.  CARNEGIE MELLON DISCLAIMS ANY LIABILITY OF ANY KIND FOR
+ * ANY DAMAGES WHATSOEVER RESULTING FROM THE USE OF THIS SOFTWARE.
+ * 
+ * Carnegie Mellon requests users of this software to return to
+ * 
+ *  Software Distribution Coordinator   or   Software.Distribution@CS.CMU.EDU
+ *  School of Computer Science
+ *  Carnegie Mellon University
+ *  Pittsburgh PA 15213-3890
+ * 
+ * any improvements or extensions that they made and grant Carnegie Mellon the
+ * rights to redistribute these changes.
+ */
+/*
+ * auth_types.defs
+ *	Mig type definitions for the authentication service.
+ *
+ */
+/*
+ * HISTORY
+ * $Log:	auth_types.defs,v $
+ * Revision 2.5  94/07/08  18:13:43  mrt
+ * 	Updated copyrights
+ * 
+ * Revision 2.4  94/06/01  18:19:48  mrt
+ * 	Changed #include "" to <>
+ * 	[94/04/20  14:15:58  mrt]
+ * 
+ * Revision 2.3  94/05/17  14:06:24  jms
+ * 	Pull extra ";"
+ * 	[94/04/28  18:19:28  jms]
+ * 
+ * Revision 2.2  92/03/05  15:01:04  jms
+ * 	Moved from the defunct "defs" directory.
+ * 
+ * Revision 1.2.1.1  92/02/26  16:38:11  jms
+ * 	Translate to use the latest MIG.
+ * 
+ * Revision 1.2  90/07/26  12:29:35  dpj
+ * 	Fixed include of std_types.defs to come from mach/ subdirectory.
+ * 	[90/07/24  14:04:40  dpj]
+ * 
+ *  4-Aug-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Increased size of group_name_t and full_name_t.
+ *	Include std_types.defs
+ *
+ *  9-Apr-87  Robert Sansom (rds) at Carnegie Mellon University
+ *	Split off from auth.defs.
+ *
+ */
+
+#include <mach/std_types.defs>
+
+type group_name_t	= (MACH_MSG_TYPE_STRING, 512);
+type full_name_t	= (MACH_MSG_TYPE_STRING, 2048);
+type pass_word_t	= (MACH_MSG_TYPE_STRING, 128);
+type group_id_t		= (MACH_MSG_TYPE_INTEGER_32, 32);
+type group_id_list_t	= ^ array [ ] of (MACH_MSG_TYPE_INTEGER_32, 32);
+type group_name_list_t	= ^ array [ ] of (MACH_MSG_TYPE_STRING, 64);
+type group_type_t	= (MACH_MSG_TYPE_INTEGER_32, 32);

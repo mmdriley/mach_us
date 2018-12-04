@@ -1,0 +1,50 @@
+#!/bin/csh -f
+#
+# compileback
+#
+# x-kernel v3.2
+#
+# Copyright (c) 1993,1991,1990  Arizona Board of Regents
+#
+# $Revision: 1.4 $
+# $Date: 1993/02/02 00:23:21 $
+#
+#
+# A system file which was being compiled locally via
+# a previous run of 'compilehere' is no longer to be compiled
+# locally.
+
+if ($#argv != 2) then
+    set cmd = $0
+    echo "usage: $cmd:t dir file"
+    exit (1)
+endif
+set dir = $1
+set file = $2 
+set fileroot = $file:r
+
+if (! -r $file) then
+    echo "$file is not here"
+    exit (2)
+endif
+
+rmlink $file
+
+#
+# remove the local .o file
+#
+set nonomatch
+rm -f {DEBUG,OPTIMIZE}*/$fileroot.o
+unset nonomatch
+
+#
+# edit the Makefile to indicate that this is no longer locally compiled
+#
+cat > makeed$$ << theend
+/\\	\${HOW}\\/$fileroot.o \\\\/d
+/\\	$file \\\\/d
+theend
+cp -p Makefile Makefile.bak
+sed -f makeed$$ < Makefile > newMakefile
+mv newMakefile Makefile
+rm -f makeed$$

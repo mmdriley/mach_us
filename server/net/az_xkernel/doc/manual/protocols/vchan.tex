@@ -1,0 +1,74 @@
+\subsection*{NAME}
+
+\noindent VCHAN (Channel Virtual-Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent 
+S. O'Malley and L. Peterson.  A Dynamic Network Architecture.  {\it
+ACM Transactions on Computer Systems 10}, 2 (May 1992), 110--143.
+
+\medskip
+\noindent  S. O'Malley and L. Peterson. {\it A New Methodology for
+Implementing Network Software}, University of Arizona Tech Report
+TR90-29, August 1990.
+
+\medskip
+\noindent  B. Welch. {\it The Sprite remote procedure call}. 
+University of California at Berkeley, Tech Report UCB/CSD 86/302,
+June 1986.
+
+\subsection*{SYNOPSIS}
+
+\noindent VCHAN is a virtual protocol that multiplexes multiple client
+procedure invocations over some number of open channels. The call
+blocks if there are no idle channels available.  VCHAN was originally
+based on the Sprite RPC protocol.
+
+VCHAN initially opens a default number of channels for a new session,
+though this number can be increased or decreased via control
+operations. 
+
+\subsection*{REALM}
+
+VCHAN is in the RPC realm.
+
+
+\subsection*{PARTICIPANTS}
+
+VCHAN expects an IPhost pointer on the stack of each participant.  It
+will not remove this pointer before passing the address down to the
+lower protocol. 
+
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt VCHAN\_INCCONCURRENCY:}]
+Increase the number of active channels by the number given
+({\tt xControlSessn} only).
+\begin{description}
+\item[{\rm Input:}] {\tt int}
+\item[{\rm Output:}] none;
+\end{description}
+
+\item[{\tt VCHAN\_DECCONCURRENCY:}]
+Decrease the number of active channels by the number given
+({\tt xControlSessn} only).
+\begin{description}
+\item[{\rm Input:}] {\tt int}
+\item[{\rm Output:}] none;
+\end{description}
+
+\end{description}
+
+\subsection*{CONFIGURATION}
+
+VCHAN expects to be configured above another RPC realm protocol.  It
+expects that each xOpen on the lower protocol with the same
+participants will return a new lower session.  
+
+\subsection*{AUTHOR}
+
+\noindent Ed Menze

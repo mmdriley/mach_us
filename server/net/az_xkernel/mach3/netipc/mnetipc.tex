@@ -1,0 +1,220 @@
+\documentstyle{article}
+
+\begin{document}
+\large{Incomplete DRAFT of MachNetIPC internals documentation}
+
+\section{Overview}
+MachNetIPC is a complex xkernel protocol.  It is divided into two
+major modules: the message translation and port management.  Port
+management is organized as a ``co-protocol'' with MachNetIPC.  The
+two protocols communicate via a set of interface calls.  The port
+transfer protocols, srx and rrx, communicate with port management
+to transfers rights involving 3 or more hosts.
+
+Note that in order to run this release (3.2) you must modify
+your graph.comp file to include the file "prottbl" as an
+additional protocol table.
+
+\section{Major modules}
+
+\begin{description}
+
+\item {machnetipc.c}
+The heart of the system, for processing the mach\_msg\_header and its
+network representation, and containing the ``fast-path'' code, is
+contained in this file.  The remote and local port are translate to
+and from network form, and rpc's are recognized.  If the message is
+``complex'' as determined by the msgh bits, then the message sections
+are interpreted by {\em mach-msg-intr}.
+
+Messages enter this module from one of three places:
+\begin{itemize}
+\item The SSR (Simple ServeR) protocol.	 This forwards server requests
+to remote machines.
+
+\item From a thread dedicated to ``listening'' on a Mach port.  Such a
+thread is started whenever a network send right is received from a
+remote peer.  The routine ``machr\_msg\_receive'' is the main loop of such
+a thread.
+
+\item From the network via ``machr\_calldemux.''  There are six types
+of messages recognized:
+
+\begin{itemize}
+\item SSR messages.  These are client requests for send rights to servers.
+
+\item MACHRIPC messages.  These are forwarded Mach messages requiring no
+reply.
+
+\item RPC requests.  These are Mach messages with a limited structure to
+facilitate ``fast-path'' processing.  The reply port is a send\_once right,
+
+\item RPC replies.  These are replies to RPC requests.  They are returned
+on the same xkernel session on which the request was made.  The lower-level
+transport protocol assures the association.  The message is not complex.
+
+\item PORTMGMT messages.  These are housekeeping messages used by the
+port management module.  Technically, they should be sent and received
+by the port management protocol itself, but as there are only two
+simple messages, they have been included in the MachNetIPC module;
+they are conveyed to the port management module via the portm\_mgmt
+subroutine call.
+\end{itemize}
+\end{itemize}
+
+\item {port-maint.c}
+All port manipulations are carried out in this module.  This includes
+converting to and from network form, synchronization, local database
+updates, etc.  The port transfer protocols are invoked from here
+when needed.
+
+
+\item {mach-msg-intr.c}
+All port manipulations are carried out in this module.  This includes
+all processing of the local or network forms, exclusive of the
+mach\_msg\_hdr.  This does not currently handle messages from
+incompatible architectures, although this support will be coming
+shortly.
+
+\item {mach-xfer.c}
+Some routines that are directly called by the port transfer protocols
+are here.  They port transfer protocols use the network port data
+structure ``mnetport'' for this.
+
+\item {ssr.c}
+The simple server protocol, a quick-and-dirty substitute for some of
+the netnameserver functionality.  The simple server registers with
+the Mach netnameserver.  This is the only ``hook'' into MachNetIPC.
+
+\item {hdr-utils.c}
+The low-level utilties for creating and interpreting network headers
+are intended to reside here.  The source machine type is indicated by
+a tag that determines the byte swap order.  Header load and store
+routines should call these routines if swapping is required.  Routines
+and tags for handling floating point numbers will be here.  This
+module is not yet finished, and most of its code is unused.
+
+\end{description}
+
+Entry points to machnetipc.c:
+\begin{description}
+\item {machr\_init}
+The initialization of the machnetipc subsystem is done here.  Called
+by the xkernel init function, this routine calls on the port manager
+module to fork itself into a separate protocol.  Machnetipc configures
+itself to provide a push and calldemux interface.
+
+\item {machr\_push}
+A highly specialized interface is provided by machr\_push to the upper
+protocol ``ssr'' (simple server).  This allows the simple server to
+send hybrid messages to other nodes; the hybrid message is addressed
+to an IP address, and it contains a server id number, a request type,
+and a Mach port right for sending a reply.  This allows nodes to
+``bootstrap'' their communication with servers on remote machines.  No
+reply is expected through this interface; the Mach reply port will be
+used instead, and MachNetIPC will manage communication over that port.
+
+\item {machr\_calldemux}
+All incoming network traffic goes through this routine.  There are
+three main types of communication: the ssr bootstrap messages, normal
+Mach IPC traffic in network format, and port management messages.
+Most calls to this routine will result in an immediate zero-length
+reply.  For Mach IPC RPC-style traffic, there usualy will be a reply message.
+For normal Mach IPC traffic, the calldemux thread will deliver the
+Mach message by converting the message from network to local form,
+releasing the xkernel master lock, and doing a mach\_msg send operation,
+
+\item {machr\_msg\_receive}
+Local Mach IPC traffic enters through a thread running this
+routine.  When an incoming port send right is ready for delivery via
+mach\_msg, a listening thread is established for the send right, and
+it runs this routine.  These listening threads have the port state
+bound into them.  The threads are somewhat analogous to xkernel
+sessions.
+
+\end{description}
+	
+Entry points to port-maint.c:
+\begin{description}
+\item {convert\_to\_netport}
+A local Mach port right is converted to its network representation here.
+The port database for the port reflects its global network number, the
+receiver node, and the make sender count.  The port is locked during
+message transit to assure that the destination never receives ``stale''
+port information.
+
+\item {convert\_netport\_to\_mach\_port}
+A network port descriptor is expanded to a full database descriptor in
+this routine.  If the incoming descriptor designates a new send right,
+a listening thread is started.  The port transfer protocols are called
+from here if the port has three or more machines participating in a
+conversation.
+
+\item {convert\_netport\_to\_tmp\_mach\_port}
+When a new port right is tranferred using the port transfer protocols, this
+routine is called to enter the information into the port database.
+The port right is not fully instantiated until a Mach message containing
+a reference to the port is received.
+
+\item {port\_mgmt}
+Network notifications regarding no more senders and port death are
+handled here.
+
+\item {quick\_port\_lookup}
+Maps a local Mach port name to its associated database structure.
+
+\item {quick\_netport\_lookup}
+Maps a global port name to its associated database structure.
+
+\item {portm\_add\_sender}
+Used to add send right reference to port.  This is used for reply ports.
+It is a quick version of convert\_to\_netport.
+
+\item {portm\_fast\_send\_once}
+The server side of an RPC gets a cached port to use in generating
+a send once right for a reply.
+
+\item {portm\_use\_fast\_send\_once}
+Returns the server side reply right to the cache.
+
+\item {portm\_get\_netnum}
+The client side of an RPC uses this to assign a global port number to
+a request.  The server IP address is recorded to allow graceful
+deletion of the reply right if the server reboots.
+
+\item {portm\_use\_netnum}
+The client side of an RPC removes the record of the server address.
+
+\item {portm\_port\_remove\_send\_once}
+Older form of portm\_use\_netnum?
+
+\item {portm\_delete\_local\_receive}
+Called when a task holding a network receive right deallocates the right.
+
+\item {portm\_delete\_local\_send}
+Called when a task holding a network send right deallocates the right.
+May be redundant.
+
+\end{description}
+
+Entry points to mach-msg-intr.c:
+\begin{description}
+\item {xkmach\_msg\_convert}
+Convert a Mach message to network form and do all necessary port bookkeeping.
+A list of locked embedded ports is attached to the resulting xkernel message
+as an attribute.  These ports should be unlocked after the message is sent.
+
+\item {ports\_and\_ool\_data\_convert}
+Convert a network message into a Mach message appropriate for local delivery.
+Embedded port rights are reconstituted into local form, out-of-line data
+is identified, etc.
+\end{description}
+
+Entry points to mach-xfer.c:
+\begin{description}
+\item {addNewSender}
+Add a sending node to the list of remote senders for a Mach port.
+
+\end{description}
+
+\end{document}

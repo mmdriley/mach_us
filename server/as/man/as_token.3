@@ -1,0 +1,136 @@
+.TH AS_TOKEN 3 8/2/88
+.CM 4
+.SH NAME
+as_create_token \- creates a token of identity for a user
+.br
+as_delete_token \- deletes a user's token of identity
+.br
+as_verify_token_names \- verifies a user's token
+.br
+as_verify_token_ids \- verifies a user's token
+.SH SYNOPSIS
+.B #include <mach.h>
+.br
+.B #include <auth_defs.h>
+.PP
+.B kr = as_create_token(server_port, private_port, group_ids, group_idsCnt, token)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B port_t private_port;
+.br
+.B group_id_list_t group_ids;
+.br
+.B unsigned int group_idsCnt;
+.br
+.B port_t *token;
+.PP
+.B kr = as_delete_token(server_port, private_port, token)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B port_t private_port;
+.br
+.B port_t token;
+.PP
+.B kr = as_verify_token_ids(server_port, token, user_id, group_ids, group_idsCnt)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B port_t token;
+.br
+.B group_id_t *user_id;
+.br
+.B group_id_list_t *group_ids;
+.br
+.B unsigned int *group_idsCnt;
+.PP
+.B kr = as_verify_token_names(server_port, token, user_name, group_names, group_namesCnt)
+.br
+.B kern_return_t kr;
+.br
+.B port_t server_port;
+.br
+.B port_t token;
+.br
+.B group_name_t user_name;
+.br
+.B group_name_list_t *group_names;
+.br
+.B unsigned int *group_namesCnt;
+.SH DESCRIPTION
+.I as_create_token
+creates and returns a
+.I token
+of identity for the user
+who is represented within the authentication service by
+.I private_port.
+The token can be used to prove the user's identity
+to other servers in the distributed system.
+By default the
+.I group_ids
+list is not used (by setting
+.I group_idsCnt
+to zero) and the returned token will denote all the access control groups
+of which the user is a member.
+However, if a non-empty
+.I group_ids
+list is passed in (the value of
+.I group_idsCnt
+is non-zero), and if the user is a member of all the groups
+on the list, then the returned token will denote only those groups passed in.
+Thus the optional list of access control group identifiers can be used to
+.I restrict
+the protection domain denoted by the token.
+.PP
+.I as_delete_token
+deletes the
+.I token
+passed in if the token was created by the user represented within
+the authentication service by
+.I private_port.
+.PP
+.I verify_token_ids
+returns the
+.I user_id
+and list of access control group identifiers denoted by
+.I token.
+This call can thus be used to verify a user's identity given a user's token.
+The list of group identifiers is returned in
+.I group_ids
+and the number of groups found is given by
+.I group_idsCnt.
+.PP
+.I verify_token_names
+returns the
+.I user_name
+and list of access control group names denoted by
+.I token.
+This call can thus be used to verify a user's identity given a user's token.
+It differs from the
+.I as_verify_token_ids
+call by returning printable names of users instead of numerical identifiers.
+The list of group names is returned in
+.I group_names
+and the number of groups found is given by
+.I group_namesCnt.
+.PP
+For all the calls, the
+.I server_port
+parameter must be the authentication server's public service port.
+.SH "SEE ALSO"
+as_group(3),
+as_list(3),
+as_login(3),
+as_password(3),
+as_translate(3)
+.SH HISTORY
+.TP 
+02-Aug-88  Robert Sansom (rds) at Carnegie-Mellon University
+Created.

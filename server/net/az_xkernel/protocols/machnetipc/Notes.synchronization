@@ -1,0 +1,34 @@
+
+		  Mach Network Port Synchronization
+
+The mach network port descriptors have two semaphores for
+synchronization: a send-right semaphore (sendSem) and a receive right
+semaphore (rcvSem).
+
+The sendSem is used to suspend sends on a port while a receive right
+is being moved.  MachIPC waits on this semaphore before sending a
+message -- this isn't an efficiency problem since we have to serialize
+messages going out over the same port anyway.
+
+	Waited on by:
+		moving_receiver lock requests
+		message send requests
+
+
+The rcvSem is used to synchronize potentially messy operations, only
+one of which should be occurring at any one time.  These operations
+include: 
+
+	add_sender requests
+	no_more_senders notifications
+		(the notification is sent without acquiring the lock,
+		but the lock is acquired before processing the
+		notification.)
+	move_receiver lock requests
+		(this is a local operation)
+	deallocation requests
+		(this is a local operation)
+	forward requests
+
+
+

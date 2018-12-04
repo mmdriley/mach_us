@@ -1,0 +1,35 @@
+%
+% rrx.tex
+%
+% $Revision: 1.2 $
+% $Date: 1993/02/04 08:22:07 $
+%
+
+\subsection*{NAME}
+
+\noindent RRX (transfer Mach receive right).
+
+
+\subsection*{SYNOPSIS}
+
+SRX is a receive-right transfer protocol.  Transferring a receive
+right involves coordination among the original holder of the receive
+right, the new holder of the receive right, and all of the holders of
+send rights to the port.
+
+\noindent
+\subsection*{EXTERNAL INTERFACE}
+
+RRX uses subroutine calls to accept transfer requests, and to keep
+{\em MachNetIPC} apprised of the movement of receive rights.
+
+\subsection*{CONFIGURATION}
+
+RRX depends on a synchronous lower protocol and BIDCTL to detect
+reboots.
+
+\noindent {\tt name=rrx protocols=chan, bidctl;}
+
+\subsection*{AUTHORS}
+
+\noindent Ed Menze

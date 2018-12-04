@@ -1,0 +1,55 @@
+/*
+ * Thu May 14 17:09:38 MST 1992
+ *
+ *  Use of lower transport service (CHAN):
+ *     Assumes CHAN is a reliable, sequenced service.  Only one message
+ *     at a time can be outstanding on a CHAN session.  However, at the
+ *     current time the client is allowed to use control operations to
+ *     cancel an xCall and then initiate a new xCall.  The protocol may
+ *     drop the first message, and this is considered correct operation
+ *     of the CHAN protocol.  Mach NIPC must not do this.  Messages can
+ *     only be dropped is the receiving machine reboots.
+ *
+ *     One xOpenEnable call with ANY_HOST will be made to CHAN.
+ *
+ *     An xOpen will return a CHAN session.  It is not necessary to
+ *      close the session before re-using it.
+ *
+ *     xOpenDone will indicate that a remote request has been made
+ *      and a message is waiting.  This call is not necessary, and
+ *      Mach NIPC will have a noop.  CHAN might be modified to eliminate
+ *      the call altogether.
+ *
+ *     CHAN has no well-known ports and conveys no identifiers to Mach NIPC
+ *     other than the session handle.
+ *
+ *     Messages are delivered to MNIPC via xCallDemux.
+ *
+ *     An xCallDemux will receive a CONTEXT_TOKEN can return XK_THINKING,
+ *      meaning an xReply(msg, token)  will be done later.
+ *      OR
+ *     An xCallDemux can return an empty message to terminate the RPC.
+ *
+ *     CHAN will abruptly stop all transfers to a rebooted host and
+ *      reset the sequence number.  Any xCall's in progress from Mach NIPC
+ *      will terminate with XK_FAILURE and an empty reply message.
+ *     
+ *     Mach NIPC's xControl routine will be called before any xCall can
+ *      complete, giving MNIPC time to mark the affected session invalid.
+ *      MNIPC will close these sessions after the xCall completes.
+ *
+ *     If Mach NIPC gets an empty reply message from an xCall, and there
+ *      was no reboot indication, then this should be treated as a
+ *      null reply from the remote peer.
+ *
+ *  Possible use of VCHAN-CACHE.  To keep a pool of active sessions
+ *     open to each remote host, an intermediate protocol might be
+ *     used.  This would be transparent to MNIPC.
+ *
+ *  MNIPC can use a (Mach-send-right, CHAN session) association for as
+ *   long as desired.  This can be closed at any time after an xCall
+ *   completes, and a new association can be made later.  It is a severe
+ *   error for MNIPC to call xClose for a session that has an xCall in
+ *   progress.
+ *
+ */

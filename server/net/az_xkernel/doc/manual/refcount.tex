@@ -1,0 +1,432 @@
+%
+% refcount.tex
+%
+% $Revision: 1.15 $
+% $Date: 1992/05/21 21:34:32 $
+%
+
+\section{Reference Counting XObjs}
+\label{refcnt}
+
+\def\xPush{{\em xPush}}
+\def\xPop{{\em xPop}}
+\def\xCall{{\em xCall}}
+\def\xCallPop{{\em xCallPop}}
+\def\xDemux{{\em xDemux}}
+\def\xOpen{{\em xOpen}}
+\def\xClose{{\em xClose}}
+\def\xDuplicate{{\em xDuplicate}}
+\def\xCreateSessn{{\em xCreateSessn}}
+
+Version 3.2 of the \xk{} maintains reference counts for sessions in
+order to facilitate their destruction. The following implementation
+notes should guide the protocol writer towards programming techniques
+that are consistent with the reference count mechanism.
+
+In v3.1, the {\em XObj} structure had a reference count field which
+was supposed to keep track of the number of external references to
+that object.  The intent was that the object could safely be destroyed
+when the reference count fell to zero.
+
+Unfortunately, the proper use of reference counts was never
+documented.  With each protocol writer deciding to handle session
+reference counts in a different manner (if at all), reference counts
+were seldom accurate.  This resulted in idle sessions that were never
+freed and in dangling references to sessions which had been destroyed.
+
+Constructing a protocol which directly manipulates reference counts
+and does so correctly can be awkward and tedious.  Version 3.2 of the
+\xk{} has addressed this difficulty by:
+
+\begin{itemize}
+\item{}
+moving all direct reference count manipulation into the \xk{}
+infrastructure.  
+\item{}
+changing the semantics of some of the UPI functions
+\item{}
+explicitly documenting how references to other {\em XObj}s may
+be used.
+\item{}
+adding system support for session caching and garbage collection. 
+\end{itemize}
+
+The rest of this section discusses the system support for reference
+counts and explains how to modify a v3.1 protocol to properly use
+reference counts in v3.2.
+
+We discuss {\em XObj} reference counts in the context of
+sessions (rather than protocols) because protocols are relatively
+static objects and the issues surrounding their reference counts are
+not very interesting.
+
+
+\subsection{References}
+
+An {\em XObj} reference is a pointer to an {\em XObj}.  References come in
+two flavors: {\sl permanent} and {\sl temporary}.  
+
+A permanent reference can be used indefinitely.  As long as the holder
+of a permanent reference does not call \xClose{} on the reference, the
+holder knows that the pointer will remain valid.  Permanent references
+are returned by \xOpen{}.
+
+An {\em XObj} pointer received as a parameter in a function call is a
+temporary reference.  It can only be safely used for the duration of
+that function call.
+
+A permanent reference may be created from a temporary reference by
+using the UPI function \xDuplicate{}.  For example, \xDemux{} passes a
+reference to the lower session as a parameter to the upper protocol.
+If the upper protocol wishes to save this reference beyond the extent
+of the demux call, the protocol should call \xDuplicate{} on the
+session.  The protocol can then safely use the reference until it
+calls \xClose{}.
+
+
+\subsection{Reference counts}
+
+Session reference counts in v3.2 are a sum of:
+\begin{itemize}
+\begin{itemize}
+\item{}
+the number of permanent external references to the session
+\item{}
+the number of outstanding \xPop{}'s on the session
+\end{itemize}
+\end{itemize}
+
+\subsubsection{ Counting External References }
+
+Several of the UPI functions are involved in maintaining the count of
+permanent external references.  They are listed here along with their
+semantics with respect to reference counts (and how these semantics
+have changed from \xk{} version 3.1):
+
+\begin{quote}
+\begin{em}
+\noindent xCreateSessn( ... )
+\end{em}
+\begin{quote}
+
+\noindent The newly created session has an initial reference
+count of 0 (it was 1 in v3.1.)
+
+\end{quote}
+\end{quote}
+
+
+\begin{quote}
+\begin{em}
+\noindent xOpen( ... )
+\end{em}
+\begin{quote}
+
+\noindent The session returned by invoking the lower protocol's
+open routine has its reference count incremented
+before it is returned to the caller of \xOpen{}, indicating that the
+caller now has a permanent reference to the session.  (\xOpen{}
+did not manipulate reference counts in v3.1.)
+
+\end{quote}
+\end{quote}
+
+\begin{quote}
+\begin{em}
+\noindent xClose( XObj s )
+\end{em}
+\begin{quote}
+\noindent Decrements the reference count of the session, indicating
+that a permanent reference to the session has been released.  
+The lower protocol's close operation is called {\sl only} if
+the session's new reference count is zero.  (\xClose{} always
+invoked the lower protocol's close operation in v3.1.) 
+
+\end{quote}
+\end{quote}
+
+\begin{quote}
+\begin{em}
+\noindent xDuplicate( XObj s )
+\end{em}
+
+\begin{quote}
+
+\noindent By default, increments the session's reference count,
+indicating that a new permanent reference to the session has been
+created.  If the session has its own duplicate function, that is
+called instead.  (\xDuplicate{} did not exist in v3.1.)
+
+\end{quote}
+\end{quote}
+
+\subsubsection{ Counting xPops }
+
+To understand the second component of the reference count, the number
+of outstanding \xPop{}s on a session, it is important to realize that
+a protocol does not have explicit references to its own sessions.
+That is, while a protocol usually maintains pointers to its sessions
+(in a map) and invokes operations on them, the sessions' reference
+counts do not take these pointers into account.  (This is why
+\xCreateSessn{} returns an object with a reference count of 0 and not 1.)
+
+For a protocol to safely send this session pointer outside of the
+protocol (e.g., as a parameter in \xDemux{}), it needs to turn the
+pointer into a reference by incrementing the session's reference
+count.  It could do this by calling \xDuplicate{} on the session as
+soon as it is extracted from the session map, making the external
+call, and then closing the session.  But since all protocols must do
+this for incoming messages, this functionality has been absorbed into
+\xPop{}. \xPop{} increments the reference count of the session before 
+calling the pop function and decrements it (possibly calling the
+session's close operation) afterwards.
+
+It could be argued that all UPI functions, not just \xPop{}, should
+indicate their use of a session by incrementing the reference count at
+their start and decrementing it at their completion.  To perform any
+other UPI operation on a session, however, one must already have a
+reference to that session.  As long as an \xClose{} is not performed
+on that reference, the session is not going to go away; maintaining
+reference counts for these operations is not necessary. \xPop{}s are
+different in that a session's reference count does not reflect that
+its protocol may send messages up through it.
+
+Note that reference counts will not help a protocol which performs an
+\xClose{} on a session reference while another thread has an
+outstanding operation on that same reference.  To perform such a
+sequence is a protocol error.  If two threads share a session
+reference, they should either synchronize to avoid such sequences or
+they should duplicate the reference with \xDuplicate{} and each thread
+should \xClose{} its reference when it is through.
+
+
+\subsection{Internal vs. External Reference Counts}
+
+Session reference counts are meant to count the number of {\em
+external} references to the session (i.e., references held outside of
+the protocol.)  If a protocol must keep track of session references
+internal to the protocol itself, a separate mechanism must be used.
+
+This requirement is driven by upper protocols which require that when
+they release all of their references to a lower session that the
+session's reference count goes to zero.  Virtual protocols which
+manipulate lower session's upper protocol pointers are specific
+examples of these upper protocols.
+
+
+\subsection{Session Caching Strategies}
+
+In the presence of correct management of reference counts, protocols
+may want to implement some sort of session caching.  For example, many
+of the sessions created on the receiving end of a remote procedure
+call will have their reference counts go to zero after the reply has
+been sent, and without caching, all of those sessions will be
+destroyed.  While caching may not be important for all protocols, it
+is vital to the performance of protocols that experience a high
+frequency of traffic from the same sources.
+
+If a protocol does cache idle sessions, it is important to make the
+caching transparent to upper protocols (i.e., an upper protocol should
+not be able to distinguish a newly created lower session from a
+cached lower session that is being reused.)  One aspect of this
+requirement is that protocols which cache sessions must be sure to
+check for the presence of openEnables when reusing sessions which
+would otherwise be passively created and to 
+call xOpenDone for when reusing such sessions from the cache.
+
+Here are some examples of caching strategies and how a protocol might
+implement them.  These are just examples -- other strategies are
+certainly possible:
+
+\begin{itemize}
+
+\item{}
+Destroy the session if inactive.  
+
+In this ``null caching'' strategy, the session's close routine
+destroys the session:
+
+\begin{verbatim}
+        foo_close(s)
+                xAssert(s->rcnt == 0);
+                xDestroy(s);
+\end{verbatim}
+
+
+\item{}
+Garbage collector on a per-session basis
+
+A garbage collector event is started for each idle session.  When
+the event expires, the session is collected.  
+
+\let\tt=\COURIERtt
+\begin{verbatim}
+        foo_demux()
+                if ( active session does not exist ) {	
+                        if ( openEnable exists ) {
+                                if ( cached session exists ) {
+                                        evCancel(sstate->gc);
+                                        sstate->gc = 0;
+                                } else {
+                                        s = foo_open();
+                                }
+                                xOpenDone(s, ...);
+                        } else {
+                                drop packet; return;
+                        }
+                }
+                xPop()
+
+        foo_open()
+                ...
+                if ( active session does not exist ) {
+                        if (cached session exists ) {		
+                                evCancel(sstate->gc);
+                                sstate->gc = 0;
+                        }
+                }
+                ...
+        
+        foo_close(s)
+                sstate->gc = evRegister(foo_gc, s);
+                mark session as cached
+
+        foo_gc(s)
+                xDestroy(s);
+\end{verbatim}
+\let\tt=\CMRtt
+
+\item{}
+Garbage collector on a per-protocol basis
+
+    There is a single garbage collector for the protocol---it runs
+    every so often and looks for idle sessions in the protocol's
+    session map, calling a protocol-specific destroy function if it
+    finds one.  
+
+    The \xk{} has a default session garbage collector which a
+    protocol can use for this purpose.  See xkernel/include/gc.h for 
+    the interface.
+
+\begin{verbatim}
+        foo_init()
+                ...
+                initSessionCollector(cacheMap, interval, foo_destroy);
+
+        foo_demux()
+                if ( active session does not exist ) {	
+                        if ( openEnable exists ) {
+                                if ( cached session exists ) {
+                                        move sessn from cached map to
+                                        active map
+                                } else {
+                                        s = foo_open();
+                                }
+                                xOpenDone(s, ...);
+                        } else {
+                                drop packet; return;
+                        }
+                }
+                xPop()
+                        
+        foo_open()
+                ...
+                if ( active session does not exist ) {
+                        if (cached session exists ) {		
+                                move sessn from cached map to active map
+                        }
+                }
+                ...
+
+        foo_close(s)
+                xAssert(s->rcnt == 0);
+                move sessn from active map to cached map
+
+        foo_destroy(s)
+                xDestroy(s);
+
+\end{verbatim}
+
+\end{itemize}
+
+
+\subsection{Modifying v3.1 protocols}
+
+In addition to the other modifications one needs to make to translate
+an existing protocol from v3.1 to v3.2, one should make the following
+modifications with respect to reference counts:
+
+\begin{itemize}
+\item{}
+{\tt foo\_open} should not increment the reference count
+
+v3.1 protocols often followed the format:
+
+\begin{verbatim}
+                foo_open()
+                        if (session s exists) {
+                                s->rcnt++;
+                        } else {
+                                s = xCreateSessn();
+                                fill in state;                        
+                        }
+                        return s;
+\end{verbatim}
+
+        \xOpen{} now automatically increments the reference count so the
+        format should be more like:
+
+\begin{verbatim}
+                foo_open()
+                        if (session s does not exist) {
+                                s = xCreateSessn();
+                                fill in state;                        
+                        }
+                        return s;
+\end{verbatim}        
+
+\item{}
+{\tt foo\_close} should not decrement the reference count
+        
+        In v3.1, {\tt foo\_close} was called whenever \xClose{} was called, so
+        {\tt foo\_close} often looked like:
+
+\begin{verbatim}
+                foo_close()
+                        if (--s->rcnt == 0) {
+                                xDestroy(s);
+                        }
+\end{verbatim}
+        
+        In v3.2, the protocol's close function is called only when the
+        reference count reaches zero (see the examples in the caching section.)
+
+
+\item{}
+\xPop{} should not be bypassed
+
+        Since \xPop{} in v3.1 did nothing more than call the session's
+        pop operation, v3.1 protocols often either called their pop
+        routine directly or, if their pop routine was small, they
+        absorbed this functionality into their demux routine and
+        bypassed \xPop{} altogether.  Since \xPop{} 
+        manipulates reference counts in v3.2, it
+        can not be bypassed.
+
+
+\item{}
+\xDemux{} should not use \xOpen{} to create new sessions
+
+It is common practice for a protocol to create passive sessions
+(where session creation is triggered by an incoming packet rather than
+an xOpen) by having {\tt foo\_demux} call {\tt foo\_open} and then
+possibly customizing the session.
+There is nothing wrong with this practice, but such a
+protocol  should invoke {\tt foo\_open} directly rather
+than using \xOpen{}.  The passively created session should have an
+initial reference count of 0, but \xOpen{} would return a session
+with an initial reference count of 1.
+
+\end{itemize}
+
+

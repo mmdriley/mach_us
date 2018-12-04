@@ -1,0 +1,73 @@
+\subsection*{NAME}
+
+\noindent VCACHE ( Virtual Caching Protocol )
+
+
+\subsection*{SPECIFICATION}
+
+VCACHE is a simple session caching protocol which provides a time
+buffer between when an upper protocol closes a lower session and when
+that close is propagated to the lower session.
+
+
+\subsection*{SYNOPSIS}
+
+When a VCACHE session is closed, it is placed in a time-expiration
+cache.  When VCACHE receives subsequent opens (active or passive), it
+first looks in its cache for sessions with the same hlp and the same
+remote host.  After a configurable amount of time, closed VCACHE
+sessions will be destroyed and the lower session actually closed.
+
+As an example, VCACHE can be inserted between a UDP server and UDP to
+prevent UDP sessions from being closed when the server releases all
+references.
+
+Server sessions (those created as a result of a match between an
+incoming packet and an openenable) are always cached.  If an
+instantiation of VCACHE is running in {\em symmetric} mode, client
+sessions (those created by an xOpen) will be cached as well.  It is
+reasonable to configure VCACHE in symmetric mode above symmetric
+(ASYNC realm) protocols and in asymmetric mode above asymmetric (RPC
+realm) protocols, though this usage is certainly not required.
+
+
+\subsection*{REALM}
+
+VCACHE can be used with either ASYNC or RPC realm lower protocols and
+assumes the realm of the protocol below it.
+
+
+\subsection*{PARTICIPANTS}
+
+VCACHE passes participants directly to the lower protocol and does not
+make direct use of any participant information.
+
+
+
+\subsection*{CONFIGURATION}
+
+VCACHE uses a single lower protocol.
+
+\noindent
+VCACHE recognizes the following ROM options:
+
+\begin{description}
+
+\item[{\tt vcache symmetric}]:
+\smallskip
+Run this instantiation in symmetric mode.
+
+\item[{\tt vcache asymmetric}]:
+Run this instantiation in asymmetric mode (default).
+
+\item[{\tt vcache interval n}]:
+Set the timeout interval for {\tt n} seconds.  A cached VCACHE session
+is eligible to be destroyed if it is idle for {\tt n} seconds and is
+guaranteed to be destroyed if it is idle for more than {\tt 2 * n}
+seconds. 
+
+\end{description}
+
+\subsection*{AUTHOR}
+
+\noindent Ed Menze

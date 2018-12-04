@@ -1,0 +1,47 @@
+#!/bin/csh -f
+#
+# compilehere
+#
+# x-kernel v3.2
+#
+# Copyright (c) 1993,1991,1990  Arizona Board of Regents
+#
+# $Revision: 1.4 $
+# $Date: 1993/02/02 00:23:26 $
+#
+#
+# make a symbolic link to a system file and set up the
+# Makefile to compile it locally
+
+
+set pathname = $1
+shift
+set file = $1 
+shift
+set fileroot = $file:r
+
+if (-r $file) then
+    echo "$file is already here"
+    exit (2)
+endif
+
+if (! -r $pathname/$file) then
+    echo "$file is not in $pathname"
+    exit (2)
+endif
+
+ln -s $pathname/$file .
+
+#
+# Edit the Makefile to indicate that the object file is compiled locally
+#
+cat > makeed$$ << theend
+/PRIVOBJ =/ a\
+\	\${HOW}/$fileroot.o \\\\
+/PRIVSRC =/ a\
+\	$file \\\\
+theend
+cp -p Makefile Makefile.bak
+sed -f makeed$$ < Makefile > newMakefile
+mv newMakefile Makefile
+rm -f makeed$$

@@ -1,0 +1,149 @@
+
+% bidctl.tex
+%
+% $Revision: 1.3 $
+% $Date: 1992/08/06 17:51:57 $
+%
+
+\subsection*{NAME}
+
+\noindent BIDCTL (Bootid Control Protocol)
+
+\subsection*{SPECIFICATION}
+
+BIDCTL is the control module of the BootId protocol. 
+The BootId protocol is designed to advise workstations that a peer has
+rebooted, to protect protocols from receiving messages generated
+during previous boot incarnations, and to inform higher protocols of a
+peer's reboot in a timely fashion.
+
+If an upper protocol registers with BIDCTL protocol and messages
+from its session pass through BID sessions, the BootId protocol
+guarantees that a message from a rebooted peer will not be sent to an
+upper protocol until the upper protocol has been informed of the
+reboot.  
+
+\subsection*{SYNOPSIS}
+
+\noindent 
+Upper protocols register their desire to be informed of a peer's
+reboot by openEnabling BIDCTL with that remote peer's IPhost.  When
+BIDCTL determines that the remote peer has rebooted, it informs all
+interested upper protocols via a control operation (see below.) If an
+upper protocol is no longer interested in learning about a peer's
+reboot, it may openDisable BIDCTL.
+
+\subsection*{REALM}
+
+BIDCTL is in the CONTROL realm.  There are no BIDCTL sessions.
+
+\subsection*{PARTICIPANTS}
+
+BIDCTL openEnable and openDisable expect a single participant
+containing the IPhost of the remote peer.
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt BIDCTL\_PEER\_REBOOTED:}]
+Invoked {\em by} BIDCTL on registered upper protocols to inform them
+that a peer has rebooted.  The {\em id} field of the BidctlBootMsg
+contains the new remote BootId.  The upper protocol's control function
+should not block while handling this notification.
+
+\begin{description}
+\item[{\rm Input:}] { \tt BidctlBootMsg ==  \{ IPhost h; BootId id; \} }
+\item[{\rm Output:}] none
+\end{description}
+
+\end{description}
+
+The remaining control operations are not necessary for most users of
+BIDCTL.  They are provided mostly for the use of filtering protocols
+(e.g., BID)
+which work in conjunction with BIDCTL.
+
+\begin{description}
+
+\item[{\tt BIDCTL\_FIRST\_CONTACT:}]
+Invoked {\em by} BIDCTL on registered upper protocols to inform them
+that an initial bootid for the given peer has been discovered.  
+The {\em id} field of the BidctlBootMsg
+contains the new remote BootId. 
+\begin{description}
+\item[{\rm Input:}] { \tt BidctlBootMsg }
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt BIDCTL\_GET\_LOCAL\_BID:}]
+Returns the current BootId of the local host.  
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt BootId }
+\end{description}
+
+\item[{\tt BIDCTL\_GET\_PEER\_BID:}]
+Returns the last confirmed BootId of the given remote host.  
+If the {\em
+id} field of the input structure is non-zero, it indicates a possible
+new value.  If this value differs from BIDCTL's confirmed value for
+that peer,
+BIDCTL will start a handshake with the remote peer to determine a new confirmed
+value.  The input id can be used by a filtering protocol to indicate that it
+has seen a new remote BootId value.
+
+The BootId of the output structure will be 0
+(an invalid BootId) if
+BIDCTL doesn't yet know the peer's BootId.
+\begin{description}
+\item[{\rm Input:}] {\tt BidctlBootMsg }
+\item[{\rm Output:}] {\tt BidctlBootMsg }
+\end{description}
+
+\item[{\tt BIDCTL\_GET\_PEER\_BID\_BLOCKING:}]
+Differs from {\tt BIDCTL\_GET\_PEER\_BID} in that the calling thread
+will block if BIDCTL has not yet learned the peer's BootId or if the
+suggested {\em id} field is non-zero and differs from the protocol's
+current value for the peer BootId.  If the operation blocks, it will
+not release the calling thread until the peer BootId has been
+confirmed.  There is no timeout.
+
+\begin{description}
+\item[{\rm Input:}] {\tt BidctlBootMsg }
+\item[{\rm Output:}] {\tt BidctlBootMsg }
+\end{description}
+
+
+
+\end{description}
+
+\subsection*{CONFIGURATION}
+
+BIDCTL expects only its transport protocol below it.  It will open the
+transport protocol with a single participant consisting of the remote
+IP host. 
+
+BIDCTL uses an internal checksum and works correctly in the presence
+of dropped messages, so a reliable transport protocol is not
+necessary. 
+
+As an optimization, BIDCTL can perform an IP local-net broadcast to
+inform interested peers that it has rebooted.  A rom file entry of the
+form:
+\begin{verbatim}
+         bidctl	bcast
+\end{verbatim}
+will cause the broadcast and an entry of the form:
+\begin{verbatim}
+         bidctl	nobcast
+\end{verbatim}
+will suppress it.  Without a rom file entry, BIDCTL will perform the broadcast
+unless BIDCTL\_NO\_BOOT\_BCAST is defined during
+compilation. 
+
+
+\subsection*{AUTHORS}
+
+\noindent Ed Menze
+

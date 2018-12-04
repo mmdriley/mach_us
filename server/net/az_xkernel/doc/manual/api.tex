@@ -1,0 +1,77 @@
+% 
+% $RCSfile: api.tex,v $
+%
+% $Revision: 1.2 $
+% $Date: 1993/02/05 22:55:22 $
+%
+
+\section{Application Programmer Interfaces}
+\label{api}
+
+This appendix describes the installation and use of \xk{} application
+programmer interfaces.  API's in the \xk{} are platform-specific.
+
+
+\subsection{ Mach 3 }
+
+\subsubsection{Sockets}
+
+The Mach 3 out-of-kernel platform provides a user socket library.
+This library can be used to communicate with the XSI protocol
+running in an out-of-kernel \xk{} in a separate task.
+The combination of the library and the XSI protocol 
+provides Berkeley socket semantics.  The mach 3 user-level build
+will create a socket library in the {\tt xkernel/mach3/user/socket}
+directory which can be linked with any application making Berkeley
+socket calls.  These calls will then be routed through the \xk{}
+socket implementation rather than the sockets in the BSD server.
+
+The user-level build will also create some test programs in 
+{\tt xkernel/mach3/user/socket/tst} that exercise the socket library
+and the XSI protocol.
+
+\subsubsection{Mach NetIPC}
+
+The user-level build will create a test program, SSR-test, 
+which exercises the \xk{}'s
+out-of-kernel implementation of Mach netIPC in
+{\tt xkernel/mach3/user/netipc/test}.
+
+SSR-test communicates with the \xk{} protocols MachNetIPC and SSR.  
+There must be an \xk{}
+task with MachNetIPC running on the host, and there must be a 
+Mach nameserver running on the host.
+
+SSR-test takes command line arguments.  The first argument specifies
+the test type.  The simplest test is the {\em postcard} test.  Other
+test types are documented in the source code.
+
+To start a postcard server at debugging level 1:
+
+\noindent {\tt ssr-test -t p -l 1 \& };
+
+To start a postcard client at debugging level 1, communicating with a
+server at IP address 192.12.69.211, using 10 round-trips:
+
+\noindent {\tt ssr-test -t p -p 192.12.69.211 -l 1 -trips 10 \& };
+
+
+\subsubsection{Building}
+
+The Mach 3 APIs can be built from a normal out-of-kernel \xk{} build
+directory.  Running 
+
+\begin{verbatim}
+      make userdepend
+\end{verbatim}
+
+\noindent
+will build the dependency files for the APIs and 
+
+\begin{verbatim}
+      make libUser
+\end{verbatim}
+
+\noindent
+will build the socket library and the test programs.
+

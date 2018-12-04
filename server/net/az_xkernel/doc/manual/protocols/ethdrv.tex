@@ -1,0 +1,87 @@
+%
+% ethdrv.tex
+%
+% $Revision: 1.2 $
+% $Date: 1993/02/04 08:21:36 $
+%
+
+\subsection*{NAME}
+
+\noindent ETHDRV (Out-of-kernel Ethernet Driver Protocol (mach3 platform))
+
+\subsection*{SPECIFICATION}
+
+\noindent
+
+ETHDRV is the Mach out-of-kernel ethernet driver, interacting with an
+ethernet device through a Mach device control port.
+
+
+\subsection*{SYNOPSIS}
+
+\noindent 
+
+Each instantiation of ETHDRV is associated with a single ethernet
+device.  ETHDRV has the ability to block out certain packet types and
+to prevent other Mach servers from receiving ethernet packets.
+
+
+\subsection*{REALM}
+
+ETHDRV is in the ASYNC realm, supporting the ethernet driver interface
+described in the ETH appendix.
+
+
+\subsection*{PARTICIPANTS}
+
+ETHDRV supports the ethernet driver interface rather than a standard
+xkernel UPI interface and thus makes no use of participant stacks.
+
+
+\subsection*{EXTERNAL INTERFACE}
+
+ETHDRV supports the ethernet driver interface
+described in the ETH appendix.
+
+
+\subsection*{CONFIGURATION}
+
+ETHDRV requires no lower protocol.  It's instantiation specification
+must be the name of the unmapped device as passed to the mach system call
+{\tt device\_open}:
+
+{\tt name=ethdrv/SE0;}
+
+\noindent
+Check to make sure that {\tt /etc/NETWORKS} is set up to use the
+unmapped device.  E.g.,
+
+{\tt 192.12.69.1 on SE0 }
+
+\noindent
+The device name is case-sensitive; {\tt se0} represents the mapped device,
+while {\tt SE0} represents the unmapped device.
+
+\medskip
+
+\noindent
+ETHDRV recognizes the following ROM options:
+
+\smallskip
+
+{\tt ethdrv/xxx priority n}:
+Instantiation xxx of ETHDRV should use packet filter priority n.  
+A priority >= 200 will not allow other servers to receive ethernet
+packets.   Adjusting the priority in this way is a privileged
+Mach operation. 
+
+{\tt ethdrv/xxx block n}:
+Instantiation xxx of ETHDRV should drop packets with ethernet type
+n.  The type may be specified in either hexadecimal (prefixed with
+'x') or decimal.
+
+
+\subsection*{AUTHORS}
+
+\noindent Mats Bjorkman, Hilarie Orman, Michael Pagels, Ed Menze
+

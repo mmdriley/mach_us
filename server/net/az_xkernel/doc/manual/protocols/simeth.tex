@@ -1,0 +1,109 @@
+%
+% simeth.tex
+%
+% $Revision: 1.1 $
+% $Date: 1992/09/23 00:07:29 $
+%
+
+\subsection*{NAME}
+
+\noindent SIMETH (Simulated Ethernet Driver Protocol (sunos platform))
+
+\subsection*{SPECIFICATION}
+
+\noindent
+SIMETH simulates an \xk{} ethernet driver by sending and receiving
+messages using Unix UDP sockets. 
+
+
+\subsection*{SYNOPSIS}
+
+\noindent 
+Each instantiation of SIMETH is associated with a specific Unix UDP
+port and simulates an ethernet driver for a single interface.  SIMETH
+transmits outgoing messages by sending to other UDP ports and presents
+UDP messages received on its port as incoming ethernet packets.  Note
+that since messages sent from one sunos \xk{} to another are
+encapsulated within Unix UDP packets, it is only possible to communicate
+with another peer running the \xk{} with this same driver.
+Communication with arbitrary peers is not possible with this driver.
+
+The mapping between Unix UDP ports and SIMETH ethernet addresses is
+very simple.  The six bytes of SIMETH ethernet address are formed by
+the concatenation of the four byte IP host number for the Unix host on
+which the simulator is running and the two byte UDP port used
+by the SIMETH instantiation.  Note that this is the {\em real} IP host
+number, not the {\em simulated} IP host number.  See the CONFIGURATION
+section below.
+
+Note that an \xk{} may be configured with multiple instantiations of
+SIMETH, each with its own UDP port, to simulate a multihomed host.
+
+SIMETH can awkwardly simulate ethernet broadcast messages.  When an
+outgoing broadcast message is sent to SIMETH, SIMETH asks its
+corresponding  ARP
+protocol  for a dump of all hosts in its table.
+SIMETH then sends the message to each of these hosts in a
+point-to-point fashion.  Note that for a reasonable simulation of
+ethernet broadcast, all
+\xk{}s in communication should have the same ARP table (see the ARP
+appendix.) 
+
+\subsection*{REALM}
+
+SIMETH is in the ASYNC realm, supporting the ethernet driver interface
+described in the ETH appendix.
+
+
+\subsection*{PARTICIPANTS}
+
+SIMETH supports the ethernet driver interface rather than a standard
+xkernel UPI interface and thus makes no use of participant stacks.
+
+
+
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt ETH\_REGISTER\_ARP:}]
+Used by an ARP instantiation to register itself with its corresponding
+SIMETH driver.  This is used to simulate ethernet broadcasts as
+described above.  If no ARP protocol registers with a SIMETH
+instantiation, broadcasts on that instantiation will not be
+possible. 
+\begin{description}
+\item[{\rm Input:}] {\tt XObj /* ARP protocol object */ }
+\item[{\rm Output:}] none
+\end{description}
+
+\end{description}
+
+
+\subsection*{EXTERNAL INTERFACE}
+
+SIMETH supports the ethernet driver interface
+described in the ETH appendix.
+
+
+\subsection*{CONFIGURATION}
+
+SIMETH requires no lower protocol.  It can be configured in either the
+driver section or the protocol section of graph.comp.
+
+\medskip
+
+\noindent
+SIMETH recognizes the following ROM options:
+
+\smallskip
+
+{\tt simeth nnnn}:
+This instantiation of simeth should use UDP port nnnn.  There must be
+such a line for each instantiation of SIMETH in the \xk{}.
+
+
+\subsection*{AUTHORS}
+
+\noindent Larry Peterson and Norm Hutchinson

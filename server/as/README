@@ -1,0 +1,42 @@
+
+			AUTHENTICATION SERVICE
+
+This directory contains all the ".c" files needed to build both a central
+authentication server (cas) and a local authentication server (las).  The ".h"
+files neeeded to build the servers are contained either in this directory or
+in the secure Mach include directory (currently "../sminclude").  The test
+program astest requires some files from the  "as" directory as well.
+
+Both the local and central server's main programs ("las_main.c" and
+"cas_main.c") can be compiled (depending on the value of AS_SM_INIT) to
+obtain their initial connections either via the secure Mach initialisation
+program "sm_init" or from the insecure Mach netmsgserver.  The makefile
+"Makefile.sm" can be used to build the secure Mach version;  "Makefile"
+can be used to build the version that relies on the netmsgserver.
+
+One host in the distributed system should be running the central
+authentication server;  other hosts should run the local authentication
+server.  The central server should really be replicated for availability but
+this isn't implemented yet.
+
+A general description of the authentication service can be found in
+"auth.{tex,dvi,PS}".  Manual entries for the authentication service
+functions can found in the man sub-directory.
+
+
+			UTILITY PROGRAMS
+
+Also to be found in this directory are the programs "encrypt_db" and
+"astest".
+
+Encrypt_db allows a system administrator to construct a database that
+contains unencrypted passwords and turn it into a database that contains
+encrypted passwords.  The encryption algorithm is a reasonable hack but
+should be improved.  By default, the central authentication server reads in
+an authentication database from the file "ASDATABASE" when it starts up.
+
+Astest allows the functions of the authentication server to be exercised.
+As with the authentication servers themselves, astest can be configured
+(depending on the value of SM_INIT) to obtain its ports to the security
+servers either through the secure Mach initialisation environment of via the
+insecure name service provided by the Mach netmsgserver.

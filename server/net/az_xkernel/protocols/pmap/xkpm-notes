@@ -1,0 +1,517 @@
+April 2, 1992   *** internal notes - do not release! - rcs ***
+
+The Portmapper:  XKPM
+
+The portmapper, xkpm, implements much of the functionality of Sun's
+portmapper.  The message format is compatible with Sun.
+
+
+Differences:
+We only implement the UDP message protocol; TCP isn't there.
+   Server programs may register to serve any protocol, and
+   lookups should work correctly.  Communication to xkpm must
+   be with UDP.  And our sunrpc only supports UDP.
+We don't implement portmapper function 5 (indirect call).
+   This implies that xkpm won't respond to rpcinfo broadcasts.
+   Some of the other functions of the rpcinfo program work with xkpm.
+Sun's sunrpc provides batching of requests in the case that no
+   replies are expected, for communications efficiency.  We don't.
+
+
+Where to find things:
+The portmapper consists of the files xkpm.c and xkpm.h.
+The test files are xkpm_test.h, xkpm_client.c, and xkpm_server.c.
+Related files are the sunrpc* files, including xrpc*.
+
+x32/merge/protocols/sunrpc/sunrpc* xrpc*
+x32/merge/protocols/pmap/xkpm.c
+x32/merge/protocols/test/xkpm_client.c xkpm_server.c xkpm_test.h
+x32/merge/include/prot/sunrpc.h xkpm.h
+
+
+XDR routines:
+The xkpm* files have their own xdr routines, making them independent
+of Sun's copyright.  (To release our version of sunrpc, the xdr
+routines in sunrpc* & xrpc* would have to be converted to
+use our xdr code.)  Some modest interarchitecture checking has been
+done; the datatypes "long" and "list" are correctly converted.
+The compile switch SUNXDR selects the Sun XDR routines.
+
+
+Information sources:
+man page for rpcinfo, and the tree of man pages starting from portmap & rpc.
+Chapters 2,3,4 of the Sun Network Programming manual.
+
+
+Examples:
+The test programs can be used as working examples of how to do
+sunrpc in the x-kernel, although the code could be prettier.
+Assuming that the test programs xkpm_client and xkpm_server are
+linked in, and everything is in one execution image, the startup
+command might be
+
+ xkernel -p -s -c -t -n 112 -h 192.12.69.60
+-p runs the portmapper
+-s runs the server
+-c runs the client
+-t tells the client to run the server tests.  the client always
+   tests the portmapper.
+-n tells the all three programs to use a different port number
+   for the portmapper, rather than the standard 111.
+-h tells the client which host to speak to, when the portmapper
+   & server aren't on the local machine.
+
+For a two machine test, the startup commands are
+ xkernel -p -s -n 112
+ xkernel -c -t -h 192.12.69.60 -n 112
+
+All (alpha) switches are optional, and may occur in any order.
+The test programs must be linked in to parse the command line.
+
+
+Test Programs:
+I've written a client and a server to test xkpm.  All three
+programs communicate.  The server's function is to compute 2x2
+determinants.  Arguments may be long, double, or complex.
+Some testing was also done with the rpcinfo program.
+
+
+Test Narrative (Summary):
+  The portmapper is initialized.
+  The server registers with the portmapper.
+  The client exercises the portmapper, and requests the
+    port for the server.
+  The client exercises the server.
+  The client asks the portmapper for a dump.
+  The server unregisters with the portmapper.
+
+Test Narrative (Detail):
+A trace file is x32/merge/build/rcs/xkpm-test-run.
+When xkpm is linked with xkpm_client & xkpm_server, the following tests
+happen.
+Client is initialized first, because it contains the code
+to interpret the command line.  (If xkpm is linked without the
+client & server, it doesn't use the command line, and assumes
+its own port is 111.)  The command line is interpreted, and
+the parameters printed.
+Client schedules the remainder of its startup to happen in 5 seconds.
+The portmapper is initialized, and does an openenable to sunrpc.
+xkpm registers itself in its database.
+The server is initialized.  It does an openenable to sunrpc.
+Then it does an open to sunrpc, to contact the portmapper,
+and sends a message to register with the portmapper.
+(This is the first remote procedure call in the test.)
+The server schedules a windup test to occur in thirty seconds.
+There is a pause for a few seconds, until the client is resumed.
+Client opens a session with sunrpc to talk to xkpm, which may be
+on a remote host.  It will send several test messages to xkpm.
+No contact is actually made with the remote machine yet.
+There is another five second pause.
+The client begins sending messages to xkpm.
+First, a 0 length message, which is interpreted as a ping on xkpm.
+The remote sunrpc finds the openenable for xkpm and creates a
+session, passing on the request.
+xkpm responds to the client with a 0 length reply.
+Second, client sends a call to xkpm procedure 0, with no arguments;
+this is also a ping.  the remote sunrpc now finds an active
+session with xkpm, and forwards the client request.
+xkpm responds with a 0 length reply.
+Third, the client sends a garbage message of 100 bytes.  xkpm
+finds that the requested procedure is out of range, and sends
+a Garbage-Agruments reply.
+Fourth, the client sends another garbage message of 100 bytes,
+and xkpm again responds with the Garbage-Arguments reply.
+Fifth, the client requests xkpm to lookup program 999, version 3,
+using protocol 17.  xkpm first tries for an exact match, then
+for any version.  Both lookups fail, since there is no program 999.
+xkpm sends back a failure message, a "port" of -1.
+Sixth, the client requests xkpm to lookup the "status" program,
+number 100024.  xkpm doesn't have this program registered with it,
+but other portmappers (on other hosts) might.  This is a test that
+the client is generating correctly formatted requests; when it
+sends to Sun portmappers, they respond with the correct port for
+the status program, as verified with rpcinfo.
+xkpm replies that it can't find the program.
+Seventh, the client asks for a lookup of program 500, version 1,
+protocol 17; this is the determinant server.  xkpm finds an
+exact match, and returns the port number, 7000.
+If the -t switch is used, the client tests the server.
+The client opens another session to sunrpc, to talk to the server.
+The client sends a ping message to the server.  The remote sunrpc
+opens a session to the server, and passes on the ping.  The server
+responds with a zero length reply.
+The client sends three test messages to the server, exercising
+procedures 1, 2, and 3.  These calculate 2x2 determinants, with
+integer, double, and complex data.  This exercises the xdr routines.
+<open test: cross architecture for doubles>
+The determinant server gets the right answers with sun-sun or
+mips-mips communication.  sun-mips not tried.
+(end of client-server tests)
+The client then tests the dump option of xkpm.  xkpm responds with
+a dump of its database, which the client prints.  (this option has
+been tested with a Sun portmapper, to check the format.)
+There is now a pause of perhaps fifteen seconds.
+The windup test for the server is resumed.
+The server deregisters itself with the portmapper, deliberately
+using version 2 in the message.  The portmapper deregisters all
+versions of program 500, protocol 17.  This seems stupid, but is
+required by the Sun definition of how things work.  xkpm sends
+a successful reply to the server.
+The tests are now over, but the xkernel will continue to run,
+occasionally emitting messages from the session garbage collector.
+Stop it with ^Z.
+
+
+Test with RPCINFO:
+I also tested xkpm with the rpcinfo program.
+rpcinfo -p [ host ]
+  Probes the portmapper on host for a list of registered
+  programs.  It uses a TCP message, so it doesn't work with xkpm.
+rpcinfo [ -n portnum ] -u host program [ version ]
+  Sends a UDP ping (procedure 0) to the program on host.
+  Works with xkpm and xkpm_server.
+rpcinfo [ -n portnum ] -t host program [ version ]
+  Like -u, but sends a TCP ping.  Didn't try it.
+rpcinfo -b program version
+  Broadcasts a UDP message to all portmappers on the net,
+  requesting an indirect call to procedure 0 (ping) of program/
+  version.  xkpm receives this, but doesn't respond because
+  indirect call isn't implemented.
+rpcinfo -d program version
+  Unregisters a program on the local machine.  Requires root
+  privilege; not tested.
+
+
+Tests not done:
+I haven't tested large packets, more than about 700 bytes.
+Test compilation with SUNXDR switch, to see that code works this way.
+A cross-architecture test between client & xkpm+server would be nice.
+  Needs a non-simulator version on the Sun.
+I haven't cross architecture tested xdr-double.
+The memory recycling in xkpm hasn't been stress tested.
+Have only tested a couple of the sunrpc error messages.
+Have client send xkpm a request for a wrong version, and get the
+  relevant program.  Then send a request to the program, and get
+  a version mismatch error.
+I haven't stess tested xkpm registration:  I should be able to
+  register 100 programs, and get back a "failed" message on the 101st.
+  Then check that lookup works on 100 of 101.  Then deregister one
+  program, and verify that 101 can now register.  Interleave with
+  dump requests to check what's happening.
+
+
+
+Bugs:
+A bug in our sunrpc turned up during testing on the MIPS machines:
+When the response to a sunrpc call is slow, the caller will generate
+a retry.  When the outgoing reply (to the first call) meets incoming
+retry, the program dumps core.
+
+The current sunrpc code seems to retry forever; probably not
+"the right thing".
+
+The compilation of the file sunrpc/xrpc_prot.c produces a raft of
+warnings about enumerated values not handled in switch statements.
+The list of warnings is at the end of this file.
+
+
+Loose ends, not done:
+Code Cleanup
+  Could use more comments.
+  Arrangement could be better.
+  Standardize variable names.
+  Select reasonable trace levels for the debugging code.
+Rewrite man pages for sunrpc, pmap.
+  In particular, a user manual for sunrpc would be useful.
+Implement TCP communication with xkpm.
+Add indirect call to xkpm.
+Consider repairing the Sun definition of unregister.
+Add a more civilized version of indirect call, with errors.
+Add "reply-to-originator" indirect call.
+Some code for indirect call is already in xkpm.
+Sun pmap kills indirect call to pmap.
+Allow more control of sunrpc retry/timeout/cancel strategy.
+Add client code to send rpc message to anyone & print results.
+Fix lengths of client messages to be exact.
+Add batching of rpc calls.  The Sun version is discussed on
+  p.76 of the network manual.
+Add separate rpc error for bad procedure number.  Now lumped
+  with garbage args.  The warnings from compiling xrpc_prot may
+  be a clue that our sunrpc needs to generate more informative
+  error messages.
+Does xkpm correctly decide "local" when there are multiple enets?
+  There aren't any, yet.  Will require a code change.
+Do something about authentication?
+I've left some code fragments toward the end of this file.  One
+  is for testing the byte-reorder function htonl.  Another is a
+  start on an XObject printer for debugging.
+Ed has commented that we do nothing to trap duplicated (retransmitted)
+  messages.  His message is at the end.  Maybe we should change this.
+  The "spec" is silent on this issue.
+
+
+Commentary:
+The Sun behavior for "unregister" is not well thought out;
+it virtually precludes running two different versions of a
+server, although one program can register as two versions.
+The unregister function in effect has a wild-card version
+number.  Sun recommendeds that a server, on startup, should
+unregister prior to registering.  This clearly barfs in the
+case that there are two servers, for two different versions of the same
+program.  There is no provision for a non-wild-card version
+number in deregistration.
+
+The Sun defined behavior for indirect call is a bit strange:
+Since this is used for handling broadcast requests, the
+portmapper doesn't report back any errors, but just drops the
+request.  (It makes no effort to determine if the indirect
+call was a broadcast or not.)  Our sunrpc isn't really set
+up to handle the "no reply" case.  Presently, the sunrpc
+will just continue sending retries forever.
+
+
+
+-------------------------------------------------------
+
+probable throwaway code pieces
+
+/* long xkxdr_pmap(); */ /*$$ never called */
+
+/*$$ this routine is not needed */
+/*$$ bool_t */ void xkxdr_pmap(xdrs,pmargs) XKXDR *xdrs; PMAP_ARGS *pmargs;
+{ /* printf("entered xkxdr_pmap\n");
+  printf("xdrs=%d pmargs=%d\n",xdrs,pmargs);
+  printf("pmargs->prog=%d\n",pmargs->prog);
+  printf("xdrs->x_op = %d\n",xdrs->x_op);
+  printf("getpos before = %d\n", XDR_GETPOS(xdrs)); $$$$$ */
+  xkxdr_long(xdrs,pmargs->prog);
+  xkxdr_long(xdrs,pmargs->vers);
+  xkxdr_long(xdrs,pmargs->prot);
+  xkxdr_long(xdrs,pmargs->port);
+/*  printf("getpos after = %d\n", XDR_GETPOS(xdrs));
+  printf("leaving xkxdr_pmap\n"); $$$$$ */
+/*$$  return TRUE; */ }
+
+
+/* $$$$$  checking out what xdr_reference does: not much!
+void xdrtest()
+{ static PMAP_ARGS pmargs = {65537,131075,262150,1048575};
+  XDR xdrs; char buf[100]; char **bp; long i;
+
+  printf("entered xdrtest\n");
+  bp=&pmargs;
+  xkxdr_init(xdrs,buf,100,XDR_ENCODE);
+  printf("before reference\n");
+  printf("bp=%d pmargs=%d\n",bp,pmargs);
+  xdr_reference(&xdrs,&bp,sizeof(PMAP_ARGS),xkxdr_pmap);
+  printf("getpos = %d\n",XDR_GETPOS(&xdrs));
+  printf("after reference\n");
+  for (i=0;i<30;i++) printf(" %2x",buf[i]);
+  printf("\n");
+  printf("exiting xdrtest\n"); }
+*/
+
+
+/*  long myhost=ANY_HOST; */
+/*  long pmap_client_port=1000; */
+
+/*  if (xControl(SUNRPC, GETMYHOST, (char *)&myipaddr, sizeof myipaddr) < 0)
+    { printf("Can't find my IP addr\n"); return XK_FAILURE; }
+*/
+/* new -- rcs */
+/* for now, pretend everything is pushed onto the part stack */
+/*  partPush(part[0], (long *) &myipprot); */
+/* out!  partSetProt(part[0], myport);  /* try using port as prot */
+
+/*  partPush(part[0], (long *) &pmap_client_port);
+  partPush(part[0], ANY_HOST);
+*/
+
+
+/* need to cleanup some pointer stuff here */
+typedef struct {double re,im;} complex;
+
+static int xdr_complex(xdrs,z) complex *z;
+{ return xdr_double(xdrs,z->re) && xdr_double(xdrs,z->im); }
+
+
+-------------------------------------------------------
+print XObj, embedded in subroutine from sunrpc_server:
+
+xkern_return_t
+sunrpcServerDemux(self, lls, dg, hdr)
+    XObj self;
+    XObj lls;
+    Msg *dg;
+    SunrpcHdr *hdr;
+{
+    XObj	rpc_s;
+    ActiveKey	aKey;
+    SState	*state;
+    PSTATE	*pstate;
+
+    printf("1\n");
+    xTrace0(sunrpcp, 3, "sunrpcServerDemux");
+    printf("self %d %x  type %x  name %x  instname %x  state %x  binding %x\n",
+	   self, self, self->type, self->name, self->instName, self->state,
+	   self->binding);
+    printf("rcnt %x  id %x  instance %x  numdown %x  downlistsz %x\n",
+	   self->rcnt, self->id, self->instance, self->numdown,
+	   self->downlistsz);
+    printf("idle %x  down %x  downlist %x  myprotl %x  up %x\n",
+	   self->idle, self->down, self->downlist, self->myprotl, self->up);
+    printf("procedures %x %x %x %x %x %x %x %x %x %x %x %x %x\n",
+	   self->open, self->close, self->closedone, self->openenable,
+	   self->opendisable, self->opendone, self->demux, self->calldemux,
+	   self->pop, self->callpop, self->push, self->call, self->control,
+	   self->duplicate);
+    printf("trying for character strings\n");
+    printf("name: %s\n", self->name);
+    printf("instname: %s\n", self->instName);
+    pstate = (PSTATE *)self->state;
+    /*
+     * check if RPC version is valid
+     */
+    printf("2\n");
+    printf("self %d\n",self);
+    if ((hdr->rm_call.cb_rpcvers > RPC_VERS_HIGH) || 
+	(hdr->rm_call.cb_rpcvers < RPC_VERS_LOW)) {
+    printf("3\n");
+	sunrpcSendError(RPC_MISMATCH, lls, hdr->rm_xid, 0);
+    printf("4\n");
+	return XK_FAILURE;
+    }
+    printf("5\n");
+    aKey.p.prog = hdr->rm_call.cb_prog;
+    aKey.p.vers = hdr->rm_call.cb_vers;
+    aKey.lls = lls;
+    sunrpcPrActiveKey(&aKey,"the active key");
+    printf("pstate %d\n", pstate);
+    printf("&akey %d\n", &aKey);
+    printf("replyMap %d\n", pstate->replyMap);
+    printf("&map %d\n", &pstate->activeMap);
+    printf("map %d\n", pstate->activeMap);
+    printf("5.5\n");
+    rpc_s = (XObj) mapResolve(pstate->activeMap, (char *)&aKey);
+    printf("6\n");
+    if ( rpc_s == ERR_XOBJ ) {
+    printf("7\n");
+	xTrace0(sunrpcp, TR_EVENTS,
+		"sunrpcServerDemux, no active sessn, looking for openenable");
+	rpc_s = createServerSessn(self, &aKey, lls, hdr);
+    printf("8\n");
+	if ( rpc_s == ERR_XOBJ ) {
+    printf("9\n");
+	    return XK_FAILURE;
+	}
+    } else {
+    printf("10\n");
+	xTrace0(sunrpcp, 3, "sunrpcServerDemux found existing session");
+    }
+    printf("11\n");
+    state = (SState *)rpc_s->state;
+    state->hdr.rm_xid = hdr->rm_xid;
+    state->s_proc = hdr->rm_call.cb_proc;  /* save procedure number */
+    /* 
+     * Save new values of cred and verf from caller's header
+     */
+    printf("12\n");
+    sunrpcAuthFree(&state->hdr.rm_reply.rp_acpt.ar_verf);
+    printf("13\n");
+    sunrpcAuthFree(&state->s_cred);
+    printf("14\n");
+    state->hdr.rm_reply.rp_acpt.ar_verf = hdr->rm_call.cb_verf;
+    state->s_cred = hdr->rm_call.cb_cred;
+    hdr->rm_call.cb_cred = sunrpcAuthDummy;
+    hdr->rm_call.cb_verf = sunrpcAuthDummy;
+    
+    printf("15\n");
+    xPop(rpc_s, lls, dg); 
+    printf("16\n");
+    return XK_SUCCESS;
+}
+
+-------------------------------------------------------
+test routine for byte-order rearrangement -- htonl:
+
+  unsigned long ulfoo; unsigned long ulbar;
+  ulfoo = 104857607;
+  printf("ulfoo %d %d %ld %d %x %d %lx %d\n",
+	 ulfoo, 39, ulfoo, 40, ulfoo, 41, ulfoo, 42);
+  ulbar = htonl(ulfoo);
+  printf("ulbar %d %d %ld %d %x %d %lx %d\n",
+	 ulbar, 39, ulbar, 40, ulbar, 41, ulbar, 42);
+
+-------------------------------------------------------
+Compiler errors from sunrpc stuff:
+
+sunrpc/xrpc_prot.c: In function xdr_accepted_reply:
+sunrpc/xrpc_prot.c:78: warning: enumerated value `SUCCESS' not handled in switch
+sunrpc/xrpc_prot.c:78: warning: enumerated value `PROG_UNAVAIL' not handled in switch
+sunrpc/xrpc_prot.c:78: warning: enumerated value `PROC_UNAVAIL' not handled in switch
+sunrpc/xrpc_prot.c:78: warning: enumerated value `GARBAGE_ARGS' not handled in switch
+sunrpc/xrpc_prot.c:78: warning: enumerated value `SYSTEM_ERR' not handled in switch
+sunrpc/xrpc_prot.c: In function rejected:
+sunrpc/xrpc_prot.c:246: warning: enumerated value `RPC_MISMATCH' not handled in switch
+sunrpc/xrpc_prot.c:246: warning: case value `6' not in enumerated type `reject_stat'
+sunrpc/xrpc_prot.c: In function _seterr_reply:
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_SUCCESS' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_CANTENCODEARGS' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_CANTDECODERES' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_CANTSEND' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_CANTRECV' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_TIMEDOUT' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_INTR' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_PROGUNAVAIL' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_PROCUNAVAIL' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_CANTDECODEARGS' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_SYSTEMERROR' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_UNKNOWNHOST' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_UNKNOWNPROTO' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_PMAPFAILURE' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_PROGNOTREGISTERED' not handled in switch
+sunrpc/xrpc_prot.c:297: warning: enumerated value `RPC_FAILED' not handled in switch
+
+-------------------------------------------------------
+note from Ed about duplicated sunrpc messages.
+Date: Thu, 2 Apr 92 23:46:02 -0700
+From: "Ed Menze" <menze>
+Message-Id: <9204030646.AA25523@caslon.cs.arizona.edu>
+Received: by caslon.cs.arizona.edu; Thu, 2 Apr 92 23:46:02 -0700
+To: xmach
+Subject: sunrpc control/timeouts
+
+
+We seem to have a sticky little correctness problem in sunrpc.  
+
+Consider a server which takes a very long time to run.  The client
+either times out or reboots, eventually sending a new request to the
+server while the thread servicing the first request is still running.
+This causes a second server thread to approach the sunrpc server
+session with a different transaction id (XID.)
+
+Our current implementation just changes the XID in the session state
+and continues up to the server.  When the first thread finishes, it
+will realize that the XID has changed and will not send the answer
+back to the client.  So far, so good.  Unfortunately, the first server
+thread may execute a control operation on the sunrpc session which
+causes a reply to be sent to the client, but with the second thread's
+transaction id.  I don't think there's a clean way for the sunrpc
+session to know which thread is executing a control operation.
+
+I see a couple of possibilities.  When the second thread comes in and
+determines that the first thread is still active on that server
+session, it could mark the server session as 'dead', remove it from
+the active map, and start up a new server session.  The sunrpc control
+operations for a 'dead' session would not send any reply messages.
+
+The second possible solution is that the sunrpc server session will
+drop all subsequent requests until the first server thread returns.
+This has the virtue of simplicity, and although this behavior does not
+result in incorrect replies, I'm not sure it is acceptable.
+
+Comments?
+
+Ed
+
+

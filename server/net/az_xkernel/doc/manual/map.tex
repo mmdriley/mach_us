@@ -1,0 +1,269 @@
+% 
+% map.tex
+%
+% $Revision: 1.17 $
+% $Date: 1993/02/05 22:28:35 $
+%
+
+\section{Map Library}
+
+The map library provides a facility for maintaining a set of bindings
+between identifiers.  The map library supports operations for
+adding new bindings to the set, removing bindings from the set, and
+mapping one identifier into another, relative to a set of bindings (lookup).
+Protocol implementations use these operations to translate identifiers
+extracted from message headers (e.g., addresses, port numbers) into
+capabilities for kernel objects (e.g., {\em XObj}, {\em Enable}).
+
+\subsection{Type Definitions}
+
+The map library defines two data structures: {\em MapElement}
+and {\em Map}. {\em Bind} is a pointer to a {\em MapElement}.
+\medskip
+
+\begin{tabbing}
+xxxx \= xxxxxxxx \= xxxxxxxxxxxxx \= xxxxxxxxx \= \kill
+\>{\sem typedef struct} mapelement \{\\
+\>\>  {\sem struct mapelement} \>\>*next;\\
+\>\>  {\sem void *} \>internalid;\\
+\>\>  {\sem void *} \>externalid;\\
+\>\} {\bold MapElement}, *{\bold Bind};\\
+\\
+\>{\sem typedef struct} \{\\
+\>\>  {\sem int} \>nEntries, keySize;\\
+\>\>  {\sem MapElement}  \>*cache;\\
+\>\>  {\sem MapElement}  \>*freelist;\\
+\>\>  {\sem MapElement}  \>**table;\\
+\>\>  {\sem xkern\_return\_t} \>(*resolve)();\\
+\>\>  {\sem Bind} \>(*bind)();\\
+\>\>  {\sem xkern\_return\_t} \>(*unbind)();\\
+\>\>  {\sem xkern\_return\_t} \>(*remove)();\\
+\>\} *{\bold Map};
+\end{tabbing}
+
+\subsection{Operations}
+
+\subsubsection{mapCreate}
+
+Creates a map with {\em nEntries} elements in it. External ids bound
+in this map are {\em keySize} bytes long. The maximum value for the
+key size is MAX\_MAP\_KEY\_SIZE, currently 100 bytes.  Programmers will
+normally use {\sf sizeof(structuretype)} as the keysize to facilitate
+platform independence.  Note that maps never overflow, but they
+perform best if {\em nEntries} is chosen so that the map is at most
+50-80\% full.
+\medskip
+
+{\sem Map } {\bold mapCreate} ({\sem int} {\caps nEntries}, {\sem int} {\caps keySize});
+
+\subsubsection{mapResolve}
+
+Looks for the internal identifier bound to the external identifier
+{\em ext} in the map {\em Map}.  Note that the resolution will be done
+with {\em keysize} bytes of what the {\em ext} identifier points to,
+where {\em keysize} is the parameter that was used in the {\em
+mapCreate} call.  If a binding is found, {\em *ptr} is assigned the
+value of the internal identifier and XK\_SUCCESS is returned.  If no
+appropriate binding is found, mapResolve returns XK\_FAILURE.  If {\em
+ptr} is NULL, only the error code is returned.
+\medskip
+
+{\sem xkern\_return\_t} {\bold mapResolve} ({\sem Map} {\caps Map}, 
+{\sem void} *{\caps ext}, 
+{\sem void} **{\caps ptr} );
+
+\subsubsection{mapBind}
+
+Adds a binding of external id {\em ext} to internal id {\em intern}
+to map {\em Map}.  Note that the binding will be done with {\em
+keysize} bytes of what the {\em ext} identifier points to, where {\em
+keysize} is the parameter that was used in the {\em mapCreate} call.
+The return value uniquely identifies this binding; it can later be
+given as an argument to {\em mapRemoveBinding}.  
+A return
+value of ERR\_BIND indicates that the external identifier is already
+bound in the map.
+\medskip
+
+{\sem Bind} {\bold mapBind} 
+(
+{\sem Map} {\caps Map}, 
+{\sem void} *{\caps ext}, 
+{\sem void *} {\caps intern}
+);
+
+\subsubsection{mapRemoveBinding}
+
+Removes binding {\em Bind} from map {\em Map}.  Returns {\em
+XK\_FAILURE} if the item is not in the map.
+\medskip
+
+{\em 3.1 Compatibility note}:  Same as 3.1 {\em mapunbindbinding}.
+\medskip
+
+{\sem xkern\_return\_t} {\bold mapRemoveBinding} ({\sem Map} {\caps Map}, {\sem Bind} {\caps Bind});
+
+\subsubsection{mapUnbind}
+
+Removes binding of the association key {\em ext} from the map {\em
+Map}.  This is the inverse of {\em mapBind}.  
+Returns XK\_FAILURE if the item is not in the map.
+\medskip
+
+{\em 3.1 Compatibility note:}  Same as 3.1 mapremove.
+\medskip
+
+{\sem xkern\_return\_t} {\bold mapUnbind} ({\sem Map} {\caps Map},  {\sem void } *{\caps ext});
+
+\subsubsection{mapClose}
+
+Destroys the map and frees its space.  Any elements left in the
+map will be unbound before the map is destroyed.
+\medskip
+
+{\sem void} {\bold mapClose} ({\sem Map} {\caps Map});
+
+\subsubsection{mapForEach}
+
+Allows iterative access to the entries of a map by the provided
+function {\em f}.  Each call to {\em mapForEach} puts the key and its
+value into arguments passed the function {\em f}.  The third argument
+passed to {\em f} is the supplied value {\em arg}.  As long as the
+flag {\em MFE\_CONTINUE} is set in the function's return value
+and there are unprocessed keys, {\em mapForEach}
+will continue to call {\em f}.
+
+If the flag {\em MFE\_REMOVE} is set in the return value, {\em mapForEach}
+will remove the entry from the map after the user function returns and
+before it is called with the next map entry.  This is the only
+recommended way to remove the ``current'' map entry during a
+{\em mapForEach} operation.  If the user function tries to remove the
+``current'' entry directly (via mapRemove or mapUnbind), {\em mapForEach}
+may fail to find all of the map entries.
+
+New map entries added in the middle of a {\em mapForEach} iteration may or
+may not show up during that iteration.  Map manipulations within a
+{\em mapForEach} user function are generally not recommended.
+
+{\em MFE\_REMOVE} and {\em MFE\_CONTINUE} are binary flags which may
+be combined using bitwise OR.  A return value of 0 negates both flags.
+
+The order in which keys are returned depends on the
+internal structure of the map.
+
+\medskip
+
+{\sem void} {\bold mapForEach}({\sem Map} {\caps m}, {\sem MapForEachFun} {\caps f}, {\sem void} *{\caps arg} )
+\medskip
+
+{\sem typedef int} {\bold MapForEachFun}
+(
+{\sem void} *{\caps key}, 
+{\sem void} *{\caps value}, 
+{\sem void} *{\caps arg} 
+)
+
+
+\subsection{Usage Rules}
+
+\subsubsection{External Keys}
+
+Maps are used to bind a variable length external id to an internal id
+of type {\em int}.  The size of the external id is given
+as an argument when a particular map is created. All external ids
+bound using this map are expected to be of this size.  The user is
+warned to use a zero-izing routine like {\sanss bzero} before
+assigning values to a structure that will be used with the map
+routines.  The C language can have uninitialized data in the
+interstices of structures (i.e., padding areas), and these can cause
+structures that are ``equal'' (i.e., all fields have the same values)
+to fail to map to the same value in the $x$-kernel.
+
+
+\subsubsection{Active and Passive Maps}
+
+Protocols generally maintain two maps: an active map and a passive
+map.  Active maps are used to map keys found in incoming messages into
+the session that will process the message. Thus, the active map holds
+information about the set of currently active connections. Passive
+maps are used to bind identifiers to {\em Enable} objects 
+(section \ref{enable_objects}),
+thereby allowing a
+protocol to create a session when a message that is part of a new
+connection arrives.
+
+Typically, a protocol binds an active key to a session in its {\em
+open} routine, and a passive key to an enable object in its {\em
+openEnable} routine. These bindings are then used in the protocol's
+{\em demux} operation, according to the general pattern illustrated in
+figure~\ref{fig:mapfig}.
+
+\begin{figure}
+\caption{Example of using maps in demux \label{fig:mapfig}}
+\begin{verbatim}
+static xkern_return_t
+yap_demux(self, lls, msg)
+    XObj self;
+    XObj lls;
+    Msg *msg;
+{
+    Enable  *e;
+    
+    /* get protocol-specific state from self */
+    pstate = self->state;
+
+    /* extract the header from the message */
+    msgPop(msg, yapHdrLoad, &hdr, HLEN, 0);
+
+    /* make an active key from fields in the header (and other info) */
+    /* then see if it is in active map; if found, call pop */
+    activeid.localport = hdr.dstport;
+    activeid.remoteport = hdr.srcport;
+    activeid.lls = lls;
+    if (mapResolve(pstate->activemap, &activeid, &s) != XK_FAILURE)
+    {  
+        xkr = xPop(s, msg, lls, &hdr);
+        return xkr;
+    }
+
+    /* make a passive key from fields in the header (and other info) */
+    /* then for it in the passive map */
+    /*  if found, create a new session, */
+    /* save a binding to it in the active map, */
+    /* and call opendone and pop */
+    passiveid = hdr.dstport;
+    if (mapResolve(pstate->passivemap, &passiveid, &e) != XK_FAILURE) 
+    {
+        s = yapCreateSessn(self, e->hlpRcv, e->hlpType, &activeid);
+        xDuplicate(lls);
+        s->binding = mapBind(pstate->activemap, &activeid, (int)s);
+        xOpenDone(e->hlpRcv, s, self);
+        xkr = xPop(s, lls, msg, &hdr);
+        return xkr;
+   }
+
+    /* don't know how to process this message, so drop it */
+    return;
+}
+\end{verbatim}
+\end{figure}
+
+Notice two things about the example. First, in the
+case where a new session is created, it is necessary to call {\em
+xDuplicate} on the lower-level session to make the reference we hold
+to it permanent (see Sections \ref{duplicate} and \ref{refcnt}). 
+Second, it is useful
+to save the binding of an active key to the newly created session in
+the session object itself. 
+(The same thing is done when a session is created in the
+protocol's {\em open} routine).
+This is because it will be necessary to be able to remove the binding from the
+active map when the session is closed, and this is often easier or
+more efficient if the
+binding itself is available.
+Finally, the active key in this
+example includes both fields found in the message header and the 
+lower-level session that called xDemux. Using the lower-level session as
+part of the active key is fairly common; it helps to disambiguate
+protocol header fields that are not unique across all lower-level
+connections.

@@ -1,0 +1,136 @@
+
+\section{System Installation}
+
+This section describes how to install Version 3.2 of the $x$-kernel.
+By installing the $x$-kernel we mean setting up the $x$-kernel
+environment so that programmers can begin writing protocols and
+configuring new kernels.
+
+The $x$-kernel is commonly used for both research and instruction.  A
+typical scenario is for a researcher (instructor) to install the
+$x$-kernel for use by various network projects (students). Individual
+projects (students) then build and test kernels in private working
+directories. This section
+describes the work the researcher (instructor) needs to do to set up
+the $x$-kernel directory.  Most of the installation can be handled by
+the researcher (instructor).  Only a few things need to be done by a
+system administrator that has root permission, and these are clearly
+documented below.
+
+The $x$-kernel runs in several environments: as a task under
+Mach3 or within the Mach kernel (on both DecStations and HP 700
+workstations),  or as a user process on top of SunOS, release
+4.1 or latter.
+
+\subsection{Unpacking the {\it tar} file}
+
+If you haven't done so already, create a new directory for installing
+the $x$-kernel.  For the purpose of this report, we refer to this
+directory as {\tt /usr/xkernel}.  You may chose another name, however.
+{\tt cd} to this directory and type
+
+\begin{quote}
+{\tt tar xf} {\it file}
+\end{quote}
+
+\noindent where {\it file} is the disk or tape file of the $x$-kernel
+distribution. This will create several subdirectories in {\tt
+/usr/xkernel}. 
+
+
+\subsection{Directory Structure}
+
+The distribution contains the following directories:
+
+\begin{description}
+
+\item[{\tt bin}]~\\ Binaries for utility programs used to develop new
+kernels.
+
+\item[{\tt doc}]~\\ Documentation.
+
+\item[{\tt etc}]~\\ Configuration-related data files and protocol
+tables. 
+
+\item[{\tt gen}]~\\ Source code for the in-kernel Mach platforms.
+This code is automatically generated from various configuration files. 
+
+\item[{\tt mach3}]~\\ Sources and binaries for the Mach3-based $x$-kernel.
+
+\item[{\tt pi}]~\\ Sources and binaries for platform independent code:
+the \xk{}'s object-oriented infrastructure, protocol table code, and
+the message, participant, and map libraries.
+
+\item[{\tt protocols}]~\\ Sources and binaries for all protocols supported 
+in this release.
+
+\item[{\tt sunos}]~\\ Sources and binaries for Unix-based $x$-kernel.
+
+\item[{\tt util}]~\\ Utility programs for the \xk{}.
+
+
+\end{description}
+
+\noindent Note that those directories that contain $x$-kernel source
+and binaries actually place the binaries in several sub-directories,
+one for each ``kind'' of binary: {\tt DEBUGsunos} (Sun binaries,
+compiled with debugging turned on), {\tt OPTIMIZEsunos} (Sun binaries,
+compiled with optimization turned on), {\tt DEBUGmach3} (Mach3 MIPS
+binaries, compiled with debugging turned on), {\tt OPTIMIZEmach3}
+(Mach3 MIPS binaries, compiled with optimization turned on), etc.
+
+\subsection{About Compilers}
+
+Version 3.2 of the $x$-kernel now uses either the Gnu C compiler ({\tt
+gcc}) or the standard Unix compiler ({\tt cc}).  If you do not
+currently have Gnu C at your site, you can get a copy by doing
+anonymous FTP to {\tt prep.ai.mit.edu}, and retrieving {\tt
+pub/gnu/gcc.xtar}.
+
+
+\subsection{ Configuration }
+
+Many of the site-specific configuration options are listed in the file
+{\tt xkernel/etc/site.h}.  These options should be edited to reflect
+reasonable defaults for your site.  Many protocols have additional
+options that can be set on a per-execution basis with entries in a
+``rom file.''  These options are described in the manual page for each
+protocol in appendix \ref{protman}.
+
+
+\subsection{Building and Testing the System}
+
+First edit {\tt xkernel/etc/site.h} to reflect reasonable default values for
+your site.  The comments in site.h should be self-explanatory.
+
+Installing the \xk{} consists of building a few utility programs used
+to develop new kernels.  These are the procedures for building these
+programs, though binary versions are distributed for most platforms
+and rebuilding these programs is probably unnecessary.  For both of
+these procedures, you need to define the environment variable {\tt
+ARCH} to correspond to the type of binaries you want created:  
+{\tt sparc}, {\tt mips}, or {\tt hp700}.
+
+The \xk{} depends on gnumake, so you first have to make gnumake:
+\medskip
+
+{\tt cd} to {\tt /usr/xkernel/util/make} and type {\tt make}.  
+\medskip
+
+Next, put {\tt /usr/xkernel/bin/ARCH} and {\tt /usr/xkernel/bin}
+in your search path, where ARCH is as described above.
+They should appear before {\tt /bin} and {\tt /usr/bin} in
+order to pick up gnumake before the standard Unix {\tt make}. Finally,
+{\tt cd~/usr/xkernel/util} and type {\tt make~setup} followed by 
+{\tt make~install}.  This will install a handful of programs used to
+develop new kernels.  ({\tt make~install} may produce a warning of the
+form:  {\tt make[1]: fopen: Makedep.ARCH: No such file or directory}.
+The missing file will be created during this step and the warning can
+be ignored.)
+
+
+To test a system, build a kernel as described in section
+\ref{config} which includes one or more of the test protocols 
+(e.g., {\tt udptest}).  You should then be able to run your test
+kernel as described in section \ref{running}.
+

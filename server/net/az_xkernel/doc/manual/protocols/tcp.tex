@@ -1,0 +1,195 @@
+%
+% tcp.tex
+%
+% $Revision: 1.6 $
+% $Date: 1993/02/04 08:18:19 $
+%
+
+\subsection*{NAME}
+
+\noindent TCP (Transmission Control Protocol)
+
+\subsection*{SPECIFICATION}
+
+\noindent {\it Transmission Control Protocol}. Request for Comments
+793, USC Information Sciences Institute, Marina Del Rey, Calif., Sept. 1981
+
+\subsection*{SYNOPSIS}
+
+\noindent TCP is a reliable stream transport protocol. It maintains
+a connection between the server and the client, and provides reliable
+stream delivery to the process. This implementation is an encapsulation
+of the Unix 4.3 BSD implementation.
+
+This implementation of TCP supports input and output buffering.
+Output buffers are contained within TCP.  If the amount of data sent
+and unacknowledged by the peer reaches the output buffer size, TCP
+will block subsequent {\em xPush}'s (or will return
+XMSG\_ERR\_WOULDBLOCK in the case of non-blocking I/O.)
+
+TCP provides support for users to work with finite input buffers.  TCP
+will limit the amount of input data sent to its upper protocol via
+{\em xDemux} to the size of the input buffer.  When data have been
+consumed from the user's input buffer, free buffer space must be
+signalled to TCP via a TCP\_SETRCVBUFSPACE call (see below.)  If a
+user does not wish to use input buffering, a control message
+signalling an empty buffer should be sent in response to each {\em
+xDemux.} 
+
+
+\subsection*{REALM}
+
+TCP is in the ASYNC realm.
+
+\subsection*{PARTICIPANTS}
+
+TCP removes a pointer to a long (the TCP port number) from the
+participant stack.  TCP ports must be less than 0x10000.  
+If the local participant is missing, or if the
+local protocol number is ANY\_PROT, TCP will select an unused local
+port. 
+
+
+\subsection*{CONTROL OPERATIONS}
+
+\begin{description}
+
+\item[{\tt TCP\_PUSH:}]
+Force a TCP message to be sent.  (session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt TCP\_GETSTATEINFO:}]
+Returns state of the connection.  (session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] {\tt int}
+\end{description}
+
+\item[{\tt TCP\_DUMPSTATEINFO:}]
+Prints out statistics gathered by TCP.  (protocol only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] none
+\end{description}
+
+\item[{\tt TCP\_GETFREEPROTNUM:}]
+Returns an unused TCP port number.  This port number will not be given
+out to subsequent TCP\_GETFREEPROTNUM calls until it is released with
+TCP\_RELEASEPROTNUM.  This allows an opener to separate reservation of
+free ports from the actual open operation, if desired.
+(protocol only) 
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] long
+\end{description}
+
+\item[{\tt TCP\_RELEASEPROTNUM:}]
+Releases a TCP portnumber previously acquired with TCP\_GETFREEPROTNUM.
+(protocol only)
+\begin{description}
+\item[{\rm Input:}] long
+\item[{\rm Output:}] none
+\end{description}
+
+
+\item[{\tt TCP\_SETRCVBUFSPACE:}]
+Tells TCP how many bytes in the receive queue are free.
+(session only)
+\begin{description}
+\item[{\rm Input:}] u\_short
+\item[{\rm Output:}] none
+\end{description}
+
+
+\item[{\tt TCP\_SETRCVBUFSIZE:}]
+Tells TCP the size of the TCP user's receive queue.
+(session only)
+\begin{description}
+\item[{\rm Input:}] u\_short
+\item[{\rm Output:}] none
+\end{description}
+
+
+\item[{\tt TCP\_GETSNDBUFSPACE:}]
+Asks TCP for the number of free bytes its send queue.
+(session only)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] u\_short
+\end{description}
+
+\item[{\tt TCP\_SETSNDBUFSIZE:}]
+Tells TCP to change its send queue to the indicated size
+(session only)
+\begin{description}
+\item[{\rm Input:}] u\_short
+\item[{\rm Output:}] none
+\end{description}
+
+
+\item[{\tt TCP\_SETOOBINLINE:}]
+Tells TCP whether users wants urgent data to be delivered inline
+(non-zero == yes.)  (session only)
+
+\begin{description}
+
+\item[{\rm Input:}] int
+\item[{\rm Output:}] none
+
+\end{description}
+
+\item[{\tt TCP\_GETOOBDATA:}]
+reads the urgent data (exactly one byte), returning 1 on a successful
+read or returning 0
+if data was either read already or was not received yet
+(the OOB notification may precede the actual reception
+of the OOB data)
+\begin{description}
+\item[{\rm Input:}] none
+\item[{\rm Output:}] char
+\end{description}
+
+
+\item[{\tt TCP\_OOBPUSH:}]
+send a msg in urgent mode
+\begin{description}
+\item[{\rm Input:}] Msg *
+\item[{\rm Output:}] char
+\end{description}
+
+
+
+\item[{\tt TCP\_OOBMODE:}]
+TCP uses this to tell the user of TCP that it has
+urgent data present, i.e., TCP does an xControl() call on
+its parent --- THIS IS AN UPCALL!
+The first void pointer (args[0]) is of type XObj and is
+a pointer to the TCP session that invoked this operation.
+The second pointer (args[1]) is of type u\_int and is the
+value of the urgent data mark. 
+The oobmark indicates that the "oobmark-th" byte in the
+receive queue is the oobdata (or will be the oobdata.)
+
+Note: all protocols using TCP without having OOB data delivered
+in-band must be prepared to accept this upcall.
+
+
+\begin{description}
+\item[{\rm Input:}] void *args[2]
+\item[{\rm Output:}] none
+\end{description}
+
+
+\end{description}
+
+\subsection*{CONFIGURATION}
+
+\noindent {\tt name=tcp protocols=ip;}
+
+\subsection*{AUTHORS}
+
+Norm Hutchinson, Herman Rao, and David Mosberger
+

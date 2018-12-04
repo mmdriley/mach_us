@@ -1,0 +1,60 @@
+#
+# graph.comp.example
+#
+# x-kernel v3.2
+#
+# Copyright (c) 1993,1991,1990  Arizona Board of Regents
+#
+#
+# $Revision: 1.5 $
+# $Date: 1993/02/01 23:54:52 $
+# 
+# This is an example graph.comp file.  graph.comp is divided into
+# three sections, delimited by the character '@'.  Protocols listed in
+# the first section are 'driver' protocols.  (The first section is
+# empty in this file.)
+
+@;
+
+#
+# Non-driver protocols are declared in the second section
+#
+
+name=simeth;
+name=eth	protocols=simeth;
+name=arp	protocols=eth;
+name=vnet 	protocols=eth,arp;
+name=ip		protocols=vnet;
+name=icmp 	protocols=ip;
+name=udp 	protocols=ip;
+name=sunrpc 	protocols=udp;
+name=iptest 	protocols=ip	dir=tst	trace=3;
+
+#
+# This is an example of multiple instantiation.  In this example,
+# BLAST is instantiated twice.  VMUX has both of these instantiations
+# as its lower protocols.
+#
+
+name=blast/ip 	protocols=ip		trace=3;
+name=blast/vnet	protocols=vnet;
+name=vmux	protocols=blast/vnet, blast/ip;
+name=chan	protocols=vmux;
+
+@;
+
+#
+# The third section allows setting trace variables which are not
+# linked to any protocol
+#
+
+name=msg	trace=2;
+name=protocol	trace=3;
+
+#
+# You can also specify auxiliary protocol tables to be read in at boot
+# time.  DEFAULT loads the system protocol table file as listed in etc/site.h
+#
+prottbl=DEFAULT;
+prottbl=./prottbl;
+

@@ -1,0 +1,11 @@
+@;
+name=ethdrv/pc0;
+name=eth protocols=ethdrv/pc0;
+name=arp protocols=eth;
+name=vnet protocols=eth,arp;
+name=ip protocols=vnet;
+name=icmp protocols=ip;
+name=udp protocols=ip;
+name=tcp protocols=ip;
+name=usudp files=usudp_protocol protocols=udp;
+name=ustcp files=ustcp_protocol protocols=tcp;

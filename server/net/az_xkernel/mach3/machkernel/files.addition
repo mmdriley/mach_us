@@ -1,0 +1,103 @@
+#
+# x-kernel utilities
+#
+xkern/mach3/pxk/event.c			optional xkmachkernel
+xkern/mach3/pxk/init.c			optional xkmachkernel
+xkern/mach3/pxk/xk_machine.c		optional xkmachkernel
+xkern/mach3/pxk/ocsum.c			optional xkmachkernel
+xkern/mach3/pxk/process.c		optional xkmachkernel
+xkern/mach3/pxk/time.c			optional xkmachkernel
+xkern/mach3/pxk/trace.c			optional xkmachkernel
+xkern/mach3/machkernel/utils.c		optional xkmachkernel
+xkern/mach3/machkernel/input_process.c	optional xkmachkernel
+
+#
+# xkernel platform independent core
+#
+xkern/pi/xk_debug.c			optional xkmachkernel
+xkern/pi/list.c				optional xkmachkernel
+xkern/pi/msg.c				optional xkmachkernel
+xkern/pi/part.c				optional xkmachkernel
+xkern/pi/prottbl.c			optional xkmachkernel
+xkern/pi/sessn_gc.c			optional xkmachkernel
+xkern/pi/upi.c				optional xkmachkernel
+xkern/pi/idmap/idmap.c			optional xkmachkernel
+xkern/pi/hoststr.c			optional xkmachkernel
+xkern/pi/netmask.c			optional xkmachkernel
+xkern/pi/upi_defaults.c			optional xkmachkernel
+xkern/pi/event_monitor.c		optional xkmachkernel
+#
+#
+# generated files
+#
+xkern/gen/traceLevels.c			optional xkmachkernel
+xkern/gen/protTbl.c			optional xkmachkernel
+xkern/gen/ptbl_static.c			optional xkmachkernel
+xkern/gen/protocols.c			optional xkmachkernel
+#
+#
+# xkernel protocols
+#
+xkern/protocols/arp/arp.c		optional xkmachkernel
+xkern/protocols/arp/arp_mach3.c		optional xkmachkernel
+xkern/protocols/arp/arp_table.c		optional xkmachkernel
+xkern/protocols/bid/bid.c		optional xkmachkernel
+xkern/protocols/bidctl/bidctl.c		optional xkmachkernel
+xkern/protocols/bidctl/bidctl_id.c	optional xkmachkernel
+xkern/protocols/bidctl/bidctl_state.c	optional xkmachkernel
+xkern/protocols/bidctl/bidctl_timer.c	optional xkmachkernel
+xkern/protocols/blast/blast.c		optional xkmachkernel
+xkern/protocols/blast/blast_control.c	optional xkmachkernel
+xkern/protocols/blast/blast_debug.c	optional xkmachkernel
+xkern/protocols/blast/blast_hdr.c	optional xkmachkernel
+xkern/protocols/blast/blast_input.c	optional xkmachkernel
+xkern/protocols/blast/blast_output.c	optional xkmachkernel
+xkern/protocols/blast/blast_stack.c	optional xkmachkernel
+xkern/protocols/blast/blast_util.c	optional xkmachkernel
+xkern/protocols/chan/chan.c		optional xkmachkernel
+xkern/protocols/chan/chan_client.c	optional xkmachkernel
+xkern/protocols/chan/chan_debug.c	optional xkmachkernel
+xkern/protocols/chan/chan_mapchain.c	optional xkmachkernel
+xkern/protocols/chan/chan_server.c	optional xkmachkernel
+xkern/protocols/eth/eth.c		optional xkmachkernel
+xkern/protocols/icmp/icmp.c		optional xkmachkernel
+xkern/protocols/icmp/icmp_reqrep.c	optional xkmachkernel
+xkern/protocols/ip/ip.c			optional xkmachkernel
+xkern/protocols/ip/ip_control.c		optional xkmachkernel
+xkern/protocols/ip/ip_gc.c		optional xkmachkernel
+xkern/protocols/ip/ip_util.c		optional xkmachkernel
+xkern/protocols/ip/ip_frag.c		optional xkmachkernel
+xkern/protocols/ip/ip_hdr.c		optional xkmachkernel
+xkern/protocols/ip/ip_input.c		optional xkmachkernel
+xkern/protocols/ip/ip_rom.c		optional xkmachkernel
+xkern/protocols/ip/iproute.c		optional xkmachkernel
+xkern/protocols/select/multi_select.c	optional xkmachkernel
+xkern/protocols/select/select.c		optional xkmachkernel
+xkern/protocols/select/select_common.c	optional xkmachkernel
+#xkern/protocols/tcp/in_hacks.c		optional xkmachkernel
+#xkern/protocols/tcp/sb.c		optional xkmachkernel
+#xkern/protocols/tcp/tcp_debug.c		optional xkmachkernel
+#xkern/protocols/tcp/tcp_hdr.c		optional xkmachkernel
+#xkern/protocols/tcp/tcp_input.c		optional xkmachkernel
+#xkern/protocols/tcp/tcp_output.c	optional xkmachkernel
+#xkern/protocols/tcp/tcp_port.c		optional xkmachkernel
+#xkern/protocols/tcp/tcp_subr.c		optional xkmachkernel
+#xkern/protocols/tcp/tcp_timer.c		optional xkmachkernel
+#xkern/protocols/tcp/tcp_usrreq.c	optional xkmachkernel
+#xkern/protocols/tcp/tcp_x.c		optional xkmachkernel
+xkern/protocols/udp/udp.c		optional xkmachkernel
+xkern/protocols/udp/udp_port.c		optional xkmachkernel
+xkern/protocols/vchan/vchan.c		optional xkmachkernel
+xkern/protocols/vmux/vmux.c		optional xkmachkernel
+xkern/protocols/vnet/vnet.c		optional xkmachkernel
+xkern/protocols/vsize/vsize.c		optional xkmachkernel
+#
+# protocol tests
+#
+xkern/protocols/test/blasttest.c	optional xkmachkernel
+xkern/protocols/test/ethtest.c		optional xkmachkernel
+xkern/protocols/test/icmptest.c		optional xkmachkernel
+xkern/protocols/test/iptest.c		optional xkmachkernel
+xkern/protocols/test/rarptest.c		optional xkmachkernel
+xkern/protocols/test/tcptest.c		optional xkmachkernel
+xkern/protocols/test/udptest.c		optional xkmachkernel

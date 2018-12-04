@@ -1,0 +1,38 @@
+#!/bin/csh -f
+#
+# $RCSfile: mapTimes,v $
+# 
+# Copyright (c) 1993,1991,1990  Arizona Board of Regents
+#
+#
+# $Revision: 1.2 $
+# $Date: 1993/02/01 23:56:50 $
+#
+# Runs the map timing tests
+
+
+set sizes = ( 2 4 6 8 10 12 16 20 24 28 32 )
+
+set N = 5	# number of times to run each test
+set T = 0	# test tracing level
+
+foreach k ( $sizes )
+	echo Key size == $k
+
+	echo generic test
+	set n = $N
+	while ( $n )
+		time mapTestPerf -k $k -t $T
+		@ n--
+	end
+end
+
+foreach k ( $sizes )
+	echo Key size == $k
+	echo key-specific test
+	set n = $N
+	while ( $n )
+		time mapTestPerf -o -k $k -t $T
+		@ n--
+	end
+end
